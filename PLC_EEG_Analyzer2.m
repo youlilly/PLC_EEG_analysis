@@ -1,5 +1,5 @@
-%PLC_EEGpost_Analyzer2.m
-%Created by YY, 7/31/14
+%PLC_EEG_Analyzer2.m
+%Created by YY, 7/27/14
 
 clear all
 eeglab %Open up EEGlaa
@@ -63,7 +63,7 @@ subinitials = ['AP';
 'SR';
 'TG';
 ];
-%% Re-referencing eye channels and Epoching
+%% Re-referencing eye channels
 %Horizontal eye channels (99/EX3 and 100/EX4) are referenced to each
 %other; vertical eye channel is referenced to C25(89).  
 %NEW November 2010: Data from channel C25(89) are grabbed before
@@ -72,20 +72,24 @@ subinitials = ['AP';
 
 %Suffix "epochs": -200 to 300ms
 
-%allsubs = [1:5 7:44 46:57];%Data for Sub6 and Sub45 weren't collected for
-%1st visit
-allsubs = [1:4 7 9 10 12 13 15:18 20:25 27 28 32:35 37:40 42:44 46:52 54 55 57];%Subjects whose EEG has been collected as retest
-
+%allsubs = [1:5 7:44 46:57];%Data for Sub6 and Sub45 weren't collected
+allsubs = [16:44 46:57];
 
 for s = allsubs
     initial = subinitials(s,:);
     
-    bs = 4:6;
+    if s == 56 || s == 15
+        bs = 1:5; 
+    elseif s ==55
+        bs = [1:3 5:6];
+    else
+        bs = 1:6;
+    end
     
     for b = bs %For each block included in these analyses
         
     %Re-reference fear files    
-    filenamerr = strcat('EEG_PLC_Sub',num2str(s),'block',num2str(b),'post_evt_fil.set');  
+    filenamerr = strcat('EEG_PLC_Sub',num2str(s),'block',num2str(b),'_evt_fil.set');  
     EEG = pop_loadset(filenamerr); %Load event-altered & filtered EEG dataset
     
     channelC25 = EEG.data(89,:); %Grabs data from channel C25, which will soon become the ref channel for EX5
@@ -107,11 +111,9 @@ for s = allsubs
     
     EEG = eeg_checkset(EEG);
     
-    savefile2 = strcat('EEG_PLC_Sub',num2str(s),'block',num2str(b),'post_epochs_blc.set');     
+    savefile2 = strcat('EEG_PLC_Sub',num2str(s),'block',num2str(b),'epochs_blc.set');     
     EEG = pop_saveset(EEG, savefile2); %#ok<NASGU> %Save epochs
     clear EEG
     end
 end
-
-%%
 

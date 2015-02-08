@@ -336,7 +336,7 @@ end %Of subject loop
 
 clear all
 
-allsubs = [1:5 8:11 13:15 17:44 50 51 53:57];
+allsubs = [1:5 7:44 46 47 49:51 53:57];
 
 GrayCSp = cell(96,1);
 GrayCSm = cell(96,1);
@@ -382,7 +382,7 @@ results.GrayCSm = GrayCSm;
 results.ColCSp = ColCSp;
 results.ColCSm = ColCSm;
 
-save PLC_EEG_GrandAve_Precond_47subs.mat results
+save PLC_EEG_GrandAve_Precond_53subs_no4852.mat results
 
 %save PLC_EEG_GrandAve_Precond_All51subs.mat results
 
@@ -390,7 +390,7 @@ save PLC_EEG_GrandAve_Precond_47subs.mat results
 
 clear all
 
-allsubs = [1:5 8:11 13:15 17:44 50 51 53:57];
+allsubs = [1:5 7:44 46 47 49:51 53:57];
 
 GrayCSp = cell(96,1);
 GrayCSm = cell(96,1);
@@ -436,7 +436,7 @@ results.GrayCSm = GrayCSm;
 results.ColCSp = ColCSp;
 results.ColCSm = ColCSm;
 
-save PLC_EEG_GrandAve_Postcond_47subs.mat results
+save PLC_EEG_GrandAve_Postcond_53subs_no4852.mat results
 
 %save PLC_EEG_GrandAve_Postcond_All51subs.mat results
 

@@ -3,12 +3,12 @@
 
 %% Extract ERPs
 %Based on P1 window rejected trials above, it is determined that
-%Sub16,48,49,52 be removed from further EEG analysis due to too many
+%Sub 48 52 (updated 2/8/15; old rej: 16,48,49,52) be removed from further EEG analysis due to too many
 %movements and preculiar extraneous experimental conditions (ie. refusal to
 %use chin rest, physiological symptoms during experiment, no contignency
 %retained,etc.)
 
-allsubs = [1:4 7 9 10 12 13 15 17 18 20:25 27 28 32:35 37:40 42:44 46 47 50 51 54 55 57];
+allsubs = [1:4 7 9 10 12 13 15 16 17 18 20:25 27 28 32:35 37:40 42:44 46 47 49 50 51 54 55 57];
 
 backofhead = [1 14:22 25:38 41:50 54:57]; %New channels of interest: back of head
 midofhead = [2:13 23:24 39 40 51:53 58:66]; %Middle of head
@@ -154,3 +154,84 @@ for s = allsubs
         clear results
     end %Of block loop
 end %Of subject loop
+
+%% Average ERPs for Postcond2 blocks.
+
+allsubs = [1:4 7 9 10 12 13 15 16 17 18 20:25 27 28 32:35 37:40 42:44 46 47 49 50 51 54 55 57];
+
+for s = allsubs
+    
+    bs = 4:6;
+    
+    %Preallocate cell arrays for each subject's averages.
+    GrayCSp = cell(96,1);    %Gray target 1;if subno is odd, T1 is the CS+
+    GrayCSm = cell(96,1);    %Gray target 2;if subno is even, T2 is the CS+
+    ColCSp = cell(96,1);    %Color target 1
+    ColCSm = cell(96,1);    %Color target 2
+    
+    for c = 1:96 %For each channel
+        %Preallocate condition matrices for this channel
+        %Preallocate condition matrices
+        graycsp = [];
+        graycsm = [];
+        colcsp = [];
+        colcsm = [];
+        
+        
+        for b = bs %For each of the 3 blocks of precond
+            
+            eval(['load PLC_EEGpost_Sub' num2str(s) 'Block' num2str(b) 'ERPs.mat results';]); %Load fear file
+            eval(['load PLC_EEGpost_Sub' num2str(s) '_block' num2str(b) '_chaninfo chaninfo']); %Load fear file channel info
+            
+            
+            if c == 1 %Only have to do this part once for each subj & block (during channel 1)  
+                if b == 5 %Only have to do this part once for each subject 
+                    horz = results.horz; %#ok<NASGU> %Will become the x-axis later, when graphing
+                    epochdur = results.epochdur; %Tells us how long the epoch is (in ms)
+                else
+                end
+            else
+            end
+            
+            if ~isempty(find(chaninfo.chaninc==c, 1)) %If this channel is in the included channels matrix
+                %Grab mean epoch for this channel for each condition &
+                %concatenate w/other 2 blocks
+                
+                
+                graycsp = [graycsp; results.GrayCSp{c}];
+                graycsm = [graycsm; results.GrayCSm{c}];
+                colcsp = [colcsp; results.ColCSp{c}];
+                colcsm = [colcsm; results.ColCSm{c}];               
+                
+                
+            else %If the channel was excluded, don't add anything to the concatenated matrix
+            end
+            clear results %To save memory--these are big files!
+        end %Of block loop
+               
+        %Now that the ERPs for each block have been collected, average them
+        %together & assign them to the correct cell in the overall matrix.
+        
+        GrayCSp{c} = mean(graycsp,1);
+        GrayCSm{c} = mean(graycsm,1);
+        ColCSp{c} = mean(colcsp,1);
+        ColCSm{c} = mean(colcsm,1);
+
+        
+    end %Of channel loop
+    
+    %Time to save everything!
+    %Creating save structure "results"
+    results.horz = horz; %Will use later to graph
+    results.epochdur=epochdur;
+    
+    results.GrayCSp = GrayCSp;
+    results.GrayCSm = GrayCSm;
+    results.ColCSp = ColCSp;
+    results.ColCSm = ColCSm;
+    
+    
+    eval(['save PLC_EEGpost_Sub' num2str(s) '_Postcond2_ERPs.mat results';]); %Save it all for each subject
+
+end %Of subject loop
+

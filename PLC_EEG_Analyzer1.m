@@ -127,6 +127,7 @@ for s = allsubs
     end
 end
 
+
 %% Check # of triggers and timing of 1st trigger (called 'st') in behav .mat file and EEG dataset to see how well they match.
 allsubs = [1:5 7:44 46:57];%Data for Sub6 and Sub45 weren't collected
 

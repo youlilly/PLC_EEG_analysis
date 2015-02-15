@@ -235,3 +235,132 @@ for s = allsubs
 
 end %Of subject loop
 
+
+
+%% Make grand averages-Postcond2
+
+clear all
+
+allsubs = [1:4 7 9 10 12 13 15 16 17 18 20:25 27 28 32:35 37:40 42:44 46 47 49 50 51 54 55 57];
+
+GrayCSp = cell(96,1);
+GrayCSm = cell(96,1);
+ColCSp = cell(96,1);
+ColCSm = cell(96,1);
+
+for c = 1:96 %For each channel
+    %Preallocate condition matrices for this channel
+    graycsp = [];
+    graycsm = [];
+    colcsp = [];
+    colcsm = [];
+    
+    for s = allsubs
+        eval(['load PLC_EEGpost_Sub' num2str(s) '_Postcond2_ERPs.mat results';]);
+        if s == 1 && c == 1 %Only have to do this once
+            horz = results.horz;
+            epochdur = results.epochdur;
+        else
+        end
+        
+        graycsp = [graycsp; results.GrayCSp{c}];
+        graycsm = [graycsm; results.GrayCSm{c}];
+        colcsp = [colcsp; results.ColCSp{c}];
+        colcsm = [colcsm; results.ColCSm{c}];        
+        
+        clear results
+    end %Of subject loop
+    %Averaging ERPs from each subject & assigning them to grand avg cells.
+    GrayCSp{c} = mean(graycsp,1);
+    GrayCSm{c} = mean(graycsm,1);
+    ColCSp{c} = mean(colcsp,1);
+    ColCSm{c} = mean(colcsm,1);
+end %Of channel loop
+
+results.horz = horz;
+results.epochdur = epochdur;
+
+
+results.GrayCSp = GrayCSp;
+results.GrayCSm = GrayCSm;
+results.ColCSp = ColCSp;
+results.ColCSm = ColCSm;
+
+save PLC_EEG_GrandAve_Postcond2_40subs_no4852.mat results
+
+
+%% Plot grand average Pre-Post
+
+load PLC_EEG_GrandAve_Postcond2_40subs_no4852.mat results
+postcond = results;
+clear results
+
+mkdir('GrandAvepost_40subs');
+cd('GrandAvepost_40subs');
+
+horz = postcond.horz-200;
+
+for c = [1 14:22 25:38 41:50 54:57 2:13 23:24 39 40 51:53 58:66];
+    figure;
+%     plot(horz, precond.GrayCSp{c,:} , 'b--'); hold on;
+%     plot(horz, precond.GrayCSm{c,:} , 'k--');
+%     plot(horz, precond.ColCSp{c,:} , 'r--');
+%     plot(horz, precond.ColCSm{c,:} , 'g--');
+%     
+    plot(horz, postcond.GrayCSp{c,:} , 'b'); hold on;
+    plot(horz, postcond.GrayCSm{c,:} , 'k');
+    plot(horz, postcond.ColCSp{c,:} , 'r');
+    plot(horz, postcond.ColCSm{c,:} , 'g');
+    
+    legend('Post Gray CS+', 'Post Gray CS-', 'Post Color CS+', 'Post Color CS-', 'Location', 'northwest');
+    
+    eval(['saveas(gcf,''PLC_EEG_GrandAvepost_40subs_no4852_Chan' num2str(c) '.tif'');']);
+    close(gcf)
+    
+    
+end
+
+%% Plot individual ERPs Pre-Post
+
+clear all
+allsubs = [1:4 7 9 10 12 13 15 16 17 18 20:25 27 28 32:35 37:40 42:44 46 47 49 50 51 54 55 57];
+
+Oz = [28 30 31 32 44];
+Pz = [24 34 35 36 40];
+Cz = [1 2 38 63 84];
+Fz = [75 81 82 83 86];
+
+
+for s = allsubs
+    
+%     eval(['load PLC_EEG_Sub' num2str(s) '_Precond_ERPs.mat results';]);
+%     precond = results;
+%     clear results
+    eval(['load PLC_EEGpost_Sub' num2str(s) '_Postcond2_ERPs.mat results';]);
+    postcond = results;
+    clear results
+    
+horz = postcond.horz-200;
+    
+    for c = [31 35];
+        figure;
+%         plot(horz, precond.GrayCSp{c,:} , 'b--'); hold on;
+%         plot(horz, precond.GrayCSm{c,:} , 'k--');
+%         plot(horz, precond.ColCSp{c,:} , 'r--');
+%         plot(horz, precond.ColCSm{c,:} , 'g--');
+%         
+        plot(horz, postcond.GrayCSp{c,:} , 'b');hold on;
+        plot(horz, postcond.GrayCSm{c,:} , 'k');
+        plot(horz, postcond.ColCSp{c,:} , 'r');
+        plot(horz, postcond.ColCSm{c,:} , 'g');
+        
+        legend('Post2 Gray CS+', 'Post2 Gray CS-', 'Post2 Color CS+', 'Post2 Color CS-', 'Location', 'northwest');
+        
+        eval(['saveas(gcf,''PLC_EEGpost_Sub' num2str(s) '_Chan' num2str(c) '.tif'');']);
+        close(gcf)
+        
+        
+    end
+    
+end
+

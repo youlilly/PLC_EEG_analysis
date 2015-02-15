@@ -204,8 +204,7 @@ for s = allsubs
             if ~isempty(find(chaninfo.chaninc==c, 1)) %If this channel is in the included channels matrix
                 %Grab mean epoch for this channel for each condition &
                 %concatenate w/other 2 blocks
-                
-                
+                                
                 graycsp = [graycsp; results.GrayCSp{c}];
                 graycsm = [graycsm; results.GrayCSm{c}];
                 colcsp = [colcsp; results.ColCSp{c}];
@@ -443,19 +442,19 @@ save PLC_EEG_GrandAve_Postcond_53subs_no4852.mat results
 %% Plot grand average Pre-Post
 
 
-load PLC_EEG_GrandAve_Precond_47subs.mat results
+load PLC_EEG_GrandAve_Precond_53subs_no4852.mat results
 precond = results;
 clear results
-load PLC_EEG_GrandAve_Postcond_47subs.mat results
+load PLC_EEG_GrandAve_Postcond_53subs_no4852.mat results
 postcond = results;
 clear results
 
-mkdir('GrandAve_47subs');
-cd('GrandAve_47subs');
+%mkdir('GrandAve_53subs');
+cd('GrandAve_53subs');
 
 horz = precond.horz-200;
 
-for c = 29:33
+for c = [2:13 23:24 39 40 51:53 58:66];
     figure;
     plot(horz, precond.GrayCSp{c,:} , 'b--'); hold on;
     plot(horz, precond.GrayCSm{c,:} , 'k--');
@@ -469,9 +468,59 @@ for c = 29:33
     
     legend('Pre Gray CS+','Pre Gray CS-','Pre Color CS+', 'Pre Color CS-', 'Post Gray CS+', 'Post Gray CS-', 'Post Color CS+', 'Post Color CS-', 'Location', 'northwest');
     
-    eval(['saveas(gcf,''PLC_EEG_GrandAve_47subs_Chan' num2str(c) '.tif'');']);
+    eval(['saveas(gcf,''PLC_EEG_GrandAve_53subs_no4852_Chan' num2str(c) '.tif'');']);
     close(gcf)
     
+    
+end
+
+% Oz = [28 30 31 32 44]
+% Pz = [24 34 35 36 40];
+% Cz = [1 2 38 63 84];
+% Fz = [75 81 82 83 86];
+
+%% Plot individual ERPs Pre-Post
+
+clear all
+allsubs = [1:5 7:44 46 47 49:51 53:57];
+
+Oz = [28 30 31 32 44];
+Pz = [24 34 35 36 40];
+Cz = [1 2 38 63 84];
+Fz = [75 81 82 83 86];
+
+
+for s = 49%allsubs
+    
+    eval(['load PLC_EEG_Sub' num2str(s) '_Precond_ERPs.mat results';]);
+    precond = results;
+    clear results
+    eval(['load PLC_EEG_Sub' num2str(s) '_Postcond_ERPs.mat results';]);
+    postcond = results;
+    clear results
+    
+horz = precond.horz-200;
+    
+    for c = [31 35];
+        figure;
+        plot(horz, precond.GrayCSp{c,:} , 'b--'); hold on;
+        plot(horz, precond.GrayCSm{c,:} , 'k--');
+        plot(horz, precond.ColCSp{c,:} , 'r--');
+        plot(horz, precond.ColCSm{c,:} , 'g--');
+        
+        plot(horz, postcond.GrayCSp{c,:} , 'b'); hold on;
+        plot(horz, postcond.GrayCSm{c,:} , 'k');
+        plot(horz, postcond.ColCSp{c,:} , 'r');
+        plot(horz, postcond.ColCSm{c,:} , 'g');
+        
+        legend('Pre Gray CS+','Pre Gray CS-','Pre Color CS+', 'Pre Color CS-', 'Post Gray CS+', 'Post Gray CS-', 'Post Color CS+', 'Post Color CS-', 'Location', 'northwest');
+%        legend( 'Post Gray CS+', 'Post Gray CS-', 'Post Color CS+', 'Post Color CS-', 'Location', 'northwest');
+        
+        eval(['saveas(gcf,''PLC_EEG_Sub' num2str(s) '_Chan' num2str(c) '.tif'');']);
+        close(gcf)
+        
+        
+    end
     
 end
 

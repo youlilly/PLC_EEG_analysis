@@ -8,7 +8,8 @@
 %use chin rest, physiological symptoms during experiment, no contignency
 %retained,etc.)
 
-allsubs = [1:4 7 9 10 12 13 15 16 17 18 20:25 27 28 32:35 37:40 42:44 46 47 49 50 51 54 55 57];
+%allsubs = [1:4 7 9 10 12 13 15 16 17 18 20:25 27 28 32:35 37:40 42:44 46 47 49 50 51 54 55 57];
+allsubs = [2 7 16 33 37 38 54 55];
 
 backofhead = [1 14:22 25:38 41:50 54:57]; %New channels of interest: back of head
 midofhead = [2:13 23:24 39 40 51:53 58:66]; %Middle of head
@@ -36,13 +37,13 @@ for s = allsubs
         for v = thesections %For each of the 3 sections of the head
             
             if v=='B' %If working with back-of-head EEG file
-                thefile = strcat('EEG_PLC_Sub',num2str(s),'block',num2str(b),'post_epochs_blc_Barej.set'); %Want to load back-of-head fear file
+                thefile = strcat('EEG_PLC_Sub',num2str(s),'block',num2str(b),'post_ica_epochs_blc_Barej.set'); %Want to load back-of-head fear file
                 thesechans = backofhead; %Channel loop will use back-of-head channels
             elseif v=='M' %If working with mid-of-head file
-                thefile = strcat('EEG_PLC_Sub',num2str(s),'block',num2str(b),'post_epochs_blc_Marej.set'); %Want to load mid-of-head fear file
+                thefile = strcat('EEG_PLC_Sub',num2str(s),'block',num2str(b),'post_ica_epochs_blc_Marej.set'); %Want to load mid-of-head fear file
                 thesechans = midofhead;
             elseif v=='F'
-                thefile = strcat('EEG_PLC_Sub',num2str(s),'block',num2str(b),'post_epochs_blc_Farej.set'); %Want to load front-of-head fear file
+                thefile = strcat('EEG_PLC_Sub',num2str(s),'block',num2str(b),'post_ica_epochs_blc_Farej.set'); %Want to load front-of-head fear file
                 thesechans = frontofhead;
             else
                 sprintf('%s','WTF IS HAPPENING')
@@ -149,7 +150,7 @@ for s = allsubs
             results.ColCSm = ColT1;
         end
         
-        eval(['save PLC_EEGpost_Sub' num2str(s) 'Block' num2str(b) 'ERPs.mat results';]); %Save it all for fear
+        eval(['save PLC_EEGpost_Sub' num2str(s) 'Block' num2str(b) 'ERPs_ica.mat results';]); %Save it all for fear
         clear cleandata %To save memory
         clear results
     end %Of block loop
@@ -157,8 +158,8 @@ end %Of subject loop
 
 %% Average ERPs for Postcond2 blocks.
 
-allsubs = [1:4 7 9 10 12 13 15 16 17 18 20:25 27 28 32:35 37:40 42:44 46 47 49 50 51 54 55 57];
-
+%allsubs = [1:4 7 9 10 12 13 15 16 17 18 20:25 27 28 32:35 37:40 42:44 46 47 49 50 51 54 55 57];
+allsubs = [2 7 16 33 37 38 54 55];
 for s = allsubs
     
     bs = 4:6;
@@ -180,8 +181,8 @@ for s = allsubs
         
         for b = bs %For each of the 3 blocks of precond
             
-            eval(['load PLC_EEGpost_Sub' num2str(s) 'Block' num2str(b) 'ERPs.mat results';]); %Load fear file
-            eval(['load PLC_EEGpost_Sub' num2str(s) '_block' num2str(b) '_chaninfo chaninfo']); %Load fear file channel info
+            eval(['load PLC_EEGpost_Sub' num2str(s) 'Block' num2str(b) 'ERPs_ica.mat results';]); %Load fear file
+            eval(['load PLC_EEGpost_Sub' num2str(s) '_block' num2str(b) '_chaninfo_ica chaninfo']); %Load fear file channel info
             
             
             if c == 1 %Only have to do this part once for each subj & block (during channel 1)  
@@ -231,7 +232,7 @@ for s = allsubs
     results.ColCSm = ColCSm;
     
     
-    eval(['save PLC_EEGpost_Sub' num2str(s) '_Postcond2_ERPs.mat results';]); %Save it all for each subject
+    eval(['save PLC_EEGpost_Sub' num2str(s) '_Postcond2_ERPs_ica.mat results';]); %Save it all for each subject
 
 end %Of subject loop
 
@@ -323,7 +324,8 @@ end
 %% Plot individual ERPs Pre-Post
 
 clear all
-allsubs = [1:4 7 9 10 12 13 15 16 17 18 20:25 27 28 32:35 37:40 42:44 46 47 49 50 51 54 55 57];
+%allsubs = [1:4 7 9 10 12 13 15 16 17 18 20:25 27 28 32:35 37:40 42:44 46 47 49 50 51 54 55 57];
+allsubs = [2 7 16 33 37 38 54 55];
 
 Oz = [28 30 31 32 44];
 Pz = [24 34 35 36 40];
@@ -336,7 +338,7 @@ for s = allsubs
 %     eval(['load PLC_EEG_Sub' num2str(s) '_Precond_ERPs.mat results';]);
 %     precond = results;
 %     clear results
-    eval(['load PLC_EEGpost_Sub' num2str(s) '_Postcond2_ERPs.mat results';]);
+    eval(['load PLC_EEGpost_Sub' num2str(s) '_Postcond2_ERPs_ica.mat results';]);
     postcond = results;
     clear results
     
@@ -356,7 +358,7 @@ horz = postcond.horz-200;
         
         legend('Post2 Gray CS+', 'Post2 Gray CS-', 'Post2 Color CS+', 'Post2 Color CS-', 'Location', 'northwest');
         
-        eval(['saveas(gcf,''PLC_EEGpost_Sub' num2str(s) '_Chan' num2str(c) '.tif'');']);
+        eval(['saveas(gcf,''PLC_EEGpost_Sub' num2str(s) '_Chan' num2str(c) '_ica.tif'');']);
         close(gcf)
         
         

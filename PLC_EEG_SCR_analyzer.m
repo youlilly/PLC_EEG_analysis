@@ -109,7 +109,8 @@ end
 
 condition = {'color';'gray'};
 eventnum = [];
-allsubs = [7 12];
+allsubs = 42%[40:44 46:57];
+
 
 for a = allsubs
     if a ==37
@@ -128,7 +129,8 @@ for a = allsubs
             case(1)
                 if c ==1
                     %501 color T1, 502 color T2, 166 color T1 UCS, 266,
-                    %color T2 UCS
+                    %color T2 UCS; reinforcement 70%, 10 CS+, 10 CS-, 7
+                    %UCS, 7 save cues
                 eventtype = [502 266 501 166 501 166 502 266 502 266 501 501 166 502 266 502 501 166 501 166 502 266 501 166 502 266 501 502 266 502 501 166 501 502];
                 else
                 eventtype = [101 166 102 266 102 266 101 166 101 166 102 102 266 101 101 166 102 266 101 102 266 101 166 102 101 166 102 101 166 102 266 101 102 266];
@@ -158,7 +160,7 @@ for a = allsubs
             q = q+1; %Move to the next event
             end
             
-            if EEG.event(1).latency < 2000 %If the then first event has a latency less or equal than ~8s, it is a false trigger
+            if EEG.event(1).latency < 1060 %If the then first event has a latency less or equal than ~8s, it is a false trigger
             EEG = pop_editeventvals(EEG, 'delete', 1); %So delete this trigger
             z = length(EEG.event); %Number of triggers has changed, so last trigger # has changed too
             else %If the first event is legit (which it isn't on most of these files), do nothing
@@ -178,7 +180,13 @@ for a = allsubs
     scrfile = strcat('PLC_Sub',num2str(a),'_fc_',ccode,'_event.mat');%save event onsets + types
     save(scrfile, 'eventonsets');
     
-    data = EEG.data(263,:)'; %channel 103 saves SCR
+    if a == 42 || a == 43
+        scrchan  = 263;
+    else
+        scrchan = 103;
+    end    
+    
+    data = EEG.data(scrchan,:)'; %channel 103 saves SCR
     scrdatafile = strcat('PLC_Sub',num2str(a),'_fc_',ccode,'_scr.mat');%save continuous SCR
     save(scrdatafile, 'data');
     
@@ -193,7 +201,7 @@ end
 % script "Glm_fc_allsubs.m", which calls 1st level GLM feature of scralyze
 % and generates betas for each condition in each individual
 
-allsubs = [7 12];
+allsubs = [40:44 46:57];
 condition = {'color';'gray'};
 
 
@@ -232,12 +240,55 @@ for a = allsubs
     
 end
 
+%% Trim SCR data at the end, 6s after the last event onset -fear
+%% conditioning block
+% To ensure better modelling results, getting rid of noise data at the end
+% of the experiment;
+% These trimmed files are then used to import to scralyze
+
+% Post1 data sets
+%allsubs = [1:5 7:39];
+allsubs = [1:5 7:39 40:44 46:57];
+condition = {'color';'gray'};
+
+for a = allsubs
+    
+    if a ==37
+        c1 = 1;
+    else c1 = 1:2;
+    end
+    
+    for c = c1
+    ccode = condition{c,:};
+    scrfile = strcat('PLC_Sub',num2str(a),'_fc_',ccode,'_event.mat');%save event onsets + types
+    load(scrfile, 'eventonsets');
+    
+    scrdatafile = strcat('PLC_Sub',num2str(a),'_fc_',ccode,'_scr.mat');%save continuous SCR
+    load(scrdatafile, 'data');
+    
+    lastevent = eventonsets(1,34);
+ 
+    if length(data) > lastevent + 1536 %if the data has not ended 6s after the last event onset
+    
+        data(lastevent+1537:end) = [];% delete the portion of SCR data after 6s after last event onset
+    
+    end
+    
+
+    scrdatafile = strcat('PLC_Sub',num2str(a),'_fc_',ccode,'_scr_trim.mat');%save continuous SCR
+    save(scrdatafile, 'data');    
+    
+    end
+end
+
+%%
+% Run the script "Import_fc_scr_sub1_57.m" in SCRalyze
 
 %% Compute 1st level constrast for each individual
 % this steps calls each individual "SubX_fc_gray/color_1stGLM.mat" file and
 % record the beta for each condition, tabulizing them
 
-allsubs = [1:5 7:39];
+allsubs = [1:5 7:36 38 39 40:44 46:57];
 condition = {'color';'gray'};
 all_betas = []; %subno, color-code (1:color; 2:gray), CS+, CS-, UCS+, UCS-
 
@@ -249,7 +300,7 @@ for a = allsubs
         
     for c = c1
     ccode = condition{c,:};
-    glmfile = strcat('/Volumes/Work/SCR/Sub', num2str(a),'_fc_',ccode,'_1stGLM.mat');%save event onsets + types
+    glmfile = strcat('Sub', num2str(a),'_fc_',ccode,'_1stGLM.mat');%save event onsets + types
     load(glmfile);
     
     if rem(a,2)==1
@@ -450,12 +501,15 @@ end
 % These trimmed files are then used to import to scralyze
 
 % Post1 data sets
-allsubs = [1:5 7:39];
+%allsubs = [1:5 7:39];
+allsubs = [1:5 7:39 40:44 46:57];
 
 for a = allsubs
     
-    if a == 15
+    if a == 56 || a == 15
         c1 = 1:5;
+    elseif a == 55
+        c1 = [1:3 5:6];
     else
         c1 = 1:6;
     end
@@ -468,7 +522,11 @@ for a = allsubs
     scrdatafile = strcat('EEG_Sub',num2str(a),'_block',num2str(c),'_scr.mat');%save continuous SCR
     load(scrdatafile, 'data');
     
+    if c == 1 || c == 2 || c == 3
     lastevent = eventonsets(1,240);
+    else
+    lastevent = eventonsets(1,270);
+    end
  
     if length(data) > lastevent + 1536 %if the data has not ended 6s after the last event onset
     
@@ -484,9 +542,10 @@ for a = allsubs
 end
 
 
-% Post2 data sets
+%% Post2 data sets
 
-allsubs=find(ExpStatus(:,3)==1 | ExpStatus(:,3)==0)';
+%allsubs=find(ExpStatus(:,3)==1 | ExpStatus(:,3)==0)';
+allsubs = [1,2,3,4,7,9,10,12,13,15,16,17,18,20,21,22,23,24,25,27,28,32,33,34,37,38,39,40,42,43,44,46,47,48,49,50,51,52,54,55,57;];
 
 for a = allsubs
     
@@ -512,6 +571,8 @@ for a = allsubs
     
     end
 end
+%%
+% Run the script "Import_gb_scr_sub1_57.m" in SCRalyze
 
 %% Reformat and generate multiple condition file
 % have onsets for both CS+/- and corresponding UCS (four conditions)
@@ -520,7 +581,7 @@ end
 % and generates betas for each condition in each individual
 
 % Pre Cond data sets - gabor blocks 1-3
-allsubs = [1:5 7:39];
+allsubs = [1:5 7:39 40:44 46:57];
 
 for a = allsubs
 %     
@@ -550,8 +611,10 @@ end
 % Post Cond data sets - gabor blocks 4-6
 for a = allsubs
 %     
-    if a == 15
+    if a == 15 || a == 56
         c1 = 4:5;
+    elseif a == 55
+        c1 = 5:6;
     else
         c1 = 4:6;
     end
@@ -561,7 +624,7 @@ for a = allsubs
     scrfile = strcat('EEG_Sub',num2str(a),'_block',num2str(c),'_event.mat');%save event onsets + types
     load(scrfile, 'eventonsets');
     
-    names = {'T1', 'T2', 'T1G', 'T2G', 'T1CUC', 'T2CUC', 'T1GUC', 'T2GUC'};
+    names = {'T1C', 'T2C', 'T1G', 'T2G', 'T1CUC', 'T2CUC', 'T1GUC', 'T2GUC'};
     
     T1Consets = eventonsets(1,eventonsets(2,:)==501);
     T2Consets = eventonsets(1,eventonsets(2,:)==502);
@@ -600,16 +663,17 @@ end
 
 
 
-% Post2 Cond data sets - gabor blocks 4-6
-allsubs=find(ExpStatus(:,3)==1 | ExpStatus(:,3)==0)';
+%% Post2 Cond data sets - gabor blocks 4-6
+allsubs = [1,2,3,4,7,9,10,12,13,15,16,17,18,20,21,22,23,24,25,27,28,32,33,34,37,38,39,40,42,43,44,46,47,48,49,50,51,52,54,55,57;];
 for a = allsubs
-%     
+
+    c1 = 4:6;
     for c = c1
 
     scrfile = strcat('EEG_Sub',num2str(a),'_block',num2str(c),'_post_event.mat');%save event onsets + types
     load(scrfile, 'eventonsets');
     
-    names = {'T1', 'T2', 'T1G', 'T2G', 'T1CUC', 'T2CUC', 'T1GUC', 'T2GUC'};
+    names = {'T1C', 'T2C', 'T1G', 'T2G', 'T1CUC', 'T2CUC', 'T1GUC', 'T2GUC'};
     
     T1Consets = eventonsets(1,eventonsets(2,:)==501);
     T2Consets = eventonsets(1,eventonsets(2,:)==502);
@@ -646,71 +710,101 @@ for a = allsubs
     end
 end
 
+%% run Glm_gb_sub1_57.m to build GLM models to the individual scr data
+
 %% Compute 1st level constrast for each individual
 % this steps calls each individual "EEG_SubX_blockX_1stGLM.mat" file and
 % record the beta for each condition, tabulizing them
 
-allsubs = [1:5 7:39];
+allsubs = [1,2,3,4,5,7,8,9,10,11,12,13,14,15,16,17,18,19,20,21,22,23,24,25,26,27,28,29,31,32,33,34,37,38,39,40,41,42,43,44,46,47,48,49,50,51,52,53,54,55,56,57;];
+
 % Pre Conditioning block 1-3
 
 all_betas = []; %subno, blkno, Color CS+, Color CS-, Gray CS+, Gray CS-
+all_betas_b1 = [];
+all_betas_b2 = [];
+all_betas_b3 = [];
+
 for a = allsubs
-betas = [];
+    betas = [];
     c1 = 1:3;
     for c = c1
-
-    glmfile = strcat('/Volumes/Work/SCR/EEG_Sub', num2str(a),'_block', num2str(c),'_norm_1stGLM.mat');
-    load(glmfile);
-    
+        
+        glmfile = strcat('EEG_Sub', num2str(a),'_block', num2str(c),'_norm_1stGLM.mat');
+        load(glmfile);
+        
         if rem(a,2)==1
             betas = [betas; a c glm.beta(1,1) glm.beta(4,1) glm.beta(7,1) glm.beta(10,1)];
-      
+            
         else
             betas = [betas; a c glm.beta(4,1) glm.beta(1,1) glm.beta(10,1) glm.beta(7,1)];
-         
+            
         end
-    
+        
     end
     
+    all_betas_b1 = [all_betas_b1; a betas(1,2) betas(1,3) betas(1,4) betas(1,5) betas(1,6)];
+    all_betas_b2 = [all_betas_b2; a betas(2,2) betas(2,3) betas(2,4) betas(2,5) betas(2,6)];
+    all_betas_b3 = [all_betas_b3; a betas(3,2) betas(3,3) betas(3,4) betas(3,5) betas(3,6)];
     all_betas = [all_betas; a mean(betas(:,3),1) mean(betas(:,4),1) mean(betas(:,5),1) mean(betas(:,6),1)];
     
 end
 
+save scr_betas_sub1_57_b1_3 all_betas all_betas_b1 all_betas_b2 all_betas_b3
+
 %% Collate parameter estimates
 % Post1 Gabor block 4-6
-allsubs = [1,2,3,4,5,7,9,10,11,13,15,17,18,19,20,21,22,24,25,27,28,31,32,33,34,38,39;];%successfully conditioned sub at the end of visit1
+%allsubs = [1,2,3,4,5,7,9,10,11,13,15,17,18,19,20,21,22,24,25,27,28,31,32,33,34,38,39;];%successfully conditioned sub at the end of visit1
+allsubs = [1,2,3,4,5,7,8,9,10,11,12,13,14,15,16,17,18,19,20,21,22,23,24,25,26,27,28,29,31,32,33,34,37,38,39,40,41,42,43,44,46,47,48,49,50,51,52,53,54,55,56,57;];
 
 all_betas = []; %subno, blkno, Color CS+, Color CS-, Gray CS+, Gray CS-, Color UCS, Color Safe, Gray UCS, Gray Safe
+all_betas_b4 = [];
+all_betas_b5 = [];
+all_betas_b6 = [];
+
 for a = allsubs
-    if a ==15
+    if a == 15 || a == 56
         c1 = 4:5;
-    else c1 = 4:6;
-    end
-betas = [];        
-
-    for c = c1
-
-    glmfile = strcat('/Volumes/Work/SCR/EEG_Sub', num2str(a),'_block', num2str(c),'_norm_1stGLM.mat');
-    load(glmfile);
-    
-    if rem(a,2)==1
-        betas = [betas; a c glm.beta(1,1) glm.beta(4,1) glm.beta(7,1) glm.beta(10,1) glm.beta(13,1) glm.beta(16,1) glm.beta(19,1) glm.beta(22,1)];
-      
+    elseif a == 55
+        c1 = 5:6;
     else
-        betas = [betas; a c glm.beta(4,1) glm.beta(1,1) glm.beta(10,1) glm.beta(7,1) glm.beta(16,1) glm.beta(13,1) glm.beta(22,1) glm.beta(19,1)];
-         
+        c1 = 4:6;
     end
     
+    betas = [];
+    
+    for c = c1
+        
+        glmfile = strcat('EEG_Sub', num2str(a),'_block', num2str(c),'_norm_1stGLM.mat');
+        load(glmfile);
+        
+        if rem(a,2)==1
+            
+            betas = [betas; a c glm.beta(1,1) glm.beta(4,1) glm.beta(7,1) glm.beta(10,1) glm.beta(13,1) glm.beta(16,1) glm.beta(19,1) glm.beta(22,1)];
+            
+        else
+            betas = [betas; a c glm.beta(4,1) glm.beta(1,1) glm.beta(10,1) glm.beta(7,1) glm.beta(16,1) glm.beta(13,1) glm.beta(22,1) glm.beta(19,1)];
+            
+        end
+        
+
     end
     
-    all_betas = [all_betas; a mean(betas(:,3),1) mean(betas(:,4),1) mean(betas(:,5),1) mean(betas(:,6),1) mean(betas(:,7),1) mean(betas(:,8),1) mean(betas(:,9),1) mean(betas(:,10),1)];    
+
+    all_betas = [all_betas; a mean(betas(:,3),1) mean(betas(:,4),1) mean(betas(:,5),1) mean(betas(:,6),1) mean(betas(:,7),1) mean(betas(:,8),1) mean(betas(:,9),1) mean(betas(:,10),1)];
     
 end
 
+save scr_betas_sub1_57_b4_6 all_betas all_betas_b4 all_betas_b5 all_betas_b6
+
+
 %% Collate parameter estimates
 % Post2 Gabor block 4-6
-allsubs = [1,2,3,4,7,9,10,12,17,20,21,22,23,24,25,27,28,33,34,37,38,39;];%successfully conditioned sub at the end of visit2
+allsubs = [1,2,3,4,7,9,10,12,13,15,16,17,18,20,21,22,23,24,25,27,28,32,33,34,37,38,39,40,42,43,44,46,47,48,49,50,51,52,54,55,57;];
 all_betas = []; %subno, blkno, Color CS+, Color CS-, Gray CS+, Gray CS-, Color UCS, Color Safe, Gray UCS, Gray Safe
+all_betas_b4 = [];
+all_betas_b5 = [];
+all_betas_b6 = [];
 
 for a = allsubs
     c1 = 4:6;
@@ -718,7 +812,7 @@ betas = [];
 
     for c = c1
 
-    glmfile = strcat('/Volumes/Work/SCR/EEG_Sub', num2str(a),'_block', num2str(c),'_post_norm_1stGLM.mat');
+    glmfile = strcat('EEG_Sub', num2str(a),'_block', num2str(c),'_post_norm_1stGLM.mat');
     load(glmfile);
     
     if rem(a,2)==1
@@ -730,11 +824,16 @@ betas = [];
     end
 
     end
+    
+    all_betas_b4 = [all_betas_b4; a betas(1,2) betas(1,3) betas(1,4) betas(1,5) betas(1,6) betas(1,7) betas(1,8) betas(1,9) betas(1,10) ];
+    all_betas_b5 = [all_betas_b5; a betas(2,2) betas(2,3) betas(2,4) betas(2,5) betas(2,6) betas(2,7) betas(2,8) betas(2,9) betas(2,10) ];
+    all_betas_b6 = [all_betas_b6; a betas(3,2) betas(3,3) betas(3,4) betas(3,5) betas(3,6) betas(3,7) betas(3,8) betas(3,9) betas(3,10) ];    
     all_betas = [all_betas; a mean(betas(:,3),1) mean(betas(:,4),1) mean(betas(:,5),1) mean(betas(:,6),1) mean(betas(:,7),1) mean(betas(:,8),1) mean(betas(:,9),1) mean(betas(:,10),1)];    
     
     
 end
 
+save scr_betas_sub1_57_b4_6post all_betas all_betas_b4 all_betas_b5 all_betas_b6
 
 
 %% Sort data into groups of subjects

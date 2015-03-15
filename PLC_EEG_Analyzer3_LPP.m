@@ -10,7 +10,7 @@
 %allsubs = [1:5 7:15 17:44 46 47 50 51 53:57];
 
 %allsubs = [1:5 7:44 46 47 49:51 53:57];
-allsubs = [2 7 16 33 37 38 54 55];
+allsubs = [1 3:5 8:29 31 33 34 37:44 46 47 50 51 54:57];
 
 backofhead = [1 14:22 25:38 41:50 54:57]; %New channels of interest: back of head
 midofhead = [2:13 23:24 39 40 51:53 58:66]; %Middle of head
@@ -37,6 +37,15 @@ for s = allsubs
         ColT1 = cell(96,1);    %Color target 1
         ColT2 = cell(96,1);    %Color target 2
         
+        GrayT1S = cell(96,1);
+        GrayT1D = cell(96,1);
+        ColT1S = cell(96,1);
+        ColT1D = cell(96,1);
+        
+        GrayT2S = cell(96,1);
+        GrayT2D = cell(96,1);
+        ColT2S = cell(96,1);
+        ColT2D = cell(96,1);
         
         counter = counter + 1;
         
@@ -44,20 +53,20 @@ for s = allsubs
         for v = thesections %For each of the 3 sections of the head
             
             if v=='B' %If working with back-of-head EEG file
-                thefile = strcat('EEG_PLC_Sub',num2str(s),'block',num2str(b),'_ica_epochs_blc_Barej.set'); %Want to load back-of-head fear file
+                thefile = strcat('EEG_PLC_Sub',num2str(s),'block',num2str(b),'_epochsLPP_blc_Barej.set'); %Want to load back-of-head fear file
                 thesechans = backofhead; %Channel loop will use back-of-head channels
             elseif v=='M' %If working with mid-of-head file
-                thefile = strcat('EEG_PLC_Sub',num2str(s),'block',num2str(b),'_ica_epochs_blc_Marej.set'); %Want to load mid-of-head fear file
+                thefile = strcat('EEG_PLC_Sub',num2str(s),'block',num2str(b),'_epochsLPP_blc_Marej.set'); %Want to load mid-of-head fear file
                 thesechans = midofhead;
             elseif v=='F'
-                thefile = strcat('EEG_PLC_Sub',num2str(s),'block',num2str(b),'_ica_epochs_blc_Farej.set'); %Want to load front-of-head fear file
+                thefile = strcat('EEG_PLC_Sub',num2str(s),'block',num2str(b),'_epochsLPP_blc_Farej.set'); %Want to load front-of-head fear file
                 thesechans = frontofhead;
             else
                 sprintf('%s','WTF IS HAPPENING')
             end
             
             EEG = pop_loadset(thefile); %Load up results from previous cell for this subj, block, head section
-            cleandata = EEG.data; %return channel per frame*frames per epoch*number of epochs
+            cleandata = EEG.data; %return channel No.*data points per epoch*number of epochs
             epochdur = EEG.pnts; %return frames per epoch
             cleanevents = [];
             cleanevents2 = [];
@@ -67,17 +76,24 @@ for s = allsubs
                 n = EEG.epoch(i).eventtype;
                 if iscell(n)
                     for ii=1:length(n)
-                        if n{ii} == 1 || n{ii} == 2 || n{ii} == 501 || n{ii} == 502
-                            cleanevents = [cleanevents n(ii)];
+                        if n{ii} == 1 || n{ii} == 2 || n{ii} == 501 || n{ii} == 502 || n{ii} == 201 || n{ii} == 202 || n{ii} == 203 || n{ii} == 701 || n{ii} == 702 || n{ii} == 703
+                            if rem(ii,2) ~= 0
+                            cleanevents(i,1) = n{ii};
+                            else
+                            cleanevents(i,2) = n{ii};
+                            end
                         end
                     end
                 else
                     for ii=1:length(n)
-                        if n(ii) == 1 || n(ii) == 2 || n(ii) == 501 || n(ii) == 502
-                            cleanevents = [cleanevents n(ii)];
+                        if n(ii) == 1 || n(ii) == 2 || n(ii) == 501 || n(ii) == 502 || n(ii) == 201 || n(ii) == 202 || n(ii) == 203 || n(ii) == 701 || n(ii) == 702 || n(ii) == 703
+                            if rem(ii,2) ~= 0
+                            cleanevents(i,1) = n(ii);
+                            else
+                            cleanevents(i,2) = n(ii);
+                            end
                         end
-                    end
-                    
+                    end                    
                 end
             end
             
@@ -100,23 +116,66 @@ for s = allsubs
                 colt1 = [];
                 colt2 = [];
                 
+                grayt1s = []; %target followed by the same thing
+                grayt1d = []; %target followed by the distractor
+                grayt2s = [];
+                grayt2d = [];
+                
+                colt1s = [];
+                colt1d = [];
+                colt2s = [];
+                colt2d = [];
                 
                 %For each clean event, add its epoch to the relevant condition matrix
-                for j = 1:howmanyevents
-                    
-                    
-                    switch cleanevents(j)
+                for j = 1:howmanyevents                   
+                    switch cleanevents(j,1)
                         case(1) %Event code 1: Gray Target 1
                             grayt1 = [grayt1; cleandata(m,(1+epochdur*(j-1): epochdur*j))] ; %#ok<AGROW>
+                            
+                            switch cleanevents(j,2)
+                                case(201) %Event code 201: Distractor is the same as the target
+                                     grayt1s = [grayt1s; cleandata(m,(1+epochdur*(j-1): epochdur*j))];
+                                     
+                                case(203) %Event code 203: Distractor is different from the target
+                                     grayt1d = [grayt1d; cleandata(m,(1+epochdur*(j-1): epochdur*j))];
+                                    
+                            end
                             
                         case(2) %Event code 2: Gray Target 2
                             grayt2 = [grayt2; cleandata(m,(1+epochdur*(j-1): epochdur*j))] ; %#ok<AGROW>
                             
+                            switch cleanevents(j,2)
+                                case(202) %Event code 202: Distractor is the same as the target
+                                     grayt2s = [grayt2s; cleandata(m,(1+epochdur*(j-1): epochdur*j))];
+                                     
+                                case(203) %Event code 203: Distractor is different from the target
+                                     grayt2d = [grayt2d; cleandata(m,(1+epochdur*(j-1): epochdur*j))];
+                                    
+                            end    
+                            
                         case(501) %Event code 501: Color Target 1
                             colt1 = [colt1; cleandata(m,(1+epochdur*(j-1): epochdur*j))] ; %#ok<AGROW>
                             
+                            switch cleanevents(j,2)
+                                case(701) %Event code 701: Distractor is the same as the target
+                                     colt1s = [colt1s; cleandata(m,(1+epochdur*(j-1): epochdur*j))];
+                                     
+                                case(703) %Event code 703: Distractor is different from the target
+                                     colt1d = [colt1d; cleandata(m,(1+epochdur*(j-1): epochdur*j))];
+                                    
+                            end    
+                            
                         case(502) %Event code 502: Color Target 2
                             colt2 = [colt2; cleandata(m,(1+epochdur*(j-1): epochdur*j))] ; %#ok<AGROW>
+                            
+                            switch cleanevents(j,2)
+                                case(702) %Event code 702: Distractor is the same as the target
+                                     colt2s = [colt2s; cleandata(m,(1+epochdur*(j-1): epochdur*j))];
+                                     
+                                case(703) %Event code 703: Distractor is different from the target
+                                     colt2d = [colt2d; cleandata(m,(1+epochdur*(j-1): epochdur*j))];
+                                    
+                            end 
                             
                     end %Of switch for coding events
                 end %Of event loop
@@ -128,6 +187,15 @@ for s = allsubs
                 ColT1{m} = colt1;
                 ColT2{m} = colt2;
                 
+                GrayT1S{m} = grayt1s;
+                GrayT1D{m} = grayt1d;
+                ColT1S{m} = colt1s;
+                ColT1D{m} = colt1d;
+                
+                GrayT2S{m} = grayt2s;
+                GrayT2D{m} = grayt2d;
+                ColT2S{m} = colt2s;
+                ColT2D{m} = colt2d;
                 
             end %Of channel loop
             cleaneventall{counter,1} = cleanevents;
@@ -150,86 +218,63 @@ for s = allsubs
             results.GrayCSm = GrayT2;
             results.ColCSp = ColT1;
             results.ColCSm = ColT2;
+            
+            results.GrayCSpS = GrayT1S;
+            results.GrayCSpD = GrayT1D;
+            results.GrayCSmS = GrayT2S;
+            results.GrayCSmD = GrayT2D;
+            
+            results.ColCSpS = ColT1S;
+            results.ColCSpD = ColT1D;
+            results.ColCSmS = ColT2S;
+            results.ColCSmD = ColT2D;
+            
         else
             results.GrayCSp = GrayT2; %T2 is CS+
             results.GrayCSm = GrayT1;
             results.ColCSp = ColT2;
             results.ColCSm = ColT1;
+
+            results.GrayCSpS = GrayT2S;
+            results.GrayCSpD = GrayT2D;
+            results.GrayCSmS = GrayT1S;
+            results.GrayCSmD = GrayT1D;
+            
+            results.ColCSpS = ColT2S;
+            results.ColCSpD = ColT2D;
+            results.ColCSmS = ColT1S;
+            results.ColCSmD = ColT1D;            
         end
         
-        eval(['save PLC_EEG_Sub' num2str(s) 'Block' num2str(b) 'ERPs_ica.mat results';]); %Save it all for fear
+        eval(['save PLC_EEG_Sub' num2str(s) 'Block' num2str(b) 'ERPs_LPP.mat results';]); %Save it all for fear
         clear cleandata %To save memory
         clear results
     end %Of block loop
 end %Of subject loop
 
-%% Average ERPs for each block (1-6)
-
-allsubs = [1 3:5 8:29 31 33 34 37:44 46 47 50 51 54:57]; %removing 2,7,53
-
-for s = allsubs
-    
-    if s == 56 || s == 15
-        bs = 1:5;
-    elseif s == 55
-        bs = [1:3 5:6];
-    else
-        bs = 1:6;
-    end
-    
-    for b = bs
-        if s == 16 || s == 37 || s == 54
-            eval(['load PLC_EEG_Sub' num2str(s) 'Block' num2str(b) 'ERPs_ica.mat results';]); %Save it all for fear
-        else
-            eval(['load PLC_EEG_Sub' num2str(s) 'Block' num2str(b) 'ERPs.mat results';]); %Save it all for fear
-        end
-        
-        GrayCSp = cell(96,1);
-        GrayCSm = cell(96,1);
-        ColCSp = cell(96,1);
-        ColCSm = cell(96,1);
-        
-        for c = 1:96
-            if c == 1 %Only have to do this part once for each subj & block (during channel 1)
-                horz = results.horz;  %Will become the x-axis later, when graphing
-                epochdur = results.epochdur; %Tells us how long the epoch is (in ms)
-            end
-            
-            GrayCSp{c} = mean(results.GrayCSp{c},1);
-            GrayCSm{c} = mean(results.GrayCSm{c},1);
-            ColCSp{c} = mean(results.ColCSp{c},1);
-            ColCSm{c} = mean(results.ColCSm{c},1);
-        end
-        clear results %To save memory--these are big files!
-
-        results.horz = horz; %Will use later to graph
-        results.epochdur=epochdur;
-        
-        results.GrayCSp = GrayCSp;
-        results.GrayCSm = GrayCSm;
-        results.ColCSp = ColCSp;
-        results.ColCSm = ColCSm;
-        
-        eval(['save PLC_EEG_Sub' num2str(s) '_Block' num2str(b) '_Averaged_ERPs.mat results';]); %Save it all for each subject
-        
-    end
-    
-end
-
 %% Average ERPs for Precond blocks.
-%allsubs = [1:5 7:15 17:44 46 47 50 51 53:57];
-%allsubs = [1:5 7:44 46 47 49:51 53:57];
-allsubs = [2 7 16 33 37 38 54 55];
+
+allsubs = [1 3:5 8:29 31 33 34 37:44 46 47 50 51 54:57];
 
 for s = allsubs
     
     bs = 1:3;
     
     %Preallocate cell arrays for each subject's averages.
-    GrayCSp = cell(96,1);   
-    GrayCSm = cell(96,1);   
-    ColCSp = cell(96,1);    
-    ColCSm = cell(96,1);   
+    GrayCSp = cell(96,1);
+    GrayCSm = cell(96,1);
+    ColCSp = cell(96,1);
+    ColCSm = cell(96,1);
+    
+    GrayCSpS = cell(96,1);
+    GrayCSpD = cell(96,1);
+    ColCSpS = cell(96,1);
+    ColCSpD = cell(96,1);
+    
+    GrayCSmS = cell(96,1);
+    GrayCSmD = cell(96,1);
+    ColCSmS = cell(96,1);
+    ColCSmD = cell(96,1);
     
     for c = 1:96 %For each channel
         %Preallocate condition matrices for this channel
@@ -239,15 +284,24 @@ for s = allsubs
         colcsp = [];
         colcsm = [];
         
+        graycsps = []; %target followed by the same thing
+        graycspd = []; %target followed by the distractor
+        graycsms = [];
+        graycsmd = [];
+        
+        colcsps = [];
+        colcspd = [];
+        colcsms = [];
+        colcsmd = [];
         
         for b = bs %For each of the 3 blocks of precond
             
-            eval(['load PLC_EEG_Sub' num2str(s) 'Block' num2str(b) 'ERPs_ica.mat results';]); %Load fear file
-            eval(['load PLC_EEG_Sub' num2str(s) '_block' num2str(b) '_chaninfo_ica chaninfo']); %Load fear file channel info
+            eval(['load PLC_EEG_Sub' num2str(s) 'Block' num2str(b) 'ERPs_LPP.mat results';]); %Load fear file
+            eval(['load PLC_EEG_Sub' num2str(s) '_block' num2str(b) '_chaninfo_lpp chaninfo']); %Load fear file channel info
             
             
-            if c == 1 %Only have to do this part once for each subj & block (during channel 1)  
-                if b == 1 %Only have to do this part once for each subject 
+            if c == 1 %Only have to do this part once for each subj & block (during channel 1)
+                if b == 1 %Only have to do this part once for each subject
                     horz = results.horz; %#ok<NASGU> %Will become the x-axis later, when graphing
                     epochdur = results.epochdur; %Tells us how long the epoch is (in ms)
                 else
@@ -258,18 +312,28 @@ for s = allsubs
             if ~isempty(find(chaninfo.chaninc==c, 1)) %If this channel is in the included channels matrix
                 %Grab mean epoch for this channel for each condition &
                 %concatenate w/other 2 blocks
-                                
+                
                 graycsp = [graycsp; results.GrayCSp{c}];
                 graycsm = [graycsm; results.GrayCSm{c}];
                 colcsp = [colcsp; results.ColCSp{c}];
-                colcsm = [colcsm; results.ColCSm{c}];               
+                colcsm = [colcsm; results.ColCSm{c}];
+                
+                graycsps = [graycsps; results.GrayCSpS{c}];
+                graycspd = [graycspd; results.GrayCSpD{c}];
+                graycsms = [graycsms; results.GrayCSmS{c}];
+                graycsmd = [graycsmd; results.GrayCSmD{c}];
+                
+                colcsps = [colcsps; results.ColCSpS{c}];
+                colcspd = [colcspd; results.ColCSpD{c}];
+                colcsms = [colcsms; results.ColCSmS{c}];
+                colcsmd = [colcsmd; results.ColCSmD{c}];
                 
                 
             else %If the channel was excluded, don't add anything to the concatenated matrix
             end
             clear results %To save memory--these are big files!
         end %Of block loop
-               
+        
         %Now that the ERPs for each block have been collected, average them
         %together & assign them to the correct cell in the overall matrix.
         
@@ -277,8 +341,17 @@ for s = allsubs
         GrayCSm{c} = mean(graycsm,1);
         ColCSp{c} = mean(colcsp,1);
         ColCSm{c} = mean(colcsm,1);
-
         
+        GrayCSpS{c} = mean(graycsps,1);
+        GrayCSpD{c} = mean(graycspd,1);
+        ColCSpS{c} = mean(colcsps,1);
+        ColCSpD{c} = mean(colcspd,1);
+        
+        GrayCSmS{c} = mean(graycsms,1);
+        GrayCSmD{c} = mean(graycsmd,1);
+        ColCSmS{c} = mean(colcsms,1);
+        ColCSmD{c} = mean(colcsmd,1);
+    
     end %Of channel loop
     
     %Time to save everything!
@@ -291,9 +364,18 @@ for s = allsubs
     results.ColCSp = ColCSp;
     results.ColCSm = ColCSm;
     
+    results.GrayCSpS = GrayCSpS;
+    results.GrayCSpD = GrayCSpD;
+    results.GrayCSmS = GrayCSmS;
+    results.GrayCSmD = GrayCSmD;
     
-    eval(['save PLC_EEG_Sub' num2str(s) '_Precond_ERPs_ica.mat results';]); %Save it all for each subject
-
+    results.ColCSpS = ColCSpS;
+    results.ColCSpD = ColCSpD;
+    results.ColCSmS = ColCSmS;
+    results.ColCSmD = ColCSmD;
+            
+    eval(['save PLC_EEG_Sub' num2str(s) '_Precond_ERPs_lpp.mat results';]); %Save it all for each subject
+    
 end %Of subject loop
 
 %% Average ERPs for Postcond blocks.
@@ -325,10 +407,19 @@ for s = allsubs
         colcsp = [];
         colcsm = [];
         
-        
+                grayt1s = []; %target followed by the same thing
+                grayt1d = []; %target followed by the distractor
+                grayt2s = [];
+                grayt2d = [];
+                
+                colt1s = [];
+                colt1d = [];
+                colt2s = [];
+                colt2d = [];
+                
         for b = bs %For each of the 3 blocks of precond
             
-            eval(['load PLC_EEG_Sub' num2str(s) 'Block' num2str(b) 'ERPs_ica.mat results';]); %Load fear file
+            eval(['load PLC_EEG_Sub' num2str(s) 'Block' num2str(b) 'ERPs_LPP.mat results';]); %Load fear file
             eval(['load PLC_EEG_Sub' num2str(s) '_block' num2str(b) '_chaninfo_ica chaninfo']); %Load fear file channel info
             
             
@@ -515,160 +606,6 @@ save PLC_EEG_GrandAve_Postcond_36subsNo27.mat results
 
 %save PLC_EEG_GrandAve_Postcond_All51subs.mat results
 
-%% Make grand average Pre-Post (block 1-6)
-
-for b = 1:6
-    if b == 1 || b == 2 || b == 3 || b==5
-        allsubs = [1 3:5 8:29 31 33 34 37:44 46 47 50 51 54:57];
-    elseif b == 4
-        allsubs = [1 3:5 8:29 31 33 34 37:44 46 47 50 51 54 56 57];
-    else
-        allsubs = [1 3:5 8:14 16:29 31 33 34 37:44 46 47 50 51 54:55 57];
-    end
-    
-    GrayCSp = cell(96,1);
-    GrayCSm = cell(96,1);
-    ColCSp = cell(96,1);
-    ColCSm = cell(96,1);
-    
-    for c = 1:96
-        
-        graycsp = [];
-        graycsm = [];
-        colcsp = [];
-        colcsm = [];
-        
-        for s = allsubs
-            eval(['load PLC_EEG_Sub' num2str(s) '_Block' num2str(b) '_Averaged_ERPs.mat results';]);
-            if s == 1 && c == 1 %Only have to do this once
-                horz = results.horz;
-                epochdur = results.epochdur;
-            else
-            end
-            
-            graycsp = [graycsp; results.GrayCSp{c}];
-            graycsm = [graycsm; results.GrayCSm{c}];
-            colcsp = [colcsp; results.ColCSp{c}];
-            colcsm = [colcsm; results.ColCSm{c}];
-                        
-            clear results
-        end
-        %Averaging ERPs from each subject & assigning them to grand avg cells.
-        GrayCSp{c} = mean(graycsp,1);
-        GrayCSm{c} = mean(graycsm,1);
-        ColCSp{c} = mean(colcsp,1);
-        ColCSm{c} = mean(colcsm,1);
-        
-    end
-    
-    results.horz = horz;
-    results.epochdur = epochdur;
-    
-    results.GrayCSp = GrayCSp;
-    results.GrayCSm = GrayCSm;
-    results.ColCSp = ColCSp;
-    results.ColCSm = ColCSm;
-    
-    eval(['save PLC_EEG_GrandAve_Block' num2str(b) '_ERPs_45subsNo2753.mat results';]); %Save it all for each subject
-    
-end
-
-%% Plot grand average Blockwise
-%Ave Precond vs. Block4 
-load PLC_EEG_GrandAve_Precond_45subsNo2753.mat results
-precond = results;
-
-load PLC_EEG_GrandAve_Block4_ERPs_45subsNo2753.mat results
-postcond = results;
-
-horz = precond.horz-200;
-
-mkdir('GrandAveERPs_PrePost_Blockwise_45subs_031515');
-cd('GrandAveERPs_PrePost_Blockwise_45subs_031515');
-
-    for c = 30:33;
-        figure;
-        plot(horz, precond.GrayCSp{c,:} , 'b--'); hold on;
-        plot(horz, precond.GrayCSm{c,:} , 'k--');
-        plot(horz, precond.ColCSp{c,:} , 'r--');
-        plot(horz, precond.ColCSm{c,:} , 'g--');
-        
-        plot(horz, postcond.GrayCSp{c,:} , 'b'); hold on;
-        plot(horz, postcond.GrayCSm{c,:} , 'k');
-        plot(horz, postcond.ColCSp{c,:} , 'r');
-        plot(horz, postcond.ColCSm{c,:} , 'g');
-        
-        legend('Pre Gray CS+','Pre Gray CS-','Pre Color CS+', 'Pre Color CS-', 'PostB4 Gray CS+', 'PostB4 Gray CS-', 'PostB4 Color CS+', 'PostB4 Color CS-', 'Location', 'northwest');
-%        legend( 'Post Gray CS+', 'Post Gray CS-', 'Post Color CS+', 'Post Color CS-', 'Location', 'northwest');
-        
-        eval(['saveas(gcf,''PLC_EEG_GrandAve_PrePostB4_45subs_Chan' num2str(c) '.tif'');']);
-        close(gcf)                
-    end
-    
-
-%Ave Precond vs. Block5 
-load PLC_EEG_GrandAve_Precond_45subsNo2753.mat results
-precond = results;
-
-load PLC_EEG_GrandAve_Block5_ERPs_45subsNo2753.mat results
-postcond = results;
-
-horz = precond.horz-200;
-
-%mkdir('GrandAveERPs_PrePost_Blockwise_45subs_031515');
-cd('GrandAveERPs_PrePost_Blockwise_45subs_031515');
-
-    for c = 30:33;
-        figure;
-        plot(horz, precond.GrayCSp{c,:} , 'b--'); hold on;
-        plot(horz, precond.GrayCSm{c,:} , 'k--');
-        plot(horz, precond.ColCSp{c,:} , 'r--');
-        plot(horz, precond.ColCSm{c,:} , 'g--');
-        
-        plot(horz, postcond.GrayCSp{c,:} , 'b'); hold on;
-        plot(horz, postcond.GrayCSm{c,:} , 'k');
-        plot(horz, postcond.ColCSp{c,:} , 'r');
-        plot(horz, postcond.ColCSm{c,:} , 'g');
-        
-        legend('Pre Gray CS+','Pre Gray CS-','Pre Color CS+', 'Pre Color CS-', 'PostB5 Gray CS+', 'PostB5 Gray CS-', 'PostB5 Color CS+', 'PostB5 Color CS-', 'Location', 'northwest');
-%        legend( 'Post Gray CS+', 'Post Gray CS-', 'Post Color CS+', 'Post Color CS-', 'Location', 'northwest');
-        
-        eval(['saveas(gcf,''PLC_EEG_GrandAve_PrePostB5_45subs_Chan' num2str(c) '.tif'');']);
-        close(gcf)                
-    end
-    
-    
-%Ave Precond vs. Block6 
-load PLC_EEG_GrandAve_Precond_45subsNo2753.mat results
-precond = results;
-
-load PLC_EEG_GrandAve_Block6_ERPs_45subsNo2753.mat results
-postcond = results;
-
-horz = precond.horz-200;
-
-%mkdir('GrandAveERPs_PrePost_Blockwise_45subs_031515');
-cd('GrandAveERPs_PrePost_Blockwise_45subs_031515');
-
-    for c = 30:33;
-        figure;
-        plot(horz, precond.GrayCSp{c,:} , 'b--'); hold on;
-        plot(horz, precond.GrayCSm{c,:} , 'k--');
-        plot(horz, precond.ColCSp{c,:} , 'r--');
-        plot(horz, precond.ColCSm{c,:} , 'g--');
-        
-        plot(horz, postcond.GrayCSp{c,:} , 'b'); hold on;
-        plot(horz, postcond.GrayCSm{c,:} , 'k');
-        plot(horz, postcond.ColCSp{c,:} , 'r');
-        plot(horz, postcond.ColCSm{c,:} , 'g');
-        
-        legend('Pre Gray CS+','Pre Gray CS-','Pre Color CS+', 'Pre Color CS-', 'PostB6 Gray CS+', 'PostB6 Gray CS-', 'PostB6 Color CS+', 'PostB6 Color CS-', 'Location', 'northwest');
-%        legend( 'Post Gray CS+', 'Post Gray CS-', 'Post Color CS+', 'Post Color CS-', 'Location', 'northwest');
-        
-        eval(['saveas(gcf,''PLC_EEG_GrandAve_PrePostB6_45subs_Chan' num2str(c) '.tif'');']);
-        close(gcf)                
-    end    
-    
 %% Plot grand average Pre-Post-Post2
 
 
@@ -760,48 +697,6 @@ horz = precond.horz-200;
         eval(['saveas(gcf,''PLC_EEG_Sub' num2str(s) '_Chan' num2str(c) '_ica.tif'');']);
         close(gcf)
         
-        
-    end
-    
-end
-
-%% Compute individual Oz (A30-B1) ERPs (S1) for Block 4-6 (Postcond)
-
-allsubs = [1 3:5 8:29 31 33 34 37:44 46 47 50 51 54:57];
-Ozchan = 30:33;
-
-for b = 4:6
-    if b == 1 || b == 2 || b == 3 || b==5
-        allsubs = [1 3:5 8:29 31 33 34 37:44 46 47 50 51 54:57];
-    elseif b == 4
-        allsubs = [1 3:5 8:29 31 33 34 37:44 46 47 50 51 54 56 57];
-    else
-        allsubs = [1 3:5 8:14 16:29 31 33 34 37:44 46 47 50 51 54:55 57];
-    end    
-    %precond Oz ERPs for each individual
-    for s = allsubs
-        graycsp = [];
-        graycsm = [];
-        colcsp = [];
-        colcsm = [];
-        
-        eval(['load PLC_EEG_Sub' num2str(s) '_Block' num2str(b) '_Averaged_ERPs.mat results';]);
-        
-        horz =results.horz-200;
-        
-        for c = Ozchan
-            graycsp = [graycsp; results.GrayCSp{c}];
-            graycsm = [graycsm; results.GrayCSm{c}];
-            colcsp = [colcsp; results.ColCSp{c}];
-            colcsm = [colcsm; results.ColCSm{c}];
-        end
-        Oz.GrayCSp = mean(graycsp,1);
-        Oz.GrayCSm = mean(graycsm,1);
-        Oz.ColorCSp = mean(colcsp,1);
-        Oz.ColorCSm = mean(colcsm,1);
-        Oz.hor = horz;
-        
-        eval(['save PLC_EEG_Sub' num2str(s) '_Block' num2str(b) '_Oz_ERPs.mat Oz';]);
         
     end
     
@@ -1038,110 +933,6 @@ end
 
 
 save PLC_EEG_Postcond_MeanAmp_45subs AllColorC1P1C2 AllColor150_300 AllGrayP1 AllGray150_300
-
-%% Exploratory point-by-point ttest of Time(Pre/Post)*CS(+/-) interaction
-%Color condition, early time window
-allsubs = [1 3:5 8:29 31 33 34 37:44 46 47 50 51 54:57]; %removing 2,7,53
-allTimebyCS = [];
-allH0 = [];
-allPs = [];
-
-PrecondColorCSp = [];
-PrecondColorCSm = [];
-PostcondColorCSp = [];
-PostcondColorCSm = [];
-
-for s = allsubs
-    eval(['load PLC_EEG_Sub' num2str(s) '_Precond_Oz_ERPs.mat Oz';]);
-    Precond = Oz;
-    
-    eval(['load PLC_EEG_Sub' num2str(s) '_Postcond_Oz_ERPs.mat Oz';]);
-    Postcond = Oz;
-    
-    TimebyCS = (Postcond.ColorCSp - Postcond.ColorCSm) - (Precond.ColorCSp - Precond.ColorCSm);
-    allTimebyCS = [allTimebyCS; TimebyCS];
-    
-    PrecondColorCSp = [PrecondColorCSp; Precond.ColorCSp];
-    PrecondColorCSm = [PrecondColorCSm; Precond.ColorCSm];
-    PostcondColorCSp = [PostcondColorCSp; Postcond.ColorCSp];
-    PostcondColorCSm = [PostcondColorCSm; Postcond.ColorCSm];
-end
-%ttest for interaction for each time point
-for i = 1:length(allTimebyCS)
-    interaction = allTimebyCS(:,i);
-    [H0, p] = ttest(interaction, 0);
-    allH0 = [allH0 H0];
-    allPs = [allPs p];
-end
-
-horz = Precond.horz;
-
-plot(horz, mean(PrecondColorCSp,1) , 'r:'); hold on;
-plot(horz, mean(PrecondColorCSm,1) , 'g:');
-
-plot(horz, mean(PostcondColorCSp,1) , 'r--');
-plot(horz, mean(PostcondColorCSm,1) , 'g--');
-
-plot(horz,allPs, 'k');
-legend('Pre Color CS+', 'Pre Color CS-', 'Post Color CS+', 'Post Color CS-', 'Location', 'southwest');
-saveas(gcf, 'PrePost_ColorERPs_45subs_TimebyCS_pval.jpg');
-close(gcf);
-
-%ttest for interaction for C1P1 trough-to-peak difference
-c1p1 = allTimebyCS(:,78) - allTimebyCS(:,75);
-[H0c1p1, pc1p1] = ttest(c1p1, 0); %H0 = 1, pc1p1 = 0.0031
-
-%ttest for interaction for P1C2 peak-to-trough difference
-p1c2 = allTimebyCS(:,86) - allTimebyCS(:,78);
-[H0p1c2, pp1c2] = ttest(p1c2, 0); %H0 = 0, pp1c2 = 0.19
-
-%% Gray condition, early time window
-allsubs = [1 3:5 8:29 31 33 34 37:44 46 47 50 51 54:57]; %removing 2,7,53
-allTimebyCS = [];
-allH0 = [];
-allPs = [];
-
-PrecondGrayCSp = [];
-PrecondGrayCSm = [];
-PostcondGrayCSp = [];
-PostcondGrayCSm = [];
-
-for s = allsubs
-    eval(['load PLC_EEG_Sub' num2str(s) '_Precond_Oz_ERPs.mat Oz';]);
-    Precond = Oz;
-    
-    eval(['load PLC_EEG_Sub' num2str(s) '_Postcond_Oz_ERPs.mat Oz';]);
-    Postcond = Oz;
-    
-    TimebyCS = (Postcond.GrayCSp - Postcond.GrayCSm) - (Precond.GrayCSp - Precond.GrayCSm);
-    allTimebyCS = [allTimebyCS; TimebyCS];
-    
-    PrecondGrayCSp = [PrecondGrayCSp; Precond.GrayCSp];
-    PrecondGrayCSm = [PrecondGrayCSm; Precond.GrayCSm];
-    PostcondGrayCSp = [PostcondGrayCSp; Postcond.GrayCSp];
-    PostcondGrayCSm = [PostcondGrayCSm; Postcond.GrayCSm];
-end
-%ttest for interaction for each time point
-for i = 1:length(allTimebyCS)
-    interaction = allTimebyCS(:,i);
-    [H0, p] = ttest(interaction, 0);
-    allH0 = [allH0 H0];
-    allPs = [allPs p];
-end
-
-horz = Precond.horz;
-
-plot(horz, mean(PrecondGrayCSp,1) , 'b:'); hold on;
-plot(horz, mean(PrecondGrayCSm,1) , 'g:');
-
-plot(horz, mean(PostcondGrayCSp,1) , 'b--');
-plot(horz, mean(PostcondGrayCSm,1) , 'g--');
-
-plot(horz,allPs, 'r');
-legend('Pre Gray CS+', 'Pre Gray CS-', 'Post Gray CS+', 'Post Gray CS-', 'Location', 'southwest');
-saveas(gcf, 'PrePost_GrayERPs_45subs_TimebyCS_pval.jpg');
-close(gcf);
-
 
 %% Prepare for Loreta - Grand Ave
 

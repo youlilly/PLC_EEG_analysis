@@ -948,6 +948,315 @@ close(gcf);
 w180225 = mean(allTimebyCS(:,97:109),2);
 [H0180, p180] = ttest(w180225, 0); %H0 = 0, p = 0.069
 
+%% Exploratory point-by-point ttest of Time(Pre/Post2 B4)*CS(+/-) interaction
+%Color condition, early time window
+allsubs = [1 3 4 9 10 12 13 15 16 17 18 20:25 27 28 33 34 37:40 42:44 46 47 50 51 54 55 57]; %36 subs, no 2, 7, 32 (because it's excluded in the precond sample)
+
+allTimebyCS = [];
+allH0 = [];
+allPs = [];
+
+PrecondColorCSp = [];
+PrecondColorCSm = [];
+PostcondColorCSp = [];
+PostcondColorCSm = [];
+
+for s = allsubs
+    eval(['load PLC_EEG_Sub' num2str(s) '_Precond_Oz_ERPs.mat Oz';]);
+    Precond = Oz;
+    
+    eval(['load PLC_EEGpost_Sub' num2str(s) '_Block4_Oz_ERPs.mat Oz';]);
+    Postcond = Oz;
+    
+    TimebyCS = (Postcond.ColorCSp - Postcond.ColorCSm) - (Precond.ColorCSp - Precond.ColorCSm);
+    allTimebyCS = [allTimebyCS; TimebyCS];
+    
+    PrecondColorCSp = [PrecondColorCSp; Precond.ColorCSp];
+    PrecondColorCSm = [PrecondColorCSm; Precond.ColorCSm];
+    PostcondColorCSp = [PostcondColorCSp; Postcond.ColorCSp];
+    PostcondColorCSm = [PostcondColorCSm; Postcond.ColorCSm];
+end
+%ttest for interaction for each time point
+for i = 1:length(allTimebyCS)
+    interaction = allTimebyCS(:,i);
+    [H0, p] = ttest(interaction, 0);
+    allH0 = [allH0 H0];
+    allPs = [allPs p]; %data point 76-79 p < .2
+end
+
+horz = Precond.horz;
+
+plot(horz, mean(PrecondColorCSp,1) , 'r:'); hold on;
+plot(horz, mean(PrecondColorCSm,1) , 'g:');
+
+plot(horz, mean(PostcondColorCSp,1) , 'r--');
+plot(horz, mean(PostcondColorCSm,1) , 'g--');
+
+plot(horz,allPs, 'k');
+legend('Pre Color CS+', 'Pre Color CS-', 'Post2 B4 Color CS+', 'Post2 B4 Color CS-', 'Location', 'southwest');
+saveas(gcf, 'PrePost2B4_ColorERPs_45subs_TimebyCS_pval.jpg');
+close(gcf);
+
+%ttest for interaction for C1P1 trough-to-peak difference
+c1p1 = allTimebyCS(:,78) - allTimebyCS(:,75);
+[H0c1p1, pc1p1] = ttest(c1p1, 0); %H0 = 0 , pc1p1 = 0.45
+
+%ttest for interaction for P1C2 peak-to-trough difference
+p1c2 = allTimebyCS(:,86) - allTimebyCS(:,78);
+[H0p1c2, pp1c2] = ttest(p1c2, 0); %H0 = 0 , pp1c2 = 0.28
+
+%% Gray condition
+
+allTimebyCS = [];
+allH0 = [];
+allPs = [];
+
+PrecondGrayCSp = [];
+PrecondGrayCSm = [];
+PostcondGrayCSp = [];
+PostcondGrayCSm = [];
+
+for s = allsubs
+    eval(['load PLC_EEG_Sub' num2str(s) '_Precond_Oz_ERPs.mat Oz';]);
+    Precond = Oz;
+    
+    eval(['load PLC_EEGpost_Sub' num2str(s) '_Block4_Oz_ERPs.mat Oz';]);
+    Postcond = Oz;
+    
+    TimebyCS = (Postcond.GrayCSp - Postcond.GrayCSm) - (Precond.GrayCSp - Precond.GrayCSm);
+    allTimebyCS = [allTimebyCS; TimebyCS];
+    
+    PrecondGrayCSp = [PrecondGrayCSp; Precond.GrayCSp];
+    PrecondGrayCSm = [PrecondGrayCSm; Precond.GrayCSm];
+    PostcondGrayCSp = [PostcondGrayCSp; Postcond.GrayCSp];
+    PostcondGrayCSm = [PostcondGrayCSm; Postcond.GrayCSm];
+end
+%ttest for interaction for each time point
+for i = 1:length(allTimebyCS)
+    interaction = allTimebyCS(:,i);
+    [H0, p] = ttest(interaction, 0);
+    allH0 = [allH0 H0];
+    allPs = [allPs p];
+end
+
+horz = Precond.horz;
+
+plot(horz, mean(PrecondGrayCSp,1) , 'b:'); hold on;
+plot(horz, mean(PrecondGrayCSm,1) , 'g:');
+
+plot(horz, mean(PostcondGrayCSp,1) , 'b--');
+plot(horz, mean(PostcondGrayCSm,1) , 'g--');
+
+plot(horz,allPs, 'r');
+legend('Pre Gray CS+', 'Pre Gray CS-', 'Post2 B4 Gray CS+', 'Post2 B4 Gray CS-', 'Location', 'southwest');
+saveas(gcf, 'PrePost2B4_GrayERPs_45subs_TimebyCS_pval.jpg');
+close(gcf);
+
+%% Exploratory point-by-point ttest of Time(Pre/Post2 B5)*CS(+/-) interaction
+%Color condition, early time window
+
+allTimebyCS = [];
+allH0 = [];
+allPs = [];
+
+PrecondColorCSp = [];
+PrecondColorCSm = [];
+PostcondColorCSp = [];
+PostcondColorCSm = [];
+
+for s = allsubs
+    eval(['load PLC_EEG_Sub' num2str(s) '_Precond_Oz_ERPs.mat Oz';]);
+    Precond = Oz;
+    
+    eval(['load PLC_EEGpost_Sub' num2str(s) '_Block5_Oz_ERPs.mat Oz';]);
+    Postcond = Oz;
+    
+    TimebyCS = (Postcond.ColorCSp - Postcond.ColorCSm) - (Precond.ColorCSp - Precond.ColorCSm);
+    allTimebyCS = [allTimebyCS; TimebyCS];
+    
+    PrecondColorCSp = [PrecondColorCSp; Precond.ColorCSp];
+    PrecondColorCSm = [PrecondColorCSm; Precond.ColorCSm];
+    PostcondColorCSp = [PostcondColorCSp; Postcond.ColorCSp];
+    PostcondColorCSm = [PostcondColorCSm; Postcond.ColorCSm];
+end
+%ttest for interaction for each time point
+for i = 1:length(allTimebyCS)
+    interaction = allTimebyCS(:,i);
+    [H0, p] = ttest(interaction, 0);
+    allH0 = [allH0 H0];
+    allPs = [allPs p];
+end
+
+horz = Precond.horz;
+
+plot(horz, mean(PrecondColorCSp,1) , 'r:'); hold on;
+plot(horz, mean(PrecondColorCSm,1) , 'g:');
+
+plot(horz, mean(PostcondColorCSp,1) , 'r--');
+plot(horz, mean(PostcondColorCSm,1) , 'g--');
+
+plot(horz,allPs, 'k');
+legend('Pre Color CS+', 'Pre Color CS-', 'Post2 B5 Color CS+', 'Post2 B5 Color CS-', 'Location', 'southwest');
+saveas(gcf, 'PrePost2B5_ColorERPs_45subs_TimebyCS_pval.jpg');
+close(gcf);
+
+%ttest for interaction for C1P1 trough-to-peak difference
+c1p1 = allTimebyCS(:,78) - allTimebyCS(:,75);
+[H0c1p1, pc1p1] = ttest(c1p1, 0); %H0 = 0 , pc1p1 = 0.6
+
+%ttest for interaction for P1C2 peak-to-trough difference
+p1c2 = allTimebyCS(:,86) - allTimebyCS(:,78);
+[H0p1c2, pp1c2] = ttest(p1c2, 0); %H0 = 0 , pp1c2 = 0.62
+
+%% Gray condition
+allTimebyCS = [];
+allH0 = [];
+allPs = [];
+
+PrecondGrayCSp = [];
+PrecondGrayCSm = [];
+PostcondGrayCSp = [];
+PostcondGrayCSm = [];
+
+for s = allsubs
+    eval(['load PLC_EEG_Sub' num2str(s) '_Precond_Oz_ERPs.mat Oz';]);
+    Precond = Oz;
+    
+    eval(['load PLC_EEGpost_Sub' num2str(s) '_Block5_Oz_ERPs.mat Oz';]);
+    Postcond = Oz;
+    
+    TimebyCS = (Postcond.GrayCSp - Postcond.GrayCSm) - (Precond.GrayCSp - Precond.GrayCSm);
+    allTimebyCS = [allTimebyCS; TimebyCS];
+    
+    PrecondGrayCSp = [PrecondGrayCSp; Precond.GrayCSp];
+    PrecondGrayCSm = [PrecondGrayCSm; Precond.GrayCSm];
+    PostcondGrayCSp = [PostcondGrayCSp; Postcond.GrayCSp];
+    PostcondGrayCSm = [PostcondGrayCSm; Postcond.GrayCSm];
+end
+%ttest for interaction for each time point
+for i = 1:length(allTimebyCS)
+    interaction = allTimebyCS(:,i);
+    [H0, p] = ttest(interaction, 0);
+    allH0 = [allH0 H0];
+    allPs = [allPs p];
+end
+
+horz = Precond.horz;
+
+plot(horz, mean(PrecondGrayCSp,1) , 'b:'); hold on;
+plot(horz, mean(PrecondGrayCSm,1) , 'g:');
+
+plot(horz, mean(PostcondGrayCSp,1) , 'b--');
+plot(horz, mean(PostcondGrayCSm,1) , 'g--');
+
+plot(horz,allPs, 'r');
+legend('Pre Gray CS+', 'Pre Gray CS-', 'Post2 B5 Gray CS+', 'Post2 B5 Gray CS-', 'Location', 'southwest');
+saveas(gcf, 'PrePost2B5_GrayERPs_45subs_TimebyCS_pval.jpg');
+close(gcf);
+
+%% Exploratory point-by-point ttest of Time(Pre/Post2 B6)*CS(+/-) interaction
+%Color condition, early time window
+
+allTimebyCS = [];
+allH0 = [];
+allPs = [];
+
+PrecondColorCSp = [];
+PrecondColorCSm = [];
+PostcondColorCSp = [];
+PostcondColorCSm = [];
+
+for s = allsubs
+    eval(['load PLC_EEG_Sub' num2str(s) '_Precond_Oz_ERPs.mat Oz';]);
+    Precond = Oz;
+    
+    eval(['load PLC_EEGpost_Sub' num2str(s) '_Block6_Oz_ERPs.mat Oz';]);
+    Postcond = Oz;
+    
+    TimebyCS = (Postcond.ColorCSp - Postcond.ColorCSm) - (Precond.ColorCSp - Precond.ColorCSm);
+    allTimebyCS = [allTimebyCS; TimebyCS];
+    
+    PrecondColorCSp = [PrecondColorCSp; Precond.ColorCSp];
+    PrecondColorCSm = [PrecondColorCSm; Precond.ColorCSm];
+    PostcondColorCSp = [PostcondColorCSp; Postcond.ColorCSp];
+    PostcondColorCSm = [PostcondColorCSm; Postcond.ColorCSm];
+end
+%ttest for interaction for each time point
+for i = 1:length(allTimebyCS)
+    interaction = allTimebyCS(:,i);
+    [H0, p] = ttest(interaction, 0);
+    allH0 = [allH0 H0];
+    allPs = [allPs p];
+end
+
+horz = Precond.horz;
+
+plot(horz, mean(PrecondColorCSp,1) , 'r:'); hold on;
+plot(horz, mean(PrecondColorCSm,1) , 'g:');
+
+plot(horz, mean(PostcondColorCSp,1) , 'r--');
+plot(horz, mean(PostcondColorCSm,1) , 'g--');
+
+plot(horz,allPs, 'k');
+legend('Pre Color CS+', 'Pre Color CS-', 'Post2 B6 Color CS+', 'Post2 B6 Color CS-', 'Location', 'southwest');
+saveas(gcf, 'PrePost2B6_ColorERPs_45subs_TimebyCS_pval.jpg');
+close(gcf);
+
+%ttest for interaction for C1P1 trough-to-peak difference
+c1p1 = allTimebyCS(:,78) - allTimebyCS(:,75);
+[H0c1p1, pc1p1] = ttest(c1p1, 0); %H0 = 0 , pc1p1 = 0.08
+
+%ttest for interaction for P1C2 peak-to-trough difference
+p1c2 = allTimebyCS(:,86) - allTimebyCS(:,78);
+[H0p1c2, pp1c2] = ttest(p1c2, 0); %H0 = 0 , pp1c2 = 0.94
+
+%% Gray condition
+
+allTimebyCS = [];
+allH0 = [];
+allPs = [];
+
+PrecondGrayCSp = [];
+PrecondGrayCSm = [];
+PostcondGrayCSp = [];
+PostcondGrayCSm = [];
+
+for s = allsubs
+    eval(['load PLC_EEG_Sub' num2str(s) '_Precond_Oz_ERPs.mat Oz';]);
+    Precond = Oz;
+    
+    eval(['load PLC_EEGpost_Sub' num2str(s) '_Block6_Oz_ERPs.mat Oz';]);
+    Postcond = Oz;
+    
+    TimebyCS = (Postcond.GrayCSp - Postcond.GrayCSm) - (Precond.GrayCSp - Precond.GrayCSm);
+    allTimebyCS = [allTimebyCS; TimebyCS];
+    
+    PrecondGrayCSp = [PrecondGrayCSp; Precond.GrayCSp];
+    PrecondGrayCSm = [PrecondGrayCSm; Precond.GrayCSm];
+    PostcondGrayCSp = [PostcondGrayCSp; Postcond.GrayCSp];
+    PostcondGrayCSm = [PostcondGrayCSm; Postcond.GrayCSm];
+end
+%ttest for interaction for each time point
+for i = 1:length(allTimebyCS)
+    interaction = allTimebyCS(:,i);
+    [H0, p] = ttest(interaction, 0);
+    allH0 = [allH0 H0];
+    allPs = [allPs p];
+end
+
+horz = Precond.horz;
+
+plot(horz, mean(PrecondGrayCSp,1) , 'b:'); hold on;
+plot(horz, mean(PrecondGrayCSm,1) , 'g:');
+
+plot(horz, mean(PostcondGrayCSp,1) , 'b--');
+plot(horz, mean(PostcondGrayCSm,1) , 'g--');
+
+plot(horz,allPs, 'r');
+legend('Pre Gray CS+', 'Pre Gray CS-', 'Post2 B6 Gray CS+', 'Post2 B6 Gray CS-', 'Location', 'southwest');
+saveas(gcf, 'PrePost2B6_GrayERPs_45subs_TimebyCS_pval.jpg');
+close(gcf);
+
 
 %% Prepare for Loreta Grand ave Postcond2
 

@@ -10,7 +10,8 @@
 %allsubs = [1:5 7:15 17:44 46 47 50 51 53:57];
 
 %allsubs = [1:5 7:44 46 47 49:51 53:57];
-allsubs = [1 3:5 8:11 13:15 17:29 31 33 34 38:44 50 51 55:57 12 46:47];
+%allsubs =  [1 3 4 9 10 12 13 15 17 18 20:25 27 28 32 33 34 38:40 42:44 46 47 50 51 55 57]; %36 Subs for post2
+allsubs = [16 37 54];
 
 backofhead = [1 14:22 25:38 41:50 54:57]; %New channels of interest: back of head
 midofhead = [2:13 23:24 39 40 51:53 58:66]; %Middle of head
@@ -21,13 +22,7 @@ counter = 0;
 
 for s = allsubs
     
-    if s == 56 || s == 15
-        bs = 1:5;
-    elseif s == 55
-        bs = [1:3 5:6];
-    else
-        bs = 1:6;
-    end
+    bs = 4:6;
     
     for b = bs
         
@@ -53,13 +48,13 @@ for s = allsubs
         for v = thesections %For each of the 3 sections of the head
             
             if v=='B' %If working with back-of-head EEG file
-                thefile = strcat('EEG_PLC_Sub',num2str(s),'block',num2str(b),'_epochsLPP90_blc_Barej.set'); %Want to load back-of-head fear file
+                thefile = strcat('EEG_PLC_Sub',num2str(s),'block',num2str(b),'post_epochsLPP_blc_Barej.set'); %Want to load back-of-head fear file
                 thesechans = backofhead; %Channel loop will use back-of-head channels
             elseif v=='M' %If working with mid-of-head file
-                thefile = strcat('EEG_PLC_Sub',num2str(s),'block',num2str(b),'_epochsLPP90_blc_Marej.set'); %Want to load mid-of-head fear file
+                thefile = strcat('EEG_PLC_Sub',num2str(s),'block',num2str(b),'post_epochsLPP_blc_Marej.set'); %Want to load mid-of-head fear file
                 thesechans = midofhead;
             elseif v=='F'
-                thefile = strcat('EEG_PLC_Sub',num2str(s),'block',num2str(b),'_epochsLPP90_blc_Farej.set'); %Want to load front-of-head fear file
+                thefile = strcat('EEG_PLC_Sub',num2str(s),'block',num2str(b),'post_epochsLPP_blc_Farej.set'); %Want to load front-of-head fear file
                 thesechans = frontofhead;
             else
                 sprintf('%s','WTF IS HAPPENING')
@@ -246,19 +241,20 @@ for s = allsubs
             results.ColCSmD = ColT1D;            
         end
         
-        eval(['save PLC_EEG90_Sub' num2str(s) 'Block' num2str(b) 'ERPs_LPP.mat results';]); %Save it all for fear
+        eval(['save PLC_EEGpost90_Sub' num2str(s) 'Block' num2str(b) 'ERPs_LPP.mat results';]); %Save it all for fear
         clear cleandata %To save memory
         clear results
     end %Of block loop
 end %Of subject loop
 
-%% Average ERPs for Precond blocks.
+%% Average ERPs for Postcond2 blocks.
+%exclude 1st block of Sub47
 
-allsubs =  [17:29 31 33 34 38:44 46 47 50 55:57];
+allsubs = [47]; %36 subs, no 2, 7
 
 for s = allsubs
     
-    bs = 1:3;
+    bs = 5:6;
     
     %Preallocate cell arrays for each subject's averages.
     GrayCSp = cell(96,1);
@@ -296,15 +292,15 @@ for s = allsubs
         
         for b = bs %For each of the 3 blocks of precond
             
-            eval(['load PLC_EEG90_Sub' num2str(s) 'Block' num2str(b) 'ERPs_LPP.mat results';]); %Load fear file
-            eval(['load PLC_EEG_Sub' num2str(s) '_block' num2str(b) '_chaninfo90_lpp chaninfo']); %Load fear file channel info
+            eval(['load PLC_EEGpost90_Sub' num2str(s) 'Block' num2str(b) 'ERPs_LPP.mat results';]); %Load fear file
+            eval(['load PLC_EEG_Sub' num2str(s) '_block' num2str(b) 'post_chaninfo_lpp chaninfo']); %Load fear file channel info
             
             
             if c == 1 %Only have to do this part once for each subj & block (during channel 1)
                 if b == 1 %Only have to do this part once for each subject
                     horz = results.horz; %#ok<NASGU> %Will become the x-axis later, when graphing
                     epochdur = results.epochdur; %Tells us how long the epoch is (in ms)
-                 else
+                else
                 end
             else
             end
@@ -374,13 +370,14 @@ for s = allsubs
     results.ColCSmS = ColCSmS;
     results.ColCSmD = ColCSmD;
             
-    eval(['save PLC_EEG90_Sub' num2str(s) '_Precond_ERPs_lpp.mat results';]); %Save it all for each subject
+    eval(['save PLC_EEGpost90_Sub' num2str(s) '_Postcond2_ERPs_lpp.mat results';]); %Save it all for each subject
     
 end %Of subject loop
 
+
 %% Compute individual Oz (A30-B1) ERPs (S1) for Precond and Postcond
 
-allsubs = [1 3:5 8:17 19:29 31 33 34 37:44 46 47 50 51 54:57]; %removing 2,7,53,18 -> 44 subs
+allsubs = [1 3 4 9 12 13 15 16 17 18 20:25 27 28 33 34 37:40 42:44 46 47 50 51 54 55 57]; %34 subs, no 2, 7, 32, 10
 
 Ozchan = 30:33;
 allERPsColor = [];
@@ -471,7 +468,7 @@ for s = allsubs
     colcsmd = [];
     
     
-    eval(['load PLC_EEG90_Sub' num2str(s) '_Postcond_ERPs_lpp.mat results';]);
+    eval(['load PLC_EEGpost90_Sub' num2str(s) '_Postcond2_ERPs_lpp.mat results';]);
     
     horz =results.horz-100;
     
@@ -508,7 +505,7 @@ for s = allsubs
     Oz.ColorCSmD = mean(colcsmd,1);
     
     Oz.horz = horz;
-    eval(['save PLC_EEG90_Sub' num2str(s) '_Postcond_Oz_ERPs_lpp.mat Oz';]);
+    eval(['save PLC_EEGpost90_Sub' num2str(s) '_Postcond2_Oz_ERPs_lpp.mat Oz';]);
     
     allERPsColor = [allERPsColor; Oz.ColorCSp; Oz.ColorCSm];
     allERPsGray = [allERPsGray; Oz.GrayCSp; Oz.GrayCSm];
@@ -524,12 +521,13 @@ grandygray = [grandygrandpreg; grandygrandpostg]; grandygray = mean(grandygray,1
 plot(horz, grandycolor); hold on; %this plots the grand ERP for color condition across CS+/CS-, across Pre/Postcond for S1
 plot(horz, grandygray);%this plots the grand ERP for gray condition across CS+/CS-, across Pre/Postcond for S1
 
-saveas(gcf, 'GrandLPP_Color_Gray_average_44subs.jpg');
-save GrandColor_Gray_ERP horz grandycolor grandygray
+saveas(gcf, 'GrandPrePost2_LPP_Color_Gray_average_44subs.jpg');
+save GrandPrePost2_Color_Gray_ERP horz grandycolor grandygray
 
 %% Exploratory point-by-point ttest of Time(Pre/Post)*CS(+/-) interaction
 %Color condition, LPP time window
-allsubs = [1 3:5 8:17 19:29 31 33 34 37:44 46 47 50 51 54:57]; %removing 2,7,53,18 -> 44 subs
+allsubs = [1 3 4 9 12 13 15 16 17 18 20:25 27 28 33 34 37:40 42:44 46 47 50 51 54 55 57]; %34 subs, no 2, 7, 32, 10
+
 allTimebyCS = [];
 allTimebyCSbyPer = [];
 allH0 = [];
@@ -543,54 +541,44 @@ allri = [];
 allra = [];
 allrn = [];
 
-Personality = [-0.64	-0.88	-0.76
--0.02	0.41	0.2
--0.33	-0.02	-0.17
--0.64	-0.88	-0.76
-0.91	0.7	0.81
-1.22	1.7	1.46
-1.22	-0.45	0.39
--0.64	-0.88	-0.76
-0.6	-0.31	0.15
--1.57	-1.02	-1.3
--0.95	-0.88	-0.91
-0.6	-0.88	-0.14
--1.88	-1.02	-1.45
--1.88	0.99	-0.45
--0.02	-1.17	-0.59
-0.29	0.99	0.64
--0.02	-1.17	-0.59
--0.33	-0.16	-0.24
--0.64	0.41	-0.11
--0.33	0.27	-0.03
-0.29	2.28	1.29
-1.22	0.7	0.96
-1.22	1.27	1.25
--1.57	-0.31	-0.94
-0.29	0.56	0.42
--1.26	-0.16	-0.71
--1.57	1.42	-0.08
--0.33	-1.02	-0.67
--0.64	-1.17	-0.9
-0.29	-0.74	-0.22
--0.64	-0.74	-0.69
--0.33	-1.17	-0.75
-0.91	1.42	1.17
-1.22	2.56	1.89
--0.64	0.13	-0.26
-1.84	0.84	1.34
-0.29	-1.17	-0.44
-0.91	0.27	0.59
-1.53	-0.02	0.76
-0.91	-1.02	-0.05
-0.29	-0.88	-0.29
--1.57	-0.88	-1.22
--0.33	-0.59	-0.46
--1.26	-0.88	-1.07]; %BISz, BAIz, Anxz
+Personality = [1	-0.64	-0.88	-0.76
+3	-0.02	0.41	0.2
+4	-0.33	-0.02	-0.17
+9	1.22	1.7	1.46
+12	0.6	-0.31	0.15
+13	-1.57	-1.02	-1.3
+15	0.6	-0.88	-0.14
+16	-1.88	-1.02	-1.45
+17	-1.88	0.99	-0.45
+18	0.6	-0.16	0.22
+20	0.29	0.99	0.64
+21	-0.02	-1.17	-0.59
+22	-0.33	-0.16	-0.24
+23	-0.64	0.41	-0.11
+24	-0.33	0.27	-0.03
+25	0.29	2.28	1.29
+27	1.22	1.27	1.25
+28	-1.57	-0.31	-0.94
+33	-1.57	1.42	-0.08
+34	-0.33	-1.02	-0.67
+37	-0.64	-1.17	-0.9
+38	0.29	-0.74	-0.22
+39	-0.64	-0.74	-0.69
+40	-0.33	-1.17	-0.75
+42	1.22	2.56	1.89
+43	-0.64	0.13	-0.26
+44	1.84	0.84	1.34
+46	0.29	-1.17	-0.44
+47	0.91	0.27	0.59
+50	1.53	-0.02	0.76
+51	0.91	-1.02	-0.05
+54	0.29	-0.88	-0.29
+55	-1.57	-0.88	-1.22
+57	-1.26	-0.88	-1.07]; %BISz, BAIz, Anxz
 
-BISz = Personality(:,1);
-BAIz = Personality(:,2);
-Anxz = Personality(:,3);
+BISz = Personality(:,2);
+BAIz = Personality(:,3);
+Anxz = Personality(:,4);
 
 PrecondColorCSp = [];
 PrecondColorCSm = [];
@@ -601,7 +589,7 @@ for s = allsubs
     eval(['load PLC_EEG90_Sub' num2str(s) '_Precond_Oz_ERPs_lpp.mat Oz';]);
     Precond = Oz;
     
-    eval(['load PLC_EEG90_Sub' num2str(s) '_Postcond_Oz_ERPs_lpp.mat Oz';]);
+    eval(['load PLC_EEGpost90_Sub' num2str(s) '_Postcond2_Oz_ERPs_lpp.mat Oz';]);
     Postcond = Oz;
     
     TimebyCS = (Postcond.ColorCSp - Postcond.ColorCSm) - (Precond.ColorCSp - Precond.ColorCSm);
@@ -646,8 +634,8 @@ plot(horz, mean(PostcondColorCSm,1) , 'g-');
 plot(horz,allPs, 'k');
 plot(horz,allrpi+1, 'k--');
 
-legend('Pre Color CS+', 'Pre Color CS-', 'Post Color CS+', 'Post Color CS-', 'Location', 'southwest');
-saveas(gcf, 'PrePost_LPP_ColorERPs_44subs_TimebyCSbyBIS_pval.jpg');
+legend('Pre Color CS+', 'Pre Color CS-', 'Post2 Color CS+', 'Post2 Color CS-', 'Location', 'northwest');
+saveas(gcf, 'PrePost2_LPP_ColorERPs_34subs_TimebyCSbyBIS_pval.jpg');
 close(gcf);
 
 figure;
@@ -660,8 +648,8 @@ plot(horz, mean(PostcondColorCSm,1) , 'g-');
 plot(horz,allPs, 'k');
 plot(horz,allrpa+1, 'k--');
 
-legend('Pre Color CS+', 'Pre Color CS-', 'Post Color CS+', 'Post Color CS-', 'Location', 'southwest');
-saveas(gcf, 'PrePost_LPP_ColorERPs_44subs_TimebyCSbyBAI_pval.jpg');
+legend('Pre Color CS+', 'Pre Color CS-', 'Post2 Color CS+', 'Post2 Color CS-', 'Location', 'northwest');
+saveas(gcf, 'PrePost2_LPP_ColorERPs_34subs_TimebyCSbyBAI_pval.jpg');
 close(gcf);
 
 figure;
@@ -674,11 +662,11 @@ plot(horz, mean(PostcondColorCSm,1) , 'g-');
 plot(horz,allPs, 'k');
 plot(horz,allrpn+1, 'k--');
 
-legend('Pre Color CS+', 'Pre Color CS-', 'Post Color CS+', 'Post Color CS-', 'Location', 'southwest');
-saveas(gcf, 'PrePost_LPP_ColorERPs_44subs_TimebyCSbyAnx_pval.jpg');
+legend('Pre Color CS+', 'Pre Color CS-', 'Post2 Color CS+', 'Post2 Color CS-', 'Location', 'northwest');
+saveas(gcf, 'PrePost2_LPP_ColorERPs_34subs_TimebyCSbyAnx_pval.jpg');
 close(gcf);
 
-save PrePost_LPP_Color_TimebyCS.mat
+save PrePost2_LPP_Color_TimebyCS.mat
 
 % %ttest for interaction for C1P1 trough-to-peak difference
 % c1p1 = allTimebyCS(:,78) - allTimebyCS(:,75);
@@ -689,7 +677,8 @@ save PrePost_LPP_Color_TimebyCS.mat
 % [H0p1c2, pp1c2] = ttest(p1c2, 0); %H0 = 0, pp1c2 = 0.19
 
 %% Gray condition, LPP time window
-allsubs = [1 3:5 8:17 19:29 31 33 34 37:44 46 47 50 51 54:57]; %removing 2,7,53,18 -> 44 subs
+
+allsubs = [1 3 4 9 12 13 15 16 17 18 20:25 27 28 33 34 37:40 42:44 46 47 50 51 54 55 57]; %34 subs, no 2, 7, 32, 10
 
 allTimebyCS = [];
 allH0 = [];
@@ -709,15 +698,15 @@ PostcondGrayCSp = [];
 PostcondGrayCSm = [];
 
 
-BISz = Personality(:,1);
-BAIz = Personality(:,2);
-Anxz = Personality(:,3);
+BISz = Personality(:,2);
+BAIz = Personality(:,3);
+Anxz = Personality(:,4);
 
 for s = allsubs
     eval(['load PLC_EEG90_Sub' num2str(s) '_Precond_Oz_ERPs_lpp.mat Oz';]);
     Precond = Oz;
     
-    eval(['load PLC_EEG90_Sub' num2str(s) '_Postcond_Oz_ERPs_lpp.mat Oz';]);
+    eval(['load PLC_EEGpost90_Sub' num2str(s) '_Postcond2_Oz_ERPs_lpp.mat Oz';]);
     Postcond = Oz;
     
     TimebyCS = (Postcond.GrayCSp - Postcond.GrayCSm) - (Precond.GrayCSp - Precond.GrayCSm);
@@ -762,8 +751,8 @@ plot(horz, mean(PostcondGrayCSm,1) , 'g-');
 plot(horz,allPs-1, 'r');
 plot(horz,allrpi, 'r--');
 
-legend('Pre Gray CS+', 'Pre Gray CS-', 'Post Gray CS+', 'Post Gray CS-', 'Location', 'southwest');
-saveas(gcf, 'PrePost_LPP_GrayERPs_44subs_TimebyCSbyBIS_pval.jpg');
+legend('Pre Gray CS+', 'Pre Gray CS-', 'Post2 Gray CS+', 'Post2 Gray CS-', 'Location', 'southwest');
+saveas(gcf, 'PrePost2_LPP_GrayERPs_34subs_TimebyCSbyBIS_pval.jpg');
 close(gcf);
 
 figure;
@@ -776,8 +765,8 @@ plot(horz, mean(PostcondGrayCSm,1) , 'g-');
 plot(horz,allPs-1, 'r');
 plot(horz,allrpa, 'r--');
 
-legend('Pre Gray CS+', 'Pre Gray CS-', 'Post Gray CS+', 'Post Gray CS-', 'Location', 'southwest');
-saveas(gcf, 'PrePost_LPP_GrayERPs_44subs_TimebyCSbyBAI_pval.jpg');
+legend('Pre Gray CS+', 'Pre Gray CS-', 'Post2 Gray CS+', 'Post2 Gray CS-', 'Location', 'southwest');
+saveas(gcf, 'PrePost2_LPP_GrayERPs_34subs_TimebyCSbyBAI_pval.jpg');
 close(gcf);
 
 plot(horz, mean(PrecondGrayCSp,1) , 'b-.'); hold on;
@@ -789,145 +778,11 @@ plot(horz, mean(PostcondGrayCSm,1) , 'g-');
 plot(horz,allPs-1, 'r');
 plot(horz,allrpn, 'r--');
 
-legend('Pre Gray CS+', 'Pre Gray CS-', 'Post Gray CS+', 'Post Gray CS-', 'Location', 'southwest');
-saveas(gcf, 'PrePost_LPP_GrayERPs_44subs_TimebyCSbyAnx_pval.jpg');
+legend('Pre Gray CS+', 'Pre Gray CS-', 'Post2 Gray CS+', 'Post2 Gray CS-', 'Location', 'southwest');
+saveas(gcf, 'PrePost2_LPP_GrayERPs_34subs_TimebyCSbyAnx_pval.jpg');
 close(gcf);
 
-save PrePost_LPP_Gray_TimebyCS.mat
-
-
-%% Average ERPs for Postcond blocks.
-
-allsubs = [1 3:5 8:11 13:15 17:29 31 33 34 38:44 50 51 55:57 12 46:47];
-
-for s = allsubs
-    
-    if s == 56 || s == 15
-        bs = 4:5;
-    elseif s == 55
-        bs = 5:6;
-    else
-        bs = 4:6;
-    end
-    
-    %Preallocate cell arrays for each subject's averages.
-    GrayCSp = cell(96,1);
-    GrayCSm = cell(96,1);
-    ColCSp = cell(96,1);
-    ColCSm = cell(96,1);
-    
-    GrayCSpS = cell(96,1);
-    GrayCSpD = cell(96,1);
-    ColCSpS = cell(96,1);
-    ColCSpD = cell(96,1);
-    
-    GrayCSmS = cell(96,1);
-    GrayCSmD = cell(96,1);
-    ColCSmS = cell(96,1);
-    ColCSmD = cell(96,1);
-    
-    for c = 1:96 %For each channel
-        %Preallocate condition matrices for this channel
-        %Preallocate condition matrices
-        graycsp = [];
-        graycsm = [];
-        colcsp = [];
-        colcsm = [];
-        
-        graycsps = []; %target followed by the same thing
-        graycspd = []; %target followed by the distractor
-        graycsms = [];
-        graycsmd = [];
-        
-        colcsps = [];
-        colcspd = [];
-        colcsms = [];
-        colcsmd = [];
-        
-        for b = bs %For each of the 3 blocks of precond
-            
-            eval(['load PLC_EEG90_Sub' num2str(s) 'Block' num2str(b) 'ERPs_LPP.mat results';]); %Load fear file
-            eval(['load PLC_EEG_Sub' num2str(s) '_block' num2str(b) '_chaninfo90_lpp chaninfo']); %Load fear file channel info
-            
-            
-            if c == 1 %Only have to do this part once for each subj & block (during channel 1)
-                if b == 1 %Only have to do this part once for each subject
-                    horz = results.horz; %#ok<NASGU> %Will become the x-axis later, when graphing
-                    epochdur = results.epochdur; %Tells us how long the epoch is (in ms)
-                else
-                end
-            else
-            end
-            
-            if ~isempty(find(chaninfo.chaninc==c, 1)) %If this channel is in the included channels matrix
-                %Grab mean epoch for this channel for each condition &
-                %concatenate w/other 2 blocks
-                
-                graycsp = [graycsp; results.GrayCSp{c}];
-                graycsm = [graycsm; results.GrayCSm{c}];
-                colcsp = [colcsp; results.ColCSp{c}];
-                colcsm = [colcsm; results.ColCSm{c}];
-                
-                graycsps = [graycsps; results.GrayCSpS{c}];
-                graycspd = [graycspd; results.GrayCSpD{c}];
-                graycsms = [graycsms; results.GrayCSmS{c}];
-                graycsmd = [graycsmd; results.GrayCSmD{c}];
-                
-                colcsps = [colcsps; results.ColCSpS{c}];
-                colcspd = [colcspd; results.ColCSpD{c}];
-                colcsms = [colcsms; results.ColCSmS{c}];
-                colcsmd = [colcsmd; results.ColCSmD{c}];
-                
-                
-            else %If the channel was excluded, don't add anything to the concatenated matrix
-            end
-            clear results %To save memory--these are big files!
-        end %Of block loop
-        
-        %Now that the ERPs for each block have been collected, average them
-        %together & assign them to the correct cell in the overall matrix.
-        
-        GrayCSp{c} = mean(graycsp,1);
-        GrayCSm{c} = mean(graycsm,1);
-        ColCSp{c} = mean(colcsp,1);
-        ColCSm{c} = mean(colcsm,1);
-        
-        GrayCSpS{c} = mean(graycsps,1);
-        GrayCSpD{c} = mean(graycspd,1);
-        ColCSpS{c} = mean(colcsps,1);
-        ColCSpD{c} = mean(colcspd,1);
-        
-        GrayCSmS{c} = mean(graycsms,1);
-        GrayCSmD{c} = mean(graycsmd,1);
-        ColCSmS{c} = mean(colcsms,1);
-        ColCSmD{c} = mean(colcsmd,1);
-    
-    end %Of channel loop
-    
-    %Time to save everything!
-    %Creating save structure "results"
-    results.horz = horz; %Will use later to graph
-    results.epochdur=epochdur;
-    
-    results.GrayCSp = GrayCSp;
-    results.GrayCSm = GrayCSm;
-    results.ColCSp = ColCSp;
-    results.ColCSm = ColCSm;
-    
-    results.GrayCSpS = GrayCSpS;
-    results.GrayCSpD = GrayCSpD;
-    results.GrayCSmS = GrayCSmS;
-    results.GrayCSmD = GrayCSmD;
-    
-    results.ColCSpS = ColCSpS;
-    results.ColCSpD = ColCSpD;
-    results.ColCSmS = ColCSmS;
-    results.ColCSmD = ColCSmD;
-            
-    eval(['save PLC_EEG90_Sub' num2str(s) '_Postcond_ERPs_lpp.mat results';]); %Save it all for each subject
-    
-end %Of subject loop
-
+save PrePost2_LPP_Gray_TimebyCS.mat
 
 %% Make grand averages-Precond 
 

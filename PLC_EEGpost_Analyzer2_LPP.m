@@ -1,5 +1,5 @@
-%PLC_EEG_Analyzer2_LPP.m
-%Created by YY, 3/10/14; generate long windows to capture ERPs to both
+%PLC_EEGpost_Analyzer2_LPP.m
+%Created by YY, 3/15/14; generate long windows to capture ERPs to both
 %targets and distractors
 
 clear all
@@ -64,6 +64,9 @@ subinitials = ['AP';
     'SR';
     'TG';
     ];
+%%
+allsubs = [1 3 4 9 10 12 13 15 16 17 18 20:25 27 28 32 33 34 37:40 42:44 46 47 50 51 54 55 57]; %36 Subs for post2
+
 %% Re-referencing eye channels and Epoching/Baseline correction
 %Horizontal eye channels (99/EX3 and 100/EX4) are referenced to each
 %other; vertical eye channel is referenced to C25(89).
@@ -74,7 +77,6 @@ subinitials = ['AP';
 %Suffix "epochs": -100 to 750ms
 %Rerun on 2/6/15 to correct for grabbing wrong eye channels
 
-
 %allsubs = [1 3:5 8:29 31 33 34 37:44 46 47 50 51 54:57];
 allsubs = [16 37 54];
 % use ICA-preprocessed version for Sub 16, 37, 54
@@ -82,18 +84,12 @@ allsubs = [16 37 54];
 for s = allsubs
     initial = subinitials(s,:);
     
-    if s == 56 || s == 15
-        bs = 1:5;
-    elseif s ==55
-        bs = [1:3 5:6];
-    else
-        bs = 1:6;
-    end
+    bs = 4:6;
     
     for b = bs %For each block included in these analyses
         
         %Re-reference fear files
-        filenamerr = strcat('EEG_PLC_Sub',num2str(s),'block',num2str(b),'_evt_fil_ica_rm.set');
+        filenamerr = strcat('EEG_PLC_Sub',num2str(s),'block',num2str(b),'post_evt_fil_ica_rm.set');
         EEG = pop_loadset(filenamerr); %Load event-altered & filtered EEG dataset
         
 %         channelC25 = EEG.data(89,:); %Grabs data from channel C25, which will soon become the ref channel for EX5
@@ -115,7 +111,7 @@ for s = allsubs
         
         EEG = eeg_checkset(EEG);
         
-        savefile2 = strcat('EEG_PLC_Sub',num2str(s),'block',num2str(b),'_ica_epochsLPP_blc.set');
+        savefile2 = strcat('EEG_PLC_Sub',num2str(s),'block',num2str(b),'post_ica_epochsLPP_blc.set');
         EEG = pop_saveset(EEG, savefile2); %#ok<NASGU> %Save epochs
         clear EEG
     end
@@ -131,25 +127,17 @@ end
 %Suffix "epochs": -100 to 750ms
 %Rerun on 2/6/15 to correct for grabbing wrong eye channels
 
-allsubs = [1 3:5 8:11 13:15 17:29 31 33 34 38:44 50 51 55:57];
-%allsubs = [16 37 54];
-% use ICA-preprocessed version for Sub 16, 37, 54
+allsubs = [1 9 10 12 13 15 17 18 20:25 27 28 32 33 34 38:40 44 46 47 50 51 55 57];
 
 for s = allsubs
     initial = subinitials(s,:);
     
-    if s == 56 || s == 15
-        bs = 1:5;
-    elseif s ==55
-        bs = [1:3 5:6];
-    else
-        bs = 1:6;
-    end
+    bs = 4:6;
     
     for b = bs %For each block included in these analyses
         
         %Re-reference fear files
-        filenamerr = strcat('EEG_PLC_Sub',num2str(s),'block',num2str(b),'_evt_fil.set');
+        filenamerr = strcat('EEG_PLC_Sub',num2str(s),'block',num2str(b),'post_evt_fil.set');
         EEG = pop_loadset(filenamerr); %Load event-altered & filtered EEG dataset
         
         channelC25 = EEG.data(89,:); %Grabs data from channel C25, which will soon become the ref channel for EX5
@@ -171,32 +159,26 @@ for s = allsubs
         
         EEG = eeg_checkset(EEG);
         
-        savefile2 = strcat('EEG_PLC_Sub',num2str(s),'block',num2str(b),'epochsLPP_blc.set');
+        savefile2 = strcat('EEG_PLC_Sub',num2str(s),'block',num2str(b),'post_epochsLPP_blc.set');
         EEG = pop_saveset(EEG, savefile2); %#ok<NASGU> %Save epochs
         clear EEG
     end
 end
-%% Re-referencing (differently for Sub 12,46-47, who were collected using the default setup) eye channels and Epoching/Baseline correction
+%% Re-referencing (differently for Sub 3,4,42,43, who were collected using the default setup) eye channels and Epoching/Baseline correction
 %_reref files were created when these blocks have been rerefed to EXG1 EXG2
 %manually in EEGlab
 
-allsubs = [12 46:47];
+allsubs = [3:4 42:43];
 
 for s = allsubs
     initial = subinitials(s,:);
     
-    if s == 56 || s == 15
-        bs = 1:5;
-    elseif s ==55
-        bs = [1:3 5:6];
-    else
-        bs = 1:6;
-    end
+    bs = 4:6;
     
     for b = bs %For each block included in these analyses
         
         %Re-reference fear files
-        filenamerr = strcat('EEG_PLC_Sub',num2str(s),'block',num2str(b),'_evt_fil_reref.set');
+        filenamerr = strcat('EEG_PLC_Sub',num2str(s),'block',num2str(b),'post_evt_fil_reref.set');
         EEG = pop_loadset(filenamerr); %Load event-altered & filtered EEG dataset
         
         channelC25 = EEG.data(89,:); %Grabs data from channel C25, which will soon become the ref channel for EX5
@@ -219,7 +201,7 @@ for s = allsubs
         
         EEG = eeg_checkset(EEG);
         
-        savefile2 = strcat('EEG_PLC_Sub',num2str(s),'block',num2str(b),'epochsLPP_reref_blc.set');
+        savefile2 = strcat('EEG_PLC_Sub',num2str(s),'block',num2str(b),'post_epochsLPP_reref_blc.set');
         EEG = pop_saveset(EEG, savefile2); %#ok<NASGU> %Save epochs
         clear EEG
     end
@@ -227,26 +209,20 @@ end
 
 
 %% Use re-referenced eye channels to mark trials with eye movements.
-% +-75 uV for marking rejected trials; 3/16/15: 90 uV for marking rejected
-% trials
+% +-75 uV for marking rejected trials; 3/15/15: try 90 to reduce trial
+% rejection
 % ICA-treated participants not included here due to lack of eye channels
 
-allsubs = [1 3:5 8:11 13:15 17:29 31 33 34 38:44 50 51 55:57];
+allsubs = [1 9 10 12 13 15 17 18 20:25 27 28 32 33 34 38:40 44 46 47 50 51 55 57];
 
 allsubs_feareyerejinfo = []; %c1 = sub#, c2 = block#, c3 = # of rej trials
 
 for s = allsubs
     
-    if s == 56 || s == 15
-        bs = 1:5;
-    elseif s == 55
-        bs = [1:3 5:6];
-    else
-        bs = 1:6;
-    end
+    bs = 4:6;
     
     for b = bs
-        filenamei = strcat('EEG_PLC_Sub',num2str(s),'block',num2str(b),'epochsLPP_blc.set');
+        filenamei = strcat('EEG_PLC_Sub',num2str(s),'block',num2str(b),'post_epochsLPP_blc.set');
         %filenamei = strcat('EEG_PLC_Sub',num2str(s),'block',num2str(b),'epochs_reref_blc.set');
         
         EEG = pop_loadset(filenamei); %Load up results of last cell
@@ -264,7 +240,7 @@ for s = allsubs
         
         allsubs_feareyerejinfo = [allsubs_feareyerejinfo; eyeline]; %#ok<AGROW>
         
-        eval(['save PLC_EEG_Sub' num2str(s) '_block' num2str(b) '_eyerejtriallocs90_lpp eyerejtriallocs']); %Save rejected trial locations
+        eval(['save PLC_EEG_Sub' num2str(s) '_block' num2str(b) 'post90_eyerejtriallocs_lpp eyerejtriallocs']); %Save rejected trial locations
         
         clear EEG
     end
@@ -272,25 +248,19 @@ end
 %save PLC_EEG_allsubs_eyerejinfo allsubs_feareyerejinfo
 
 %% Use re-referenced eye channels to mark trials with eye
-%% movements.-Sub12,46:47
+%% movements.-Sub3,4,42,43
 % +-75 uV for marking rejected trials
 
-allsubs = [12 46:47];
+allsubs = [3 4 42 43];
 
 allsubs_feareyerejinfo = []; %c1 = sub#, c2 = block#, c3 = # of rej trials
 
 for s = allsubs
     
-    if s == 56 || s == 15
-        bs = 1:5;
-    elseif s == 55
-        bs = [1:3 5:6];
-    else
-        bs = 1:6;
-    end
+bs = 4:6;
     
     for b = bs
-        filenamei = strcat('EEG_PLC_Sub',num2str(s),'block',num2str(b),'epochsLPP_reref_blc.set');
+        filenamei = strcat('EEG_PLC_Sub',num2str(s),'block',num2str(b),'post_epochsLPP_reref_blc.set');
         
         EEG = pop_loadset(filenamei); %Load up results of last cell
         
@@ -307,7 +277,7 @@ for s = allsubs
         
         allsubs_feareyerejinfo = [allsubs_feareyerejinfo; eyeline]; %#ok<AGROW>
         
-        eval(['save PLC_EEG_Sub' num2str(s) '_block' num2str(b) '_eyerejtriallocs90_lpp eyerejtriallocs']); %Save rejected trial locations
+        eval(['save PLC_EEG_Sub' num2str(s) '_block' num2str(b) 'post90_eyerejtriallocs_lpp eyerejtriallocs']); %Save rejected trial locations
         
         clear EEG
     end
@@ -317,20 +287,14 @@ end
 
 %% Threshold each channel and save marked-trials info.
 % +- 75 uV for marking rejected trials
-allsubs = [1 3:5 8:11 13:15 17:29 31 33 34 38:44 50 51 55:57];
+allsubs = [1 9 10 12 13 15 17 18 20:25 27 28 32 33 34 38:40 44 46 47 50 51 55 57];
 
 for s = allsubs
     
-    if s == 56 || s == 15
-        bs = 1:5;
-    elseif s == 55
-        bs = [1:3 5:6];
-    else
-        bs = 1:6;
-    end
+    bs = 4:6;
     
     for b = bs
-        filename6 = strcat('EEG_PLC_Sub',num2str(s),'block',num2str(b),'epochsLPP_blc.set');
+        filename6 = strcat('EEG_PLC_Sub',num2str(s),'block',num2str(b),'post_epochsLPP_blc.set');
         %filename6 = strcat('EEG_PLC_Sub',num2str(s),'block',num2str(b),'epochs_reref_blc.set');
         
         EEG = pop_loadset(filename6); %L99oad up baseline-corrected data
@@ -338,7 +302,7 @@ for s = allsubs
         
         for c = 1:99 %For each channel
             allrejtrialtest{c,1} = c; %Col 1 = chan #
-            EEG = pop_eegthresh(EEG,1,c,-90,90,-0.1,0.75,0,0);
+            EEG = pop_eegthresh(EEG,1,c,-75,75,-0.1,0.75,0,0);
             EEG = eeg_checkset( EEG );
             [EEG,com] = eeg_rejsuperpose( EEG, 1, 1, 1, 1, 1, 1, 1, 1); %#ok<NASGU> %Updates EEG.reject.rejglobal
             
@@ -347,28 +311,22 @@ for s = allsubs
             allrejtrialtest{c,3} = facerejtr; %Col 3 = trial #s flagged for rejection for that chan
         end
         
-        eval(['save PLC_EEG_Sub' num2str(s) '_block' num2str(b) '_allrejtrialtest90_lpp allrejtrialtest']);
+        eval(['save PLC_EEG_Sub' num2str(s) '_block' num2str(b) 'post_allrejtrialtest_lpp allrejtrialtest']);
         clear EEG
         
     end
 end
 
-%% Threshold each channel and save marked-trials info.-Sub7,12,46:49
+%% Threshold each channel and save marked-trials info.-Sub3,4,42,43
 % +- 75 uV for marking rejected trials
-allsubs = [12 46:47];
+allsubs = [3 4 42 43];
 
 for s = allsubs
     
-    if s == 56 || s == 15
-        bs = 1:5;
-    elseif s == 55
-        bs = [1:3 5:6];
-    else
-        bs = 1:6;
-    end
+    bs = 4:6;
     
     for b = bs
-        filename6 = strcat('EEG_PLC_Sub',num2str(s),'block',num2str(b),'epochsLPP_reref_blc.set');
+        filename6 = strcat('EEG_PLC_Sub',num2str(s),'block',num2str(b),'post_epochsLPP_reref_blc.set');
         %filename6 = strcat('EEG_PLC_Sub',num2str(s),'block',num2str(b),'epochs_reref_blc.set');
         
         EEG = pop_loadset(filename6); %Load up baseline-corrected data
@@ -376,7 +334,7 @@ for s = allsubs
         
         for c = [1:96 255:257]%For each channel
             allrejtrialtest{c,1} = c; %Col 1 = chan #
-            EEG = pop_eegthresh(EEG,1,c,-90,90,-0.1,0.75,0,0);
+            EEG = pop_eegthresh(EEG,1,c,-75,75,-0.1,0.75,0,0);
             EEG = eeg_checkset( EEG );
             [EEG,com] = eeg_rejsuperpose( EEG, 1, 1, 1, 1, 1, 1, 1, 1); %#ok<NASGU> %Updates EEG.reject.rejglobal
             
@@ -385,7 +343,7 @@ for s = allsubs
             allrejtrialtest{c,3} = facerejtr; %Col 3 = trial #s flagged for rejection for that chan
         end
         
-        eval(['save PLC_EEG_Sub' num2str(s) '_block' num2str(b) '_allrejtrialtest90_lpp allrejtrialtest']);
+        eval(['save PLC_EEG_Sub' num2str(s) '_block' num2str(b) 'post_allrejtrialtest_lpp allrejtrialtest']);
         clear EEG
         
     end
@@ -400,16 +358,10 @@ allsubs = [16 37 54];
 
 for s = allsubs
     
-    if s == 56 || s == 15
-        bs = 1:5;
-    elseif s == 55
-        bs = [1:3 5:6];
-    else
-        bs = 1:6;
-    end
+    bs = 4:6;
     
     for b = bs
-        filename6 = strcat('EEG_PLC_Sub',num2str(s),'block',num2str(b),'_ica_epochsLPP_blc.set');
+        filename6 = strcat('EEG_PLC_Sub',num2str(s),'block',num2str(b),'post_ica_epochsLPP_blc.set');
         %filename6 = strcat('EEG_PLC_Sub',num2str(s),'block',num2str(b),'epochs_reref_blc.set');
         
         EEG = pop_loadset(filename6); %L99oad up baseline-corrected data
@@ -426,7 +378,7 @@ for s = allsubs
             allrejtrialtest{c,3} = facerejtr; %Col 3 = trial #s flagged for rejection for that chan
         end
         
-        eval(['save PLC_EEG_Sub' num2str(s) '_block' num2str(b) '_allrejtrialtest_lpp allrejtrialtest']);
+        eval(['save PLC_EEG_Sub' num2str(s) '_block' num2str(b) 'post_allrejtrialtest_lpp allrejtrialtest']);
         clear EEG
         
     end
@@ -434,7 +386,8 @@ end
 
 
 %% Exclude channels, save corresponding info, and mark artifacts on just the included EEG channels.
-allsubs = [1 3:5 8:11 13:15 17:29 31 33 34 38:44 50 51 55:57];
+
+allsubs = [1 9 10 12 13 15 17 18 20:25 27 28 32 33 34 38:40 44 46 47 50 51 55 57];
 
 howmanysubs = length(allsubs); %1 row/subj
 allsubs_feareegBintrejtrials = cell(howmanysubs,7 ); %Col 1 = sub #, col 2 = EEG rej trials for block 1, col 3 = same for block 2, col 4 = for blk 3, col 5 = for blk 4, col6 = blk5, col7 = blk6
@@ -453,24 +406,18 @@ frow = 1; %Since included subjs are sometimes nonconsecutive, use "row" to fill 
 
 for s = allsubs
     
-    if s == 56 || s == 15
-        bs = 1:5;
-    elseif s == 55
-        bs = [1:3 5:6];
-    else
-        bs = 1:6;
-    end
+    bs = 4:6;
     
     for b = bs
         fchanexc = []; %Matrix of excluded channels & # of rejected trials in each
         fchaninc = []; %Matrix of included channels
         
-        eval(['load PLC_EEG_Sub' num2str(s) '_block' num2str(b) '_allrejtrialtest90_lpp.mat']); %Load up all marked trials info
+        eval(['load PLC_EEG_Sub' num2str(s) '_block' num2str(b) 'post_allrejtrialtest_lpp.mat']); %Load up all marked trials info
         
         for c = 1:99 %For each channel
             facerejtr = allrejtrialtest{c,2}; %# of rejected face trials for that channel
             
-            z=24; %20% of 120 trials
+            z=30; %25% of 120 trials
             
             if facerejtr > z %If # of rej face trials is >25% of total trials
                 fchanexc = [fchanexc c]; %#ok<AGROW> %Add channel to "excluded channels" matrix
@@ -487,7 +434,7 @@ for s = allsubs
         end
         chaninfo.chanexc=fchanexc;
         chaninfo.chaninc=fchaninc;
-        eval(['save PLC_EEG_Sub' num2str(s) '_block' num2str(b) '_chaninfo90_lpp chaninfo']); %Save excluded & included channels matrices
+        eval(['save PLC_EEG_Sub' num2str(s) '_block' num2str(b) 'post_chaninfo_lpp chaninfo']); %Save excluded & included channels matrices
         
         fearallchaninfo{frow,1} = s; %col 1 = subj #
         
@@ -523,16 +470,16 @@ for s = allsubs
         
         %Mark artifacts on just the included channels of interest.  In 3
         %batches, one for each section of the head.
-        filename4 = strcat('EEG_PLC_Sub',num2str(s),'block',num2str(b),'epochsLPP_blc.set'); %Dataset free of previous thresholding
+        filename4 = strcat('EEG_PLC_Sub',num2str(s),'block',num2str(b),'post_epochsLPP_blc.set'); %Dataset free of previous thresholding
         EEG = pop_loadset(filename4);
         
         %Back-of-head
-        EEG = pop_eegthresh(EEG,1,bchanint,-90,90,-0.1,0.75,1,0); %Do thresholding on just back-of-head channels, window of -200 to 300 ms
+        EEG = pop_eegthresh(EEG,1,bchanint,-75,75,-0.1,0.75,1,0); %Do thresholding on just back-of-head channels, window of -200 to 300 ms
         EEG = eeg_checkset(EEG); %Check for errors
         [EEG,com] = eeg_rejsuperpose(EEG, 1, 1, 1, 1, 1, 1, 1, 1); %#ok<NASGU> %EEG.reject.rejglobal now has all marked trials for EEGchans
         
         Bintrejtriallocs = find(EEG.reject.rejglobal); %Obtain rejected trial #s
-        eval(['save PLC_EEG_Sub' num2str(s) '_block' num2str(b) '_Bintrejtriallocs90_lpp Bintrejtriallocs']); %Save rejected trial locations
+        eval(['save PLC_EEG_Sub' num2str(s) '_block' num2str(b) 'post_Bintrejtriallocs_lpp Bintrejtriallocs']); %Save rejected trial locations
         
         allsubs_feareegBintrejtrials{fintrow,1} = s;
         switch b %For each of the 4 blocks
@@ -551,12 +498,12 @@ for s = allsubs
         end
         
         %Middle-of-head
-        EEG = pop_eegthresh(EEG,1,mchanint,-90,90,-0.1,0.75,1,0); %Do thresholding on just middle-of-head channels
+        EEG = pop_eegthresh(EEG,1,mchanint,-75,75,-0.1,0.75,1,0); %Do thresholding on just middle-of-head channels
         EEG = eeg_checkset(EEG); %Check for errors
         [EEG,com] = eeg_rejsuperpose(EEG, 1, 1, 1, 1, 1, 1, 1, 1); %#ok<NASGU> %EEG.reject.rejglobal now has all marked trials for EEGchans
         
         Mintrejtriallocs = find(EEG.reject.rejglobal); %Obtain rejected trial #s
-        eval(['save PLC_EEG_Sub' num2str(s) '_block' num2str(b) '_Mintrejtriallocs90_lpp Mintrejtriallocs']); %Save rejected trial locations
+        eval(['save PLC_EEG_Sub' num2str(s) '_block' num2str(b) 'post_Mintrejtriallocs_lpp Mintrejtriallocs']); %Save rejected trial locations
         
         allsubs_feareegMintrejtrials{fintrow,1} = s;
         switch b %For each of the 4 blocks
@@ -575,12 +522,12 @@ for s = allsubs
         end
         
         %Front-of-head
-        EEG = pop_eegthresh(EEG,1,fchanint,-90,90,-0.1,0.75,1,0); %Do thresholding on just front-of-head channels
+        EEG = pop_eegthresh(EEG,1,fchanint,-75,75,-0.1,0.75,1,0); %Do thresholding on just front-of-head channels
         EEG = eeg_checkset(EEG); %Check for errors
         [EEG,com] = eeg_rejsuperpose(EEG, 1, 1, 1, 1, 1, 1, 1, 1); %#ok<NASGU> %EEG.reject.rejglobal now has all marked trials for EEGchans
         
         Fintrejtriallocs = find(EEG.reject.rejglobal); %Obtain rejected trial #s
-        eval(['save PLC_EEG_Sub' num2str(s) '_block' num2str(b) '_Fintrejtriallocs90_lpp Fintrejtriallocs']); %Save rejected trial locations
+        eval(['save PLC_EEG_Sub' num2str(s) '_block' num2str(b) 'post_Fintrejtriallocs_lpp Fintrejtriallocs']); %Save rejected trial locations
         
         allsubs_feareegFintrejtrials{fintrow,1} = s;
         switch b %For each of the 4 blocks
@@ -610,13 +557,13 @@ allsubs_feareegintrejtrials.fearmiddle = allsubs_feareegMintrejtrials;
 allsubs_feareegintrejtrials.fearfront = allsubs_feareegFintrejtrials;
 
 %saved 2/7/15
-save PLC_EEG_eegintrejtrials_LPP_norm90.mat allsubs_feareegintrejtrials %saving info for this "normal" group of pariticipants with correct setup
-save PLC_EEG_ChanInfo_LPP_norm90.mat fearallchaninfo
+save PLC_EEGpost_eegintrejtrials_LPP_norm.mat allsubs_feareegintrejtrials %saving info for this "normal" group of pariticipants with correct setup
+save PLC_EEGpost_ChanInfo_LPP_norm.mat fearallchaninfo
 
 
 %% Exclude channels, save corresponding info, and mark artifacts on just
-%% the included EEG channels.-Sub7,12,46:49
-allsubs = [12 46:47];
+%% the included EEG channels.-Sub3,4,42,43
+allsubs = [3 4 42 43];
 
 howmanysubs = length(allsubs); %1 row/subj
 allsubs_feareegBintrejtrials = cell(howmanysubs,7 ); %Col 1 = sub #, col 2 = EEG rej trials for block 1, col 3 = same for block 2, col 4 = for blk 3, col 5 = for blk 4, col6 = blk5, col7 = blk6
@@ -635,24 +582,18 @@ frow = 1; %Since included subjs are sometimes nonconsecutive, use "row" to fill 
 
 for s = allsubs
     
-    if s == 56 || s == 15
-        bs = 1:5;
-    elseif s == 55
-        bs = [1:3 5:6];
-    else
-        bs = 1:6;
-    end
+    bs = 4:6;
     
     for b = bs
         fchanexc = []; %Matrix of excluded channels & # of rejected trials in each
         fchaninc = []; %Matrix of included channels
         
-        eval(['load PLC_EEG_Sub' num2str(s) '_block' num2str(b) '_allrejtrialtest90_lpp.mat']); %Load up all marked trials info
+        eval(['load PLC_EEG_Sub' num2str(s) '_block' num2str(b) 'post_allrejtrialtest_lpp.mat']); %Load up all marked trials info
         
         for c = [1:96 255:257] %For each channel
             facerejtr = allrejtrialtest{c,2}; %# of rejected face trials for that channel
             
-            z=24; %25% of 120 trials
+            z=30; %25% of 120 trials
             
             if facerejtr > z %If # of rej face trials is >25% of total trials
                 fchanexc = [fchanexc c]; %#ok<AGROW> %Add channel to "excluded channels" matrix
@@ -669,7 +610,7 @@ for s = allsubs
         end
         chaninfo.chanexc=fchanexc;
         chaninfo.chaninc=fchaninc;
-        eval(['save PLC_EEG_Sub' num2str(s) '_block' num2str(b) '_chaninfo90_lpp chaninfo']); %Save excluded & included channels matrices
+        eval(['save PLC_EEG_Sub' num2str(s) '_block' num2str(b) 'post_chaninfo_lpp chaninfo']); %Save excluded & included channels matrices
         
         fearallchaninfo{frow,1} = s; %col 1 = subj #
         
@@ -705,16 +646,16 @@ for s = allsubs
         
         %Mark artifacts on just the included channels of interest.  In 3
         %batches, one for each section of the head.
-        filename4 = strcat('EEG_PLC_Sub',num2str(s),'block',num2str(b),'epochsLPP_reref_blc.set'); %Dataset free of previous thresholding
+        filename4 = strcat('EEG_PLC_Sub',num2str(s),'block',num2str(b),'post_epochsLPP_reref_blc.set'); %Dataset free of previous thresholding
         EEG = pop_loadset(filename4);
         
         %Back-of-head
-        EEG = pop_eegthresh(EEG,1,bchanint,-90,90,-0.1,0.75,1,0); %Do thresholding on just back-of-head channels, window of -200 to 300 ms
+        EEG = pop_eegthresh(EEG,1,bchanint,-75,75,-0.1,0.75,1,0); %Do thresholding on just back-of-head channels, window of -200 to 300 ms
         EEG = eeg_checkset(EEG); %Check for errors
         [EEG,com] = eeg_rejsuperpose(EEG, 1, 1, 1, 1, 1, 1, 1, 1); %#ok<NASGU> %EEG.reject.rejglobal now has all marked trials for EEGchans
         
         Bintrejtriallocs = find(EEG.reject.rejglobal); %Obtain rejected trial #s
-        eval(['save PLC_EEG_Sub' num2str(s) '_block' num2str(b) '_Bintrejtriallocs90_lpp Bintrejtriallocs']); %Save rejected trial locations
+        eval(['save PLC_EEG_Sub' num2str(s) '_block' num2str(b) 'post_Bintrejtriallocs_lpp Bintrejtriallocs']); %Save rejected trial locations
         
         allsubs_feareegBintrejtrials{fintrow,1} = s;
         switch b %For each of the 4 blocks
@@ -733,12 +674,12 @@ for s = allsubs
         end
         
         %Middle-of-head
-        EEG = pop_eegthresh(EEG,1,mchanint,-90,90,-0.1,0.75,1,0); %Do thresholding on just middle-of-head channels
+        EEG = pop_eegthresh(EEG,1,mchanint,-75,75,-0.1,0.75,1,0); %Do thresholding on just middle-of-head channels
         EEG = eeg_checkset(EEG); %Check for errors
         [EEG,com] = eeg_rejsuperpose(EEG, 1, 1, 1, 1, 1, 1, 1, 1); %#ok<NASGU> %EEG.reject.rejglobal now has all marked trials for EEGchans
         
         Mintrejtriallocs = find(EEG.reject.rejglobal); %Obtain rejected trial #s
-        eval(['save PLC_EEG_Sub' num2str(s) '_block' num2str(b) '_Mintrejtriallocs90_lpp Mintrejtriallocs']); %Save rejected trial locations
+        eval(['save PLC_EEG_Sub' num2str(s) '_block' num2str(b) 'post_Mintrejtriallocs_lpp Mintrejtriallocs']); %Save rejected trial locations
         
         allsubs_feareegMintrejtrials{fintrow,1} = s;
         switch b %For each of the 4 blocks
@@ -757,12 +698,12 @@ for s = allsubs
         end
         
         %Front-of-head
-        EEG = pop_eegthresh(EEG,1,fchanint,-90,90,-0.1,0.75,1,0); %Do thresholding on just front-of-head channels
+        EEG = pop_eegthresh(EEG,1,fchanint,-75,75,-0.1,0.75,1,0); %Do thresholding on just front-of-head channels
         EEG = eeg_checkset(EEG); %Check for errors
         [EEG,com] = eeg_rejsuperpose(EEG, 1, 1, 1, 1, 1, 1, 1, 1); %#ok<NASGU> %EEG.reject.rejglobal now has all marked trials for EEGchans
         
         Fintrejtriallocs = find(EEG.reject.rejglobal); %Obtain rejected trial #s
-        eval(['save PLC_EEG_Sub' num2str(s) '_block' num2str(b) '_Fintrejtriallocs90_lpp Fintrejtriallocs']); %Save rejected trial locations
+        eval(['save PLC_EEG_Sub' num2str(s) '_block' num2str(b) 'post_Fintrejtriallocs_lpp Fintrejtriallocs']); %Save rejected trial locations
         
         allsubs_feareegFintrejtrials{fintrow,1} = s;
         switch b %For each of the 4 blocks
@@ -792,8 +733,8 @@ allsubs_feareegintrejtrials.fearmiddle = allsubs_feareegMintrejtrials;
 allsubs_feareegintrejtrials.fearfront = allsubs_feareegFintrejtrials;
 
 %saved 2/7/15
-save PLC_EEG_eegintrejtrials90_Sub124647.mat allsubs_feareegintrejtrials %saving info for this "normal" group of pariticipants with correct setup
-save PLC_EEG_ChanInfo90_Sub124647.mat fearallchaninfo
+save PLC_EEG_eegintrejtrials_Sub344243.mat allsubs_feareegintrejtrials %saving info for this "normal" group of pariticipants with correct setup
+save PLC_EEG_ChanInfo_Sub344243.mat fearallchaninfo
 
 %% Exclude channels, save corresponding info, and mark artifacts on just the included EEG channels.
 allsubs = [16 37 54]; 
@@ -815,19 +756,13 @@ frow = 1; %Since included subjs are sometimes nonconsecutive, use "row" to fill 
 
 for s = allsubs
     
-    if s == 56 || s == 15
-        bs = 1:5;
-    elseif s == 55
-        bs = [1:3 5:6];
-    else
-        bs = 1:6;
-    end
+   bs = 4:6;
     
     for b = bs
         fchanexc = []; %Matrix of excluded channels & # of rejected trials in each
         fchaninc = []; %Matrix of included channels
         
-        eval(['load PLC_EEG_Sub' num2str(s) '_block' num2str(b) '_allrejtrialtest_lpp.mat']); %Load up all marked trials info
+        eval(['load PLC_EEG_Sub' num2str(s) '_block' num2str(b) 'post_allrejtrialtest_lpp.mat']); %Load up all marked trials info
         
         for c = 1:96 %For each channel
             facerejtr = allrejtrialtest{c,2}; %# of rejected face trials for that channel
@@ -849,7 +784,7 @@ for s = allsubs
         end
         chaninfo.chanexc=fchanexc;
         chaninfo.chaninc=fchaninc;
-        eval(['save PLC_EEG_Sub' num2str(s) '_block' num2str(b) '_chaninfo_lpp chaninfo']); %Save excluded & included channels matrices
+        eval(['save PLC_EEG_Sub' num2str(s) '_block' num2str(b) 'post_chaninfo_lpp chaninfo']); %Save excluded & included channels matrices
         
         fearallchaninfo{frow,1} = s; %col 1 = subj #
         
@@ -885,7 +820,7 @@ for s = allsubs
         
         %Mark artifacts on just the included channels of interest.  In 3
         %batches, one for each section of the head.
-        filename4 = strcat('EEG_PLC_Sub',num2str(s),'block',num2str(b),'_ica_epochsLPP_blc.set'); %Dataset free of previous thresholding
+        filename4 = strcat('EEG_PLC_Sub',num2str(s),'block',num2str(b),'post_ica_epochsLPP_blc.set'); %Dataset free of previous thresholding
         EEG = pop_loadset(filename4);
         
         %Back-of-head
@@ -894,7 +829,7 @@ for s = allsubs
         [EEG,com] = eeg_rejsuperpose(EEG, 1, 1, 1, 1, 1, 1, 1, 1); %#ok<NASGU> %EEG.reject.rejglobal now has all marked trials for EEGchans
         
         Bintrejtriallocs = find(EEG.reject.rejglobal); %Obtain rejected trial #s
-        eval(['save PLC_EEG_Sub' num2str(s) '_block' num2str(b) '_Bintrejtriallocs_lpp Bintrejtriallocs']); %Save rejected trial locations
+        eval(['save PLC_EEG_Sub' num2str(s) '_block' num2str(b) 'post_Bintrejtriallocs_lpp Bintrejtriallocs']); %Save rejected trial locations
         
         allsubs_feareegBintrejtrials{fintrow,1} = s;
         switch b %For each of the 4 blocks
@@ -918,7 +853,7 @@ for s = allsubs
         [EEG,com] = eeg_rejsuperpose(EEG, 1, 1, 1, 1, 1, 1, 1, 1); %#ok<NASGU> %EEG.reject.rejglobal now has all marked trials for EEGchans
         
         Mintrejtriallocs = find(EEG.reject.rejglobal); %Obtain rejected trial #s
-        eval(['save PLC_EEG_Sub' num2str(s) '_block' num2str(b) '_Mintrejtriallocs_lpp Mintrejtriallocs']); %Save rejected trial locations
+        eval(['save PLC_EEG_Sub' num2str(s) '_block' num2str(b) 'post_Mintrejtriallocs_lpp Mintrejtriallocs']); %Save rejected trial locations
         
         allsubs_feareegMintrejtrials{fintrow,1} = s;
         switch b %For each of the 4 blocks
@@ -942,7 +877,7 @@ for s = allsubs
         [EEG,com] = eeg_rejsuperpose(EEG, 1, 1, 1, 1, 1, 1, 1, 1); %#ok<NASGU> %EEG.reject.rejglobal now has all marked trials for EEGchans
         
         Fintrejtriallocs = find(EEG.reject.rejglobal); %Obtain rejected trial #s
-        eval(['save PLC_EEG_Sub' num2str(s) '_block' num2str(b) '_Fintrejtriallocs_lpp Fintrejtriallocs']); %Save rejected trial locations
+        eval(['save PLC_EEG_Sub' num2str(s) '_block' num2str(b) 'post_Fintrejtriallocs_lpp Fintrejtriallocs']); %Save rejected trial locations
         
         allsubs_feareegFintrejtrials{fintrow,1} = s;
         switch b %For each of the 4 blocks
@@ -971,15 +906,15 @@ allsubs_feareegintrejtrials.fearback = allsubs_feareegBintrejtrials;
 allsubs_feareegintrejtrials.fearmiddle = allsubs_feareegMintrejtrials;
 allsubs_feareegintrejtrials.fearfront = allsubs_feareegFintrejtrials;
 
-save PLC_EEG_eegintrejtrials_Sub163754.mat allsubs_feareegintrejtrials %saving info for this "normal" group of pariticipants with correct setup
-save PLC_EEG_ChanInfo_Sub163754.mat fearallchaninfo
+save PLC_EEGpost_eegintrejtrials_Sub163754.mat allsubs_feareegintrejtrials %saving info for this "normal" group of pariticipants with correct setup
+save PLC_EEGpost_ChanInfo_Sub163754.mat fearallchaninfo
 
 %% Concatenate rejected trial #s into 1 large matrix & delete doubles.
 %Trial rejection input:
 %1. Trials flagged by eyechan thresholding.
 %2. Trials flagged by EEGchan-of-interest thresholding.
 %3. Trials noted in run notes as bad.  None so far!
-allsubs = [1 3:5 8:11 13:15 17:29 31 33 34 38:44 50 51 55:57 12 46 47];
+allsubs =[1 9 10 12 13 15 17 18 20:25 27 28 32 33 34 38:40 44 46 47 50 51 55 57 3 4 42 43];
 
 howmanysubs = length(allsubs);
 allsubs_fearallBrejtrials = cell(howmanysubs, 13);
@@ -995,22 +930,15 @@ allrejtypetallyF = [];
 
 for s = allsubs
     
-    if s == 56 || s == 15
-        bs = 1:5;
-    elseif s == 55
-        bs = [1:3 5:6];
-    else
-        bs = 1:6;
-    end
-    
+    bs = 4:6;
     
     for b = bs
         
         for v = thesections
             
-            eval(['load PLC_EEG_Sub' num2str(s) '_block' num2str(b) '_eyerejtriallocs90_lpp eyerejtriallocs']); %Load up eyechan marked trials info (in 1 row)
+            eval(['load PLC_EEG_Sub' num2str(s) '_block' num2str(b) 'post_eyerejtriallocs_lpp eyerejtriallocs']); %Load up eyechan marked trials info (in 1 row)
             eval(['allfrejtrials' num2str(v) ' = eyerejtriallocs;']); %Put eye rej trials into matrix of all rej trials for this subj, block, & section
-            eval(['load PLC_EEG_Sub' num2str(s) '_block' num2str(b) '_' num2str(v) 'intrejtriallocs90_lpp ' num2str(v) 'intrejtriallocs']); %Load up EEGchan-of-interest marked trials info (in 1 row)
+            eval(['load PLC_EEG_Sub' num2str(s) '_block' num2str(b) 'post_' num2str(v) 'intrejtriallocs_lpp ' num2str(v) 'intrejtriallocs']); %Load up EEGchan-of-interest marked trials info (in 1 row)
             eval(['allfrejtrials' num2str(v) ' = [allfrejtrials' num2str(v) ' ' num2str(v) 'intrejtriallocs];']); %Add EEG marked trials to all rej trials matrix
             eval(['allfrejtrials' num2str(v) ' = sort(allfrejtrials' num2str(v) ');']); %Sort all rej trials matrix
             
@@ -1067,7 +995,7 @@ for s = allsubs
                 rejectbinary(a) = 1; %That trial #'s spot in the zeros matrix becomes 1
             end
             rejectlogical = logical(rejectbinary); %#ok<NASGU> %Converts the zeros-and-ones matrix to a logical for use in EEG.reject.rejglobal
-            eval(['save PLC_EEG_Sub' num2str(s) '_block' num2str(b) '_allrejlogical' num2str(v) '90_lpp rejectlogical']);
+            eval(['save PLC_EEG_Sub' num2str(s) '_block' num2str(b) 'post_allrejlogical' num2str(v) '_lpp rejectlogical']);
         end
     end
     frowB = frowB + 1; %Move to next row
@@ -1083,8 +1011,8 @@ allrejtypetally.fearback = allrejtypetallyB;
 allrejtypetally.fearmiddle = allrejtypetallyM;
 allrejtypetally.fearfront = allrejtypetallyF;
 
-save PLC_EEG_LPP_finalallrejtrials90_noica allsubs_fearfinalallrejtrials
-save PLC_EEG_LPP_rejtypetally90_noica allrejtypetally
+save PLC_EEGpost_LPP_finalallrejtrials_noica allsubs_fearfinalallrejtrials
+save PLC_EEGpost_LPP_rejtypetally_noica allrejtypetally
 
 %% Concatenate rejected trial #s into 1 large matrix - for ICA-treated subs
 %Trial rejection input:
@@ -1107,19 +1035,13 @@ allrejtypetallyM = [];
 allrejtypetallyF = [];
 
 for s = allsubs
-    if s == 56 || s == 15
-        bs = 1:5;
-    elseif s == 55
-        bs = [1:3 5:6];
-    else
-        bs = 1:6;
-    end
+    bs = 4:6;
     
     for b = bs
         
         for v = thesections
             
-            eval(['load PLC_EEG_Sub' num2str(s) '_block' num2str(b) '_' num2str(v) 'intrejtriallocs_lpp ' num2str(v) 'intrejtriallocs']); %Load up EEGchan-of-interest marked trials info (in 1 row)
+            eval(['load PLC_EEG_Sub' num2str(s) '_block' num2str(b) 'post_' num2str(v) 'intrejtriallocs_lpp ' num2str(v) 'intrejtriallocs']); %Load up EEGchan-of-interest marked trials info (in 1 row)
             eval(['allfrejtrials' num2str(v) ' = ' num2str(v) 'intrejtriallocs;']); %Add EEG marked trials to all rej trials matrix
             
             eval(['allsubs_fearall' num2str(v) 'rejtrials{frow' num2str(v) ',1} = s;']); %Col 1 = subj #
@@ -1160,7 +1082,7 @@ for s = allsubs
                 rejectbinary(a) = 1; %That trial #'s spot in the zeros matrix becomes 1
             end
             rejectlogical = logical(rejectbinary); %#ok<NASGU> %Converts the zeros-and-ones matrix to a logical for use in EEG.reject.rejglobal
-            eval(['save PLC_EEG_Sub' num2str(s) '_block' num2str(b) '_allrejlogical' num2str(v) '_lpp rejectlogical']);
+            eval(['save PLC_EEG_Sub' num2str(s) '_block' num2str(b) 'post_allrejlogical' num2str(v) '_lpp rejectlogical']);
         end
     end
     frowB = frowB + 1; %Move to next row
@@ -1185,40 +1107,35 @@ allrejtypetally.fearfront = allrejtypetallyF;
 
 %allsubs = [1:5 7:44 46 47 49:51 53:57];
 %allsubs = [1 3:5 8:11 13:15 17:29 31 33 34 38:44 50 51 55:57];
-allsubs = [1 3:5 8:11 13:15 17:29 31 33 34 38:44 50 51 55:57];
+allsubs =  [1 3 4 9 10 12 13 15 16 17 18 20:25 27 28 32 33 34 37:40 42:44 46 47 50 51 54 55 57]; %36 Subs for post2
 
 thesections = ['B' 'M' 'F']; %Need the letters B, M, and F for running each of the 3 things
 for s = allsubs
     
-    if s == 56 || s == 15
-        bs = 1:5;
-    elseif s == 55
-        bs = [1:3 5:6];
-    else
-        bs = 1:6;
-    end
+    bs = 4:6;
     
     for b = bs
         
         for v = thesections
             
-            eval(['load PLC_EEG_Sub' num2str(s) '_block' num2str(b) '_allrejlogical' num2str(v) '90_lpp rejectlogical']);
-%             if s==7||s==12||s==46||s==47||s==49
-%             filenamef = strcat('EEG_PLC_Sub',num2str(s),'block',num2str(b),'epochs_reref_blc.set'); %Dataset free of previous thresholding
-%                 
-%             else
-            filenamef = strcat('EEG_PLC_Sub',num2str(s),'block',num2str(b),'epochsLPP_blc.set'); %Dataset free of previous thresholding
- %           end
+            eval(['load PLC_EEG_Sub' num2str(s) '_block' num2str(b) 'post_allrejlogical' num2str(v) '_lpp rejectlogical']);
+            if s == 16 || s == 37 || s == 54
+                filenamef = strcat('EEG_PLC_Sub',num2str(s),'block',num2str(b),'post_ica_epochsLPP_blc.set'); %Dataset free of previous thresholding                                
+            elseif s == 3  || s ==4 || s == 42 || s ==43
+                filenamef = strcat('EEG_PLC_Sub',num2str(s),'block',num2str(b),'post_epochsLPP_reref_blc.set'); %Dataset free of previous thresholding
+            else
+                filenamef = strcat('EEG_PLC_Sub',num2str(s),'block',num2str(b),'post_epochsLPP_blc.set'); %Dataset free of previous thresholding                
+            end
             
             EEG = pop_loadset(filenamef);
             EEG.reject.rejglobal = rejectlogical; %Assign logical results of previous cell to EEG.reject.rejglobal
             EEG = pop_rejepoch(EEG, EEG.reject.rejglobal, 0); %#ok<NASGU> %Rejects marked trials
             if v=='B'
-                savefilef = strcat('EEG_PLC_Sub',num2str(s),'block',num2str(b),'_epochsLPP90_blc_Barej.set');
+                savefilef = strcat('EEG_PLC_Sub',num2str(s),'block',num2str(b),'post_epochsLPP_blc_Barej.set');
             elseif v=='M'
-                savefilef = strcat('EEG_PLC_Sub',num2str(s),'block',num2str(b),'_epochsLPP90_blc_Marej.set');
+                savefilef = strcat('EEG_PLC_Sub',num2str(s),'block',num2str(b),'post_epochsLPP_blc_Marej.set');
             elseif v=='F'
-                savefilef = strcat('EEG_PLC_Sub',num2str(s),'block',num2str(b),'_epochsLPP90_blc_Farej.set');
+                savefilef = strcat('EEG_PLC_Sub',num2str(s),'block',num2str(b),'post_epochsLPP_blc_Farej.set');
             else
                 sprintf('%s','WTF IS HAPPENING')
             end

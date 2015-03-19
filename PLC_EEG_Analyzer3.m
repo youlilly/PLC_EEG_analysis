@@ -1225,10 +1225,76 @@ save PLC_EEG_PostB6_MeanAmp_45subs AllColorC1P1C2 AllGrayP1N1P2
 
 %% Exploratory point-by-point ttest of Time(Pre/Post)*CS(+/-) interaction
 %Color condition, early time window
-allsubs = [1 3:5 8:29 31 33 34 37:44 46 47 50 51 54:57]; %removing 2,7,53
+clear all
+
+allsubs = [1 3:4 8:11 13:29 33 34 38:40 42:44 46 47 50 51 54:56]; %removing 2,7,53,5,12,31,37,41,57 
+
+
+PersonSCR = [-0.64	-0.88	-0.76	-0.121536792	-0.132784119	-0.656143367	0.17686803
+-0.02	0.41	0.2	-0.221098569	0.213223158	0.058999586	-0.513570278
+-0.33	-0.02	-0.17	0.139763219	-0.043098606	0.136588615	0.222174489
+0.91	0.7	0.81	0.315867096	0.059905254	0.034403775	0.110258014
+1.22	1.7	1.46	0.36877096	-0.491990139	-0.244130005	-0.126695903
+1.22	-0.45	0.39	0.09901012	-0.157021963	-0.111113756	-0.127030862
+-0.64	-0.88	-0.76	0.023106227	0.022587258	-0.058291022	0.13200743
+-1.57	-1.02	-1.3	-0.139188915	-0.147945488	0.052168776	0.204931212
+-0.95	-0.88	-0.91	0.379443926	0.043633345	-0.233022243	0.44399057
+0.6	-0.88	-0.14	-0.078448693	-0.004932663	-0.423464072	-0.072641723
+-1.88	-1.02	-1.45	0.141901832	0.08047412	0.368625552	-0.062432981
+-1.88	0.99	-0.45	-0.040906923	0.018814522	0.18505544	-0.001740027
+0.603670406	-0.161709278	0.220980564	0.569641514	0.342857485	-0.320719201	-0.02546786
+-0.02	-1.17	-0.59	0.264525325	0.02816996	0.668320256	-0.072209671
+0.29	0.99	0.64	0.168769341	-0.012218746	0.027660877	0.257481963
+-0.02	-1.17	-0.59	-0.097414847	0.124333057	0.001831439	0.221225735
+-0.33	-0.16	-0.24	-0.038107585	0.166154016	-0.063838311	0.062883983
+-0.64	0.41	-0.11	-0.047451922	-0.103875478	-0.035977624	0.623207397
+-0.33	0.27	-0.03	-0.355755034	-0.315810171	-0.071418923	-0.047493077
+0.29	2.28	1.29	-0.198523144	-0.108344191	0.047619308	-0.297792088
+1.22	0.7	0.96	-0.103234703	0.050281366	0.0275141	0.015089005
+1.22	1.27	1.25	0.304204643	0.29217203	0.241923392	-0.181772084
+-1.57	-0.31	-0.94	-0.115530829	-0.233143978	-0.169994163	0.07354553
+0.29	0.56	0.42	-0.151165652	-0.233003507	-0.166396738	0.074125416
+-1.57	1.42	-0.08	-0.254398174	0.142865601	-0.375734804	0.033990428
+-0.33	-1.02	-0.67	0.229313752	0.250467973	0.032532328	0.054925349
+0.29	-0.74	-0.22	0.185501308	0.025087202	-0.359806717	0.029847246
+-0.64	-0.74	-0.69	0.010207711	0.051588986	-0.214563174	0.090920819
+-0.33	-1.17	-0.75	-0.011989929	0.118593346	-0.112426785	-0.26309504
+1.22	2.56	1.89	-0.041497311	0.392906764	0.308094454	-0.180899225
+-0.64	0.13	-0.26	-0.003450558	-0.011161584	-0.229070495	-0.030300141
+1.84	0.84	1.34	0.099551071	-0.123122405	0.320852966	-0.094244569
+0.29	-1.17	-0.44	-0.60307947	-0.344911395	0.254558509	0.167912239
+0.91	0.27	0.59	-0.140133381	-0.048098821	0.045917893	-0.082668232
+1.53	-0.02	0.76	-0.291805415	0.04449716	-0.29640455	-0.012377936
+0.91	-1.02	-0.05	0.360509487	-0.262573594	-0.259144626	0.069882532
+0.29	-0.88	-0.29	-0.42510864	-0.216558757	-0.018030172	0.206873333
+-1.57	-0.88	-1.22	-0.194993828	0.11694365	0.044729962	0.333536848
+-0.33	-0.59	-0.46	-0.227142315	-0.104696288	0.364761011	0.297901282];
+
+BISz = PersonSCR(:,1);
+BAIz = PersonSCR(:,2);
+Anxz = PersonSCR(:,3);
+
+PreColorSCRCSd = PersonSCR(:,4);
+PreGraySCRCSd = PersonSCR(:,5);
+PostColorSCRCSd = PersonSCR(:,6);
+PostGraySCRCSd = PersonSCR(:,7);
+
+
+%%
 allTimebyCS = [];
 allH0 = [];
 allPs = [];
+
+allrpi = [];
+allrpa = [];
+allrpn = [];
+
+allri = [];
+allra = [];
+allrn = [];
+
+allrscr = [];
+allrpscr = [];
 
 PrecondColorCSp = [];
 PrecondColorCSm = [];
@@ -1252,38 +1318,76 @@ for s = allsubs
 end
 %ttest for interaction for each time point
 for i = 1:length(allTimebyCS)
+    
     interaction = allTimebyCS(:,i);
+    
     [H0, p] = ttest(interaction, 0);
     allH0 = [allH0 H0];
     allPs = [allPs p];
+    
+    [ri, rpi] = corr(interaction, BISz);
+    [ra, rpa] = corr(interaction, BAIz);
+    [rn, rpn] = corr(interaction, Anxz);
+    
+    allri = [allri ri];
+    allra = [allra ra];
+    allrn = [allrn rn];
+    
+    allrpi = [allrpi rpi];
+    allrpa = [allrpa rpa];
+    allrpn = [allrpn rpn];
+    
+    [rscr, rpscr] = corr(interaction, (PostColorSCRCSd - PreColorSCRCSd));
+    
+    allrscr = [allrscr rscr];
+    allrpscr = [allrpscr rpscr];
 end
 
 horz = Precond.horz;
 
-plot(horz, mean(PrecondColorCSp,1) , 'r:'); hold on;
-plot(horz, mean(PrecondColorCSm,1) , 'g:');
+plot(horz, mean(PrecondColorCSp,1) , 'r-.'); hold on;
+plot(horz, mean(PrecondColorCSm,1) , 'g-.');
 
-plot(horz, mean(PostcondColorCSp,1) , 'r--');
-plot(horz, mean(PostcondColorCSm,1) , 'g--');
+plot(horz, mean(PostcondColorCSp,1) , 'r-');
+plot(horz, mean(PostcondColorCSm,1) , 'g-');
 
 plot(horz,allPs, 'k');
+plot(horz,allrpi+1, 'k--');
+plot(horz,allrpscr+2, 'k-.');
+
+line([horz(81) horz(81)],[0 -7]);
+line([horz(87) horz(87)],[0 -7]);
+
 legend('Pre Color CS+', 'Pre Color CS-', 'Post Color CS+', 'Post Color CS-', 'Location', 'southwest');
-saveas(gcf, 'PrePost_ColorERPs_45subs_TimebyCS_pval.jpg');
+saveas(gcf, 'PrePost_ColorERPs_39subs_TimebyCSbyBIS_pval.jpg');
 close(gcf);
 
-%ttest for interaction for C1P1 trough-to-peak difference
-c1p1 = allTimebyCS(:,78) - allTimebyCS(:,75);
-[H0c1p1, pc1p1] = ttest(c1p1, 0); %H0 = 1, pc1p1 = 0.0031
+% %ttest for interaction for C1P1 trough-to-peak difference
+% c1p1 = allTimebyCS(:,78) - allTimebyCS(:,75);
+% [H0c1p1, pc1p1] = ttest(c1p1, 0); %H0 = 1, pc1p1 = 0.0031
+% 
+% %ttest for interaction for P1C2 peak-to-trough difference
+% p1c2 = allTimebyCS(:,86) - allTimebyCS(:,78);
+% [H0p1c2, pp1c2] = ttest(p1c2, 0); %H0 = 0, pp1c2 = 0.19
 
-%ttest for interaction for P1C2 peak-to-trough difference
-p1c2 = allTimebyCS(:,86) - allTimebyCS(:,78);
-[H0p1c2, pp1c2] = ttest(p1c2, 0); %H0 = 0, pp1c2 = 0.19
+save PrePostAve_39subs_Color_TimebyCS.mat
 
 %% Gray condition, early time window
-allsubs = [1 3:5 8:29 31 33 34 37:44 46 47 50 51 54:57]; %removing 2,7,53
+allsubs = [1 3:4 8:11 13:29 33 34 38:40 42:44 46 47 50 51 54:56]; %removing 2,7,53,5,12,31,37,41,57 
 allTimebyCS = [];
 allH0 = [];
 allPs = [];
+
+allrpi = [];
+allrpa = [];
+allrpn = [];
+
+allri = [];
+allra = [];
+allrn = [];
+
+allrscr = [];
+allrpscr = [];
 
 PrecondGrayCSp = [];
 PrecondGrayCSm = [];
@@ -1305,39 +1409,136 @@ for s = allsubs
     PostcondGrayCSp = [PostcondGrayCSp; Postcond.GrayCSp];
     PostcondGrayCSm = [PostcondGrayCSm; Postcond.GrayCSm];
 end
+
 %ttest for interaction for each time point
 for i = 1:length(allTimebyCS)
+    
     interaction = allTimebyCS(:,i);
     [H0, p] = ttest(interaction, 0);
     allH0 = [allH0 H0];
     allPs = [allPs p];
+    
+    [ri, rpi] = corr(interaction, BISz);
+    [ra, rpa] = corr(interaction, BAIz);
+    [rn, rpn] = corr(interaction, Anxz);
+    
+    allri = [allri ri];
+    allra = [allra ra];
+    allrn = [allrn rn];
+    
+    allrpi = [allrpi rpi];
+    allrpa = [allrpa rpa];
+    allrpn = [allrpn rpn];
+    
+    [rscr, rpscr] = corr(interaction, (PostGraySCRCSd - PreGraySCRCSd));
+    
+    allrscr = [allrscr rscr];
+    allrpscr = [allrpscr rpscr];    
 end
 
 horz = Precond.horz;
 
-plot(horz, mean(PrecondGrayCSp,1) , 'b:'); hold on;
-plot(horz, mean(PrecondGrayCSm,1) , 'g:');
+plot(horz, mean(PrecondGrayCSp,1) , 'b-.'); hold on;
+plot(horz, mean(PrecondGrayCSm,1) , 'g-.');
 
-plot(horz, mean(PostcondGrayCSp,1) , 'b--');
-plot(horz, mean(PostcondGrayCSm,1) , 'g--');
+plot(horz, mean(PostcondGrayCSp,1) , 'b-');
+plot(horz, mean(PostcondGrayCSm,1) , 'g-');
 
-plot(horz,allPs, 'r');
+plot(horz,allPs-2, 'r');
+plot(horz,allrpi-1, 'r--');
+plot(horz,allrpscr, 'k-');
+
+line([horz(81) horz(81)],[0 7]);
+line([horz(89) horz(89)],[0 7]);
+
 legend('Pre Gray CS+', 'Pre Gray CS-', 'Post Gray CS+', 'Post Gray CS-', 'Location', 'southwest');
-saveas(gcf, 'PrePost_GrayERPs_45subs_TimebyCS_pval.jpg');
+saveas(gcf, 'PrePost_GrayERPs_39subs_TimebyCSbyBIS_pval.jpg');
 close(gcf);
 
+save PrePostAve_39subs_Gray_TimebyCS.mat
+
+
 %% Exploratory point-by-point ttest of Time(Pre/PostB4)*CS(+/-) interaction
-%Color condition, early time window
-allsubs = [1 3:5 8:29 31 33 34 37:44 46 47 50 51 54 56 57];
+%Color condition B4, early time window
+allsubs = [1 3:4 8:11 13:29 33 34 38:40 42:44 46 47 50 51 54 56]; %removing 2,7,53,5,12,31,37,41,57,55 
+
+PersonSCR = [-0.64	-0.88	-0.76	-0.121536792	-0.132784119	-0.656143367	0.17686803
+-0.02	0.41	0.2	-0.221098569	0.213223158	0.058999586	-0.513570278
+-0.33	-0.02	-0.17	0.139763219	-0.043098606	0.136588615	0.222174489
+0.91	0.7	0.81	0.315867096	0.059905254	0.034403775	0.110258014
+1.22	1.7	1.46	0.36877096	-0.491990139	-0.244130005	-0.126695903
+1.22	-0.45	0.39	0.09901012	-0.157021963	-0.111113756	-0.127030862
+-0.64	-0.88	-0.76	0.023106227	0.022587258	-0.058291022	0.13200743
+-1.57	-1.02	-1.3	-0.139188915	-0.147945488	0.052168776	0.204931212
+-0.95	-0.88	-0.91	0.379443926	0.043633345	-0.233022243	0.44399057
+0.6	-0.88	-0.14	-0.078448693	-0.004932663	-0.423464072	-0.072641723
+-1.88	-1.02	-1.45	0.141901832	0.08047412	0.368625552	-0.062432981
+-1.88	0.99	-0.45	-0.040906923	0.018814522	0.18505544	-0.001740027
+0.603670406	-0.161709278	0.220980564	0.569641514	0.342857485	-0.320719201	-0.02546786
+-0.02	-1.17	-0.59	0.264525325	0.02816996	0.668320256	-0.072209671
+0.29	0.99	0.64	0.168769341	-0.012218746	0.027660877	0.257481963
+-0.02	-1.17	-0.59	-0.097414847	0.124333057	0.001831439	0.221225735
+-0.33	-0.16	-0.24	-0.038107585	0.166154016	-0.063838311	0.062883983
+-0.64	0.41	-0.11	-0.047451922	-0.103875478	-0.035977624	0.623207397
+-0.33	0.27	-0.03	-0.355755034	-0.315810171	-0.071418923	-0.047493077
+0.29	2.28	1.29	-0.198523144	-0.108344191	0.047619308	-0.297792088
+1.22	0.7	0.96	-0.103234703	0.050281366	0.0275141	0.015089005
+1.22	1.27	1.25	0.304204643	0.29217203	0.241923392	-0.181772084
+-1.57	-0.31	-0.94	-0.115530829	-0.233143978	-0.169994163	0.07354553
+0.29	0.56	0.42	-0.151165652	-0.233003507	-0.166396738	0.074125416
+-1.57	1.42	-0.08	-0.254398174	0.142865601	-0.375734804	0.033990428
+-0.33	-1.02	-0.67	0.229313752	0.250467973	0.032532328	0.054925349
+0.29	-0.74	-0.22	0.185501308	0.025087202	-0.359806717	0.029847246
+-0.64	-0.74	-0.69	0.010207711	0.051588986	-0.214563174	0.090920819
+-0.33	-1.17	-0.75	-0.011989929	0.118593346	-0.112426785	-0.26309504
+1.22	2.56	1.89	-0.041497311	0.392906764	0.308094454	-0.180899225
+-0.64	0.13	-0.26	-0.003450558	-0.011161584	-0.229070495	-0.030300141
+1.84	0.84	1.34	0.099551071	-0.123122405	0.320852966	-0.094244569
+0.29	-1.17	-0.44	-0.60307947	-0.344911395	0.254558509	0.167912239
+0.91	0.27	0.59	-0.140133381	-0.048098821	0.045917893	-0.082668232
+1.53	-0.02	0.76	-0.291805415	0.04449716	-0.29640455	-0.012377936
+0.91	-1.02	-0.05	0.360509487	-0.262573594	-0.259144626	0.069882532
+0.29	-0.88	-0.29	-0.42510864	-0.216558757	-0.018030172	0.206873333
+-0.33	-0.59	-0.46	-0.227142315	-0.104696288	0.364761011	0.297901282];
+
+BISz = PersonSCR(:,1);
+BAIz = PersonSCR(:,2);
+Anxz = PersonSCR(:,3);
+
+PreColorSCRCSd = PersonSCR(:,4);
+PreGraySCRCSd = PersonSCR(:,5);
+PostColorSCRCSd = PersonSCR(:,6);
+PostGraySCRCSd = PersonSCR(:,7);
 
 allTimebyCS = [];
 allH0 = [];
 allPs = [];
 
+allrpi = [];
+allrpa = [];
+allrpn = [];
+
+allri = [];
+allra = [];
+allrn = [];
+
+allrscr = [];
+allrpscr = [];
+
 PrecondColorCSp = [];
 PrecondColorCSm = [];
 PostcondColorCSp = [];
 PostcondColorCSm = [];
+
+
+BISz = PersonSCR(:,1);
+BAIz = PersonSCR(:,2);
+Anxz = PersonSCR(:,3);
+
+PreColorSCRCSd = PersonSCR(:,4);
+PreGraySCRCSd = PersonSCR(:,5);
+PostColorSCRCSd = PersonSCR(:,6);
+PostGraySCRCSd = PersonSCR(:,7);
 
 for s = allsubs
     eval(['load PLC_EEG_Sub' num2str(s) '_Precond_Oz_ERPs.mat Oz';]);
@@ -1356,39 +1557,78 @@ for s = allsubs
 end
 %ttest for interaction for each time point
 for i = 1:length(allTimebyCS)
+    
     interaction = allTimebyCS(:,i);
+    
     [H0, p] = ttest(interaction, 0);
     allH0 = [allH0 H0];
-    allPs = [allPs p]; %data point 83-86 p < .1
+    allPs = [allPs p];
+    
+    [ri, rpi] = corr(interaction, BISz);
+    [ra, rpa] = corr(interaction, BAIz);
+    [rn, rpn] = corr(interaction, Anxz);
+    
+    allri = [allri ri];
+    allra = [allra ra];
+    allrn = [allrn rn];
+    
+    allrpi = [allrpi rpi];
+    allrpa = [allrpa rpa];
+    allrpn = [allrpn rpn];
+    
+    [rscr, rpscr] = corr(interaction, (PostColorSCRCSd - PreColorSCRCSd));
+    
+    allrscr = [allrscr rscr];
+    allrpscr = [allrpscr rpscr];
 end
 
 horz = Precond.horz;
 
-plot(horz, mean(PrecondColorCSp,1) , 'r:'); hold on;
-plot(horz, mean(PrecondColorCSm,1) , 'g:');
+plot(horz, mean(PrecondColorCSp,1) , 'r-.'); hold on;
+plot(horz, mean(PrecondColorCSm,1) , 'g-.');
 
-plot(horz, mean(PostcondColorCSp,1) , 'r--');
-plot(horz, mean(PostcondColorCSm,1) , 'g--');
+plot(horz, mean(PostcondColorCSp,1) , 'r-');
+plot(horz, mean(PostcondColorCSm,1) , 'g-');
 
 plot(horz,allPs, 'k');
-legend('Pre Color CS+', 'Pre Color CS-', 'PostB4 Color CS+', 'PostB4 Color CS-', 'Location', 'southwest');
-saveas(gcf, 'PrePostB4_ColorERPs_45subs_TimebyCS_pval.jpg');
+plot(horz,allrpi+1, 'k--');
+plot(horz,allrpscr+2, 'k-.');
+
+line([horz(81) horz(81)],[0 -7]);
+line([horz(87) horz(87)],[0 -7]);
+
+legend('Pre Color CS+', 'Pre Color CS-', 'Post B4 Color CS+', 'Post B4 Color CS-', 'Location', 'southwest');
+saveas(gcf, 'PrePostB4_ColorERPs_39subs_TimebyCSbyBIS_pval.jpg');
 close(gcf);
 
-%ttest for interaction for C1P1 trough-to-peak difference
-c1p1 = allTimebyCS(:,78) - allTimebyCS(:,75);
-[H0c1p1, pc1p1] = ttest(c1p1, 0); %H0 = 1 , pc1p1 = 0.004
+% %ttest for interaction for C1P1 trough-to-peak difference
+% c1p1 = allTimebyCS(:,78) - allTimebyCS(:,75);
+% [H0c1p1, pc1p1] = ttest(c1p1, 0); %H0 = 1, pc1p1 = 0.0031
+% 
+% %ttest for interaction for P1C2 peak-to-trough difference
+% p1c2 = allTimebyCS(:,86) - allTimebyCS(:,78);
+% [H0p1c2, pp1c2] = ttest(p1c2, 0); %H0 = 0, pp1c2 = 0.19
 
-%ttest for interaction for P1C2 peak-to-trough difference
-p1c2 = allTimebyCS(:,86) - allTimebyCS(:,78);
-[H0p1c2, pp1c2] = ttest(p1c2, 0); %H0 = 0 , pp1c2 = 0.187
+save PrePostB4_39subs_Color_TimebyCS.mat
+
 
 %% Gray condition
-allsubs = [1 3:5 8:29 31 33 34 37:44 46 47 50 51 54 56 57];
-
+allsubs = [1 3:4 8:11 13:29 33 34 38:40 42:44 46 47 50 51 54 56]; %removing 2,7,53,5,12,31,37,41,57 
 allTimebyCS = [];
 allH0 = [];
 allPs = [];
+
+allrpi = [];
+allrpa = [];
+allrpn = [];
+
+allri = [];
+allra = [];
+allrn = [];
+
+allrscr = [];
+allrpscr = [];
+
 
 PrecondGrayCSp = [];
 PrecondGrayCSm = [];
@@ -1410,39 +1650,86 @@ for s = allsubs
     PostcondGrayCSp = [PostcondGrayCSp; Postcond.GrayCSp];
     PostcondGrayCSm = [PostcondGrayCSm; Postcond.GrayCSm];
 end
+
 %ttest for interaction for each time point
 for i = 1:length(allTimebyCS)
+    
     interaction = allTimebyCS(:,i);
     [H0, p] = ttest(interaction, 0);
     allH0 = [allH0 H0];
     allPs = [allPs p];
+    
+    [ri, rpi] = corr(interaction, BISz);
+    [ra, rpa] = corr(interaction, BAIz);
+    [rn, rpn] = corr(interaction, Anxz);
+    
+    allri = [allri ri];
+    allra = [allra ra];
+    allrn = [allrn rn];
+    
+    allrpi = [allrpi rpi];
+    allrpa = [allrpa rpa];
+    allrpn = [allrpn rpn];
+    
+    [rscr, rpscr] = corr(interaction, (PostGraySCRCSd - PreGraySCRCSd));
+    
+    allrscr = [allrscr rscr];
+    allrpscr = [allrpscr rpscr];    
 end
 
 horz = Precond.horz;
 
-plot(horz, mean(PrecondGrayCSp,1) , 'b:'); hold on;
-plot(horz, mean(PrecondGrayCSm,1) , 'g:');
+plot(horz, mean(PrecondGrayCSp,1) , 'b-.'); hold on;
+plot(horz, mean(PrecondGrayCSm,1) , 'g-.');
 
-plot(horz, mean(PostcondGrayCSp,1) , 'b--');
-plot(horz, mean(PostcondGrayCSm,1) , 'g--');
+plot(horz, mean(PostcondGrayCSp,1) , 'b-');
+plot(horz, mean(PostcondGrayCSm,1) , 'g-');
 
-plot(horz,allPs, 'r');
-legend('Pre Gray CS+', 'Pre Gray CS-', 'PostB4 Gray CS+', 'PostB4 Gray CS-', 'Location', 'southwest');
-saveas(gcf, 'PrePostB4_GrayERPs_45subs_TimebyCS_pval.jpg');
+plot(horz,allPs-2, 'r');
+plot(horz,allrpi-1, 'r--');
+plot(horz,allrpscr, 'k-');
+
+line([horz(81) horz(81)],[0 7]);
+line([horz(89) horz(89)],[0 7]);
+
+legend('Pre Gray CS+', 'Pre Gray CS-', 'Post B4 Gray CS+', 'Post B4 Gray CS-', 'Location', 'southwest');
+saveas(gcf, 'PrePostB4_GrayERPs_39subs_TimebyCSbyBIS_pval.jpg');
 close(gcf);
+
+save PrePostB4_39subs_Gray_TimebyCS.mat
 
 %% Exploratory point-by-point ttest of Time(Pre/PostB5)*CS(+/-) interaction
 %Color condition, early time window
-allsubs = [1 3:5 8:29 31 33 34 37:44 46 47 50 51 54:57];
 
 allTimebyCS = [];
 allH0 = [];
 allPs = [];
 
+allrpi = [];
+allrpa = [];
+allrpn = [];
+
+allri = [];
+allra = [];
+allrn = [];
+
+allrscr = [];
+allrpscr = [];
+
 PrecondColorCSp = [];
 PrecondColorCSm = [];
 PostcondColorCSp = [];
 PostcondColorCSm = [];
+
+
+BISz = PersonSCR(:,1);
+BAIz = PersonSCR(:,2);
+Anxz = PersonSCR(:,3);
+
+PreColorSCRCSd = PersonSCR(:,4);
+PreGraySCRCSd = PersonSCR(:,5);
+PostColorSCRCSd = PersonSCR(:,6);
+PostGraySCRCSd = PersonSCR(:,7);
 
 for s = allsubs
     eval(['load PLC_EEG_Sub' num2str(s) '_Precond_Oz_ERPs.mat Oz';]);
@@ -1461,39 +1748,77 @@ for s = allsubs
 end
 %ttest for interaction for each time point
 for i = 1:length(allTimebyCS)
+    
     interaction = allTimebyCS(:,i);
+    
     [H0, p] = ttest(interaction, 0);
     allH0 = [allH0 H0];
     allPs = [allPs p];
+    
+    [ri, rpi] = corr(interaction, BISz);
+    [ra, rpa] = corr(interaction, BAIz);
+    [rn, rpn] = corr(interaction, Anxz);
+    
+    allri = [allri ri];
+    allra = [allra ra];
+    allrn = [allrn rn];
+    
+    allrpi = [allrpi rpi];
+    allrpa = [allrpa rpa];
+    allrpn = [allrpn rpn];
+    
+    [rscr, rpscr] = corr(interaction, (PostColorSCRCSd - PreColorSCRCSd));
+    
+    allrscr = [allrscr rscr];
+    allrpscr = [allrpscr rpscr];
 end
 
 horz = Precond.horz;
 
-plot(horz, mean(PrecondColorCSp,1) , 'r:'); hold on;
-plot(horz, mean(PrecondColorCSm,1) , 'g:');
+plot(horz, mean(PrecondColorCSp,1) , 'r-.'); hold on;
+plot(horz, mean(PrecondColorCSm,1) , 'g-.');
 
-plot(horz, mean(PostcondColorCSp,1) , 'r--');
-plot(horz, mean(PostcondColorCSm,1) , 'g--');
+plot(horz, mean(PostcondColorCSp,1) , 'r-');
+plot(horz, mean(PostcondColorCSm,1) , 'g-');
 
 plot(horz,allPs, 'k');
-legend('Pre Color CS+', 'Pre Color CS-', 'PostB5 Color CS+', 'PostB5 Color CS-', 'Location', 'southwest');
-saveas(gcf, 'PrePostB5_ColorERPs_45subs_TimebyCS_pval.jpg');
+plot(horz,allrpi+1, 'k--');
+plot(horz,allrpscr+2, 'k-.');
+
+line([horz(81) horz(81)],[0 -7]);
+line([horz(87) horz(87)],[0 -7]);
+
+legend('Pre Color CS+', 'Pre Color CS-', 'Post B5 Color CS+', 'Post B5 Color CS-', 'Location', 'southwest');
+saveas(gcf, 'PrePostB5_ColorERPs_39subs_TimebyCSbyBIS_pval.jpg');
 close(gcf);
 
-%ttest for interaction for C1P1 trough-to-peak difference
-c1p1 = allTimebyCS(:,78) - allTimebyCS(:,75);
-[H0c1p1, pc1p1] = ttest(c1p1, 0); %H0 = 1 , pc1p1 = 0.036
+% %ttest for interaction for C1P1 trough-to-peak difference
+% c1p1 = allTimebyCS(:,78) - allTimebyCS(:,75);
+% [H0c1p1, pc1p1] = ttest(c1p1, 0); %H0 = 1, pc1p1 = 0.0031
+% 
+% %ttest for interaction for P1C2 peak-to-trough difference
+% p1c2 = allTimebyCS(:,86) - allTimebyCS(:,78);
+% [H0p1c2, pp1c2] = ttest(p1c2, 0); %H0 = 0, pp1c2 = 0.19
 
-%ttest for interaction for P1C2 peak-to-trough difference
-p1c2 = allTimebyCS(:,86) - allTimebyCS(:,78);
-[H0p1c2, pp1c2] = ttest(p1c2, 0); %H0 = 0 , pp1c2 = 0.93
+save PrePostB5_39subs_Color_TimebyCS.mat
 
 %% Gray condition
-allsubs = [1 3:5 8:29 31 33 34 37:44 46 47 50 51 54:57];
 
 allTimebyCS = [];
 allH0 = [];
 allPs = [];
+
+allrpi = [];
+allrpa = [];
+allrpn = [];
+
+allri = [];
+allra = [];
+allrn = [];
+
+allrscr = [];
+allrpscr = [];
+
 
 PrecondGrayCSp = [];
 PrecondGrayCSm = [];
@@ -1515,39 +1840,125 @@ for s = allsubs
     PostcondGrayCSp = [PostcondGrayCSp; Postcond.GrayCSp];
     PostcondGrayCSm = [PostcondGrayCSm; Postcond.GrayCSm];
 end
+
 %ttest for interaction for each time point
 for i = 1:length(allTimebyCS)
+    
     interaction = allTimebyCS(:,i);
     [H0, p] = ttest(interaction, 0);
     allH0 = [allH0 H0];
     allPs = [allPs p];
+    
+    [ri, rpi] = corr(interaction, BISz);
+    [ra, rpa] = corr(interaction, BAIz);
+    [rn, rpn] = corr(interaction, Anxz);
+    
+    allri = [allri ri];
+    allra = [allra ra];
+    allrn = [allrn rn];
+    
+    allrpi = [allrpi rpi];
+    allrpa = [allrpa rpa];
+    allrpn = [allrpn rpn];
+    
+    [rscr, rpscr] = corr(interaction, (PostGraySCRCSd - PreGraySCRCSd));
+    
+    allrscr = [allrscr rscr];
+    allrpscr = [allrpscr rpscr];    
 end
 
 horz = Precond.horz;
 
-plot(horz, mean(PrecondGrayCSp,1) , 'b:'); hold on;
-plot(horz, mean(PrecondGrayCSm,1) , 'g:');
+plot(horz, mean(PrecondGrayCSp,1) , 'b-.'); hold on;
+plot(horz, mean(PrecondGrayCSm,1) , 'g-.');
 
-plot(horz, mean(PostcondGrayCSp,1) , 'b--');
-plot(horz, mean(PostcondGrayCSm,1) , 'g--');
+plot(horz, mean(PostcondGrayCSp,1) , 'b-');
+plot(horz, mean(PostcondGrayCSm,1) , 'g-');
 
-plot(horz,allPs, 'r');
-legend('Pre Gray CS+', 'Pre Gray CS-', 'PostB5 Gray CS+', 'PostB5 Gray CS-', 'Location', 'southwest');
-saveas(gcf, 'PrePostB5_GrayERPs_45subs_TimebyCS_pval.jpg');
+plot(horz,allPs-2, 'r');
+plot(horz,allrpi-1, 'r--');
+plot(horz,allrpscr, 'k-');
+
+line([horz(81) horz(81)],[0 7]);
+line([horz(89) horz(89)],[0 7]);
+
+legend('Pre Gray CS+', 'Pre Gray CS-', 'Post B5 Gray CS+', 'Post B5 Gray CS-', 'Location', 'southwest');
+saveas(gcf, 'PrePostB5_GrayERPs_39subs_TimebyCSbyBIS_pval.jpg');
 close(gcf);
+
+save PrePostB5_39subs_Gray_TimebyCS.mat
 
 %% Exploratory point-by-point ttest of Time(Pre/PostB6)*CS(+/-) interaction
 %Color condition, early time window
-allsubs = [1 3:5 8:14 16:29 31 33 34 37:44 46 47 50 51 54:55 57];
+allsubs = [1 3:4 8:11 13:14 16:29 33 34 38:40 42:44 46 47 50 51 54:55]; %removing 2,7,53,5,12,31,37,41,57,15,56 
+
+PersonSCR = [-0.64	-0.88	-0.76	-0.121536792	-0.132784119	-0.656143367	0.17686803
+-0.02	0.41	0.2	-0.221098569	0.213223158	0.058999586	-0.513570278
+-0.33	-0.02	-0.17	0.139763219	-0.043098606	0.136588615	0.222174489
+0.91	0.7	0.81	0.315867096	0.059905254	0.034403775	0.110258014
+1.22	1.7	1.46	0.36877096	-0.491990139	-0.244130005	-0.126695903
+1.22	-0.45	0.39	0.09901012	-0.157021963	-0.111113756	-0.127030862
+-0.64	-0.88	-0.76	0.023106227	0.022587258	-0.058291022	0.13200743
+-1.57	-1.02	-1.3	-0.139188915	-0.147945488	0.052168776	0.204931212
+-0.95	-0.88	-0.91	0.379443926	0.043633345	-0.233022243	0.44399057
+-1.88	-1.02	-1.45	0.141901832	0.08047412	0.368625552	-0.062432981
+-1.88	0.99	-0.45	-0.040906923	0.018814522	0.18505544	-0.001740027
+0.603670406	-0.161709278	0.220980564	0.569641514	0.342857485	-0.320719201	-0.02546786
+-0.02	-1.17	-0.59	0.264525325	0.02816996	0.668320256	-0.072209671
+0.29	0.99	0.64	0.168769341	-0.012218746	0.027660877	0.257481963
+-0.02	-1.17	-0.59	-0.097414847	0.124333057	0.001831439	0.221225735
+-0.33	-0.16	-0.24	-0.038107585	0.166154016	-0.063838311	0.062883983
+-0.64	0.41	-0.11	-0.047451922	-0.103875478	-0.035977624	0.623207397
+-0.33	0.27	-0.03	-0.355755034	-0.315810171	-0.071418923	-0.047493077
+0.29	2.28	1.29	-0.198523144	-0.108344191	0.047619308	-0.297792088
+1.22	0.7	0.96	-0.103234703	0.050281366	0.0275141	0.015089005
+1.22	1.27	1.25	0.304204643	0.29217203	0.241923392	-0.181772084
+-1.57	-0.31	-0.94	-0.115530829	-0.233143978	-0.169994163	0.07354553
+0.29	0.56	0.42	-0.151165652	-0.233003507	-0.166396738	0.074125416
+-1.57	1.42	-0.08	-0.254398174	0.142865601	-0.375734804	0.033990428
+-0.33	-1.02	-0.67	0.229313752	0.250467973	0.032532328	0.054925349
+0.29	-0.74	-0.22	0.185501308	0.025087202	-0.359806717	0.029847246
+-0.64	-0.74	-0.69	0.010207711	0.051588986	-0.214563174	0.090920819
+-0.33	-1.17	-0.75	-0.011989929	0.118593346	-0.112426785	-0.26309504
+1.22	2.56	1.89	-0.041497311	0.392906764	0.308094454	-0.180899225
+-0.64	0.13	-0.26	-0.003450558	-0.011161584	-0.229070495	-0.030300141
+1.84	0.84	1.34	0.099551071	-0.123122405	0.320852966	-0.094244569
+0.29	-1.17	-0.44	-0.60307947	-0.344911395	0.254558509	0.167912239
+0.91	0.27	0.59	-0.140133381	-0.048098821	0.045917893	-0.082668232
+1.53	-0.02	0.76	-0.291805415	0.04449716	-0.29640455	-0.012377936
+0.91	-1.02	-0.05	0.360509487	-0.262573594	-0.259144626	0.069882532
+0.29	-0.88	-0.29	-0.42510864	-0.216558757	-0.018030172	0.206873333
+-1.57	-0.88	-1.22	-0.194993828	0.11694365	0.044729962	0.333536848];
 
 allTimebyCS = [];
 allH0 = [];
 allPs = [];
 
+allrpi = [];
+allrpa = [];
+allrpn = [];
+
+allri = [];
+allra = [];
+allrn = [];
+
+allrscr = [];
+allrpscr = [];
+
 PrecondColorCSp = [];
 PrecondColorCSm = [];
 PostcondColorCSp = [];
 PostcondColorCSm = [];
+
+
+BISz = PersonSCR(:,1);
+BAIz = PersonSCR(:,2);
+Anxz = PersonSCR(:,3);
+
+PreColorSCRCSd = PersonSCR(:,4);
+PreGraySCRCSd = PersonSCR(:,5);
+PostColorSCRCSd = PersonSCR(:,6);
+PostGraySCRCSd = PersonSCR(:,7);
 
 for s = allsubs
     eval(['load PLC_EEG_Sub' num2str(s) '_Precond_Oz_ERPs.mat Oz';]);
@@ -1566,39 +1977,76 @@ for s = allsubs
 end
 %ttest for interaction for each time point
 for i = 1:length(allTimebyCS)
+    
     interaction = allTimebyCS(:,i);
+    
     [H0, p] = ttest(interaction, 0);
     allH0 = [allH0 H0];
     allPs = [allPs p];
+    
+    [ri, rpi] = corr(interaction, BISz);
+    [ra, rpa] = corr(interaction, BAIz);
+    [rn, rpn] = corr(interaction, Anxz);
+    
+    allri = [allri ri];
+    allra = [allra ra];
+    allrn = [allrn rn];
+    
+    allrpi = [allrpi rpi];
+    allrpa = [allrpa rpa];
+    allrpn = [allrpn rpn];
+    
+    [rscr, rpscr] = corr(interaction, (PostColorSCRCSd - PreColorSCRCSd));
+    
+    allrscr = [allrscr rscr];
+    allrpscr = [allrpscr rpscr];
 end
 
 horz = Precond.horz;
 
-plot(horz, mean(PrecondColorCSp,1) , 'r:'); hold on;
-plot(horz, mean(PrecondColorCSm,1) , 'g:');
+plot(horz, mean(PrecondColorCSp,1) , 'r-.'); hold on;
+plot(horz, mean(PrecondColorCSm,1) , 'g-.');
 
-plot(horz, mean(PostcondColorCSp,1) , 'r--');
-plot(horz, mean(PostcondColorCSm,1) , 'g--');
+plot(horz, mean(PostcondColorCSp,1) , 'r-');
+plot(horz, mean(PostcondColorCSm,1) , 'g-');
 
 plot(horz,allPs, 'k');
-legend('Pre Color CS+', 'Pre Color CS-', 'PostB6 Color CS+', 'PostB6 Color CS-', 'Location', 'southwest');
-saveas(gcf, 'PrePostB6_ColorERPs_45subs_TimebyCS_pval.jpg');
+plot(horz,allrpi+1, 'k--');
+plot(horz,allrpscr+2, 'k-.');
+
+line([horz(81) horz(81)],[0 -7]);
+line([horz(87) horz(87)],[0 -7]);
+
+legend('Pre Color CS+', 'Pre Color CS-', 'Post B6 Color CS+', 'Post B6 Color CS-', 'Location', 'southwest');
+saveas(gcf, 'PrePostB6_ColorERPs_39subs_TimebyCSbyBIS_pval.jpg');
 close(gcf);
 
-%ttest for interaction for C1P1 trough-to-peak difference
-c1p1 = allTimebyCS(:,78) - allTimebyCS(:,75);
-[H0c1p1, pc1p1] = ttest(c1p1, 0); %H0 = 0 , pc1p1 = 0.40
+% %ttest for interaction for C1P1 trough-to-peak difference
+% c1p1 = allTimebyCS(:,78) - allTimebyCS(:,75);
+% [H0c1p1, pc1p1] = ttest(c1p1, 0); %H0 = 1, pc1p1 = 0.0031
+% 
+% %ttest for interaction for P1C2 peak-to-trough difference
+% p1c2 = allTimebyCS(:,86) - allTimebyCS(:,78);
+% [H0p1c2, pp1c2] = ttest(p1c2, 0); %H0 = 0, pp1c2 = 0.19
 
-%ttest for interaction for P1C2 peak-to-trough difference
-p1c2 = allTimebyCS(:,86) - allTimebyCS(:,78);
-[H0p1c2, pp1c2] = ttest(p1c2, 0); %H0 = 0 , pp1c2 = 0.16
+save PrePostB6_39subs_Color_TimebyCS.mat
 
 %% Gray condition
-allsubs = [1 3:5 8:14 16:29 31 33 34 37:44 46 47 50 51 54:55 57];
-
 allTimebyCS = [];
 allH0 = [];
 allPs = [];
+
+allrpi = [];
+allrpa = [];
+allrpn = [];
+
+allri = [];
+allra = [];
+allrn = [];
+
+allrscr = [];
+allrpscr = [];
+
 
 PrecondGrayCSp = [];
 PrecondGrayCSm = [];
@@ -1620,26 +2068,53 @@ for s = allsubs
     PostcondGrayCSp = [PostcondGrayCSp; Postcond.GrayCSp];
     PostcondGrayCSm = [PostcondGrayCSm; Postcond.GrayCSm];
 end
+
 %ttest for interaction for each time point
 for i = 1:length(allTimebyCS)
+    
     interaction = allTimebyCS(:,i);
     [H0, p] = ttest(interaction, 0);
     allH0 = [allH0 H0];
     allPs = [allPs p];
+    
+    [ri, rpi] = corr(interaction, BISz);
+    [ra, rpa] = corr(interaction, BAIz);
+    [rn, rpn] = corr(interaction, Anxz);
+    
+    allri = [allri ri];
+    allra = [allra ra];
+    allrn = [allrn rn];
+    
+    allrpi = [allrpi rpi];
+    allrpa = [allrpa rpa];
+    allrpn = [allrpn rpn];
+    
+    [rscr, rpscr] = corr(interaction, (PostGraySCRCSd - PreGraySCRCSd));
+    
+    allrscr = [allrscr rscr];
+    allrpscr = [allrpscr rpscr];    
 end
 
 horz = Precond.horz;
 
-plot(horz, mean(PrecondGrayCSp,1) , 'b:'); hold on;
-plot(horz, mean(PrecondGrayCSm,1) , 'g:');
+plot(horz, mean(PrecondGrayCSp,1) , 'b-.'); hold on;
+plot(horz, mean(PrecondGrayCSm,1) , 'g-.');
 
-plot(horz, mean(PostcondGrayCSp,1) , 'b--');
-plot(horz, mean(PostcondGrayCSm,1) , 'g--');
+plot(horz, mean(PostcondGrayCSp,1) , 'b-');
+plot(horz, mean(PostcondGrayCSm,1) , 'g-');
 
-plot(horz,allPs, 'r');
-legend('Pre Gray CS+', 'Pre Gray CS-', 'PostB6 Gray CS+', 'PostB6 Gray CS-', 'Location', 'southwest');
-saveas(gcf, 'PrePostB6_GrayERPs_45subs_TimebyCS_pval.jpg');
+plot(horz,allPs-2, 'r');
+plot(horz,allrpi-1, 'r--');
+plot(horz,allrpscr, 'k-');
+
+line([horz(81) horz(81)],[0 7]);
+line([horz(89) horz(89)],[0 7]);
+
+legend('Pre Gray CS+', 'Pre Gray CS-', 'Post B5 Gray CS+', 'Post B5 Gray CS-', 'Location', 'southwest');
+saveas(gcf, 'PrePostB6_GrayERPs_39subs_TimebyCSbyBIS_pval.jpg');
 close(gcf);
+
+save PrePostB6_39subs_Gray_TimebyCS.mat
 
 %% Prepare for Loreta - Grand Ave
 

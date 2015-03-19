@@ -1067,48 +1067,101 @@ end
 save PLC_EEG_Postcond_MeanAmp_45subs AllColorC1P1C2 AllColor150_300 AllGrayP1 AllGray150_300
 
 
-%%  Get mean amplitudes for each individual: precond; 3/16/15
+%%  Get mean amplitudes for each individual: precond; 3/19/15
 
 %Inspection of grandycolor along with the graph identifies 
-%C1 trough:69; C1 peak:75; P1 peak:78; N1 peak: 86; P2 peak: 110
+%C1 trough:69; C1 peak:75; P1 peak:78; N1 peak: 86; P2 peak: 110; N3 peak:
+%125
 
 %Inspection of grandygray along with the graph identifies 
-%P1 peak: 85; N1: 98; P2 peak: 114
+%P1 peak: 85; N1: 98; P2 peak: 114; 
 
-allsubs = [1 3:5 8:29 31 33 34 37:44 46 47 50 51 54:57]; %removing 2,7,53
+%allsubs = [1 3:5 8:29 31 33 34 37:44 46 47 50 51 54:57]; %removing 2,7,53
+allsubs = [1 3:4 8:11 13:29 33 34 38:40 42:44 46 47 50 51 54:56]; %39 subs
 
 clear Oz
-AllColorC1P1C2 = [];
+AllColorC2N3 = [];
 AllGrayP1N1P2 = [];
 
 for s = allsubs
     eval(['load PLC_EEG_Sub' num2str(s) '_Precond_Oz_ERPs.mat Oz';]);
-    ColorCSpC1 = Oz.ColorCSp(75) - Oz.ColorCSp(69);
-    ColorCSpC1P1 = Oz.ColorCSp(78) - Oz.ColorCSp(75);
-    ColorCSpC2 = mean(Oz.ColorCSp(82:90));
+%     ColorCSpC1 = Oz.ColorCSp(75) - Oz.ColorCSp(69);
+%     ColorCSpC1P1 = Oz.ColorCSp(78) - Oz.ColorCSp(75);
+    ColorCSpC2 = mean(Oz.ColorCSp(81:87));
+    ColorCSpN3 = mean(Oz.ColorCSp(122:128));
 
-    ColorCSmC1 = Oz.ColorCSm(75) - Oz.ColorCSm(69);                        
-    ColorCSmC1P1 = Oz.ColorCSm(78) - Oz.ColorCSm(75);
-    ColorCSmC2 = mean(Oz.ColorCSm(82:90));
-
+%     ColorCSmC1 = Oz.ColorCSm(75) - Oz.ColorCSm(69);                        
+%     ColorCSmC1P1 = Oz.ColorCSm(78) - Oz.ColorCSm(75);
+    ColorCSmC2 = mean(Oz.ColorCSm(81:87));
+    ColorCSmN3 = mean(Oz.ColorCSm(122:128));
     
-    GrayCSpP1 = mean(Oz.GrayCSp(81:89));
-    GrayCSpN1 = mean(Oz.GrayCSp(94:102));
+    GrayCSpP1 = mean(Oz.GrayCSp(81:87));
+    GrayCSpN1 = mean(Oz.GrayCSp(99:105));
     GrayCSpP2 = mean(Oz.GrayCSp(104:124)); %using a broader window here
 
     
-    GrayCSmP1 = mean(Oz.GrayCSm(81:89));
-    GrayCSmN1 = mean(Oz.GrayCSm(94:102));
+    GrayCSmP1 = mean(Oz.GrayCSm(81:87));
+    GrayCSmN1 = mean(Oz.GrayCSm(99:105));
     GrayCSmP2 = mean(Oz.GrayCSm(104:124)); %using a broader window here
 
-AllColorC1P1C2 = [AllColorC1P1C2; s ColorCSpC1 ColorCSmC1 ColorCSpC1P1 ColorCSmC1P1 ColorCSpC2 ColorCSmC2];
-AllGrayP1N1P2 = [AllGrayP1N1P2; s GrayCSpP1 GrayCSmP1 GrayCSpN1 GrayCSmN1 GrayCSpP2 GrayCSmP2];
-    
+%AllColorC1P1C2 = [AllColorC1P1C2; s ColorCSpC1 ColorCSmC1 ColorCSpC1P1 ColorCSmC1P1 ColorCSpC2 ColorCSmC2];
+%AllGrayP1N1P2 = [AllGrayP1N1P2; s GrayCSpP1 GrayCSmP1 GrayCSpN1 GrayCSmN1 GrayCSpP2 GrayCSmP2];
+
+AllColorC2N3 = [AllColorC2N3; s ColorCSpC2 ColorCSmC2 ColorCSpN3 ColorCSmN3];
+AllGrayP1N1P2 = [AllGrayP1N1P2; s GrayCSpP1 GrayCSmP1 GrayCSpN1 GrayCSmN1 GrayCSpP2 GrayCSmP2]; 
+
 end
 
 
-save PLC_EEG_PrecondNewComponents_MeanAmp_45subs AllColorC1P1C2 AllGrayP1N1P2
+save PLC_EEG_PrecondNewComponents_MeanAmp_39subs AllColorC2N3 AllGrayP1N1P2
 
+%%  Get mean amplitudes for each individual: postcond; 3/19/15
+
+%Inspection of grandycolor along with the graph identifies 
+%C1 trough:69; C1 peak:75; P1 peak:78; N1 peak: 86; P2 peak: 110; N3 peak:
+%125
+
+%Inspection of grandygray along with the graph identifies 
+%P1 peak: 85; N1: 98; P2 peak: 114; 
+
+%allsubs = [1 3:5 8:29 31 33 34 37:44 46 47 50 51 54:57]; %removing 2,7,53
+allsubs = [1 3:4 8:11 13:29 33 34 38:40 42:44 46 47 50 51 54:56]; %39 subs
+
+clear Oz
+AllColorC2N3 = [];
+AllGrayP1N1P2 = [];
+
+for s = allsubs
+    eval(['load PLC_EEG_Sub' num2str(s) '_Postcond_Oz_ERPs.mat Oz';]);
+%     ColorCSpC1 = Oz.ColorCSp(75) - Oz.ColorCSp(69);
+%     ColorCSpC1P1 = Oz.ColorCSp(78) - Oz.ColorCSp(75);
+    ColorCSpC2 = mean(Oz.ColorCSp(81:87));
+    ColorCSpN3 = mean(Oz.ColorCSp(122:128));
+
+%     ColorCSmC1 = Oz.ColorCSm(75) - Oz.ColorCSm(69);                        
+%     ColorCSmC1P1 = Oz.ColorCSm(78) - Oz.ColorCSm(75);
+    ColorCSmC2 = mean(Oz.ColorCSm(81:87));
+    ColorCSmN3 = mean(Oz.ColorCSm(122:128));
+    
+    GrayCSpP1 = mean(Oz.GrayCSp(81:87));
+    GrayCSpN1 = mean(Oz.GrayCSp(99:105));
+    GrayCSpP2 = mean(Oz.GrayCSp(104:124)); %using a broader window here
+
+    
+    GrayCSmP1 = mean(Oz.GrayCSm(81:87));
+    GrayCSmN1 = mean(Oz.GrayCSm(99:105));
+    GrayCSmP2 = mean(Oz.GrayCSm(104:124)); %using a broader window here
+
+%AllColorC1P1C2 = [AllColorC1P1C2; s ColorCSpC1 ColorCSmC1 ColorCSpC1P1 ColorCSmC1P1 ColorCSpC2 ColorCSmC2];
+%AllGrayP1N1P2 = [AllGrayP1N1P2; s GrayCSpP1 GrayCSmP1 GrayCSpN1 GrayCSmN1 GrayCSpP2 GrayCSmP2];
+
+AllColorC2N3 = [AllColorC2N3; s ColorCSpC2 ColorCSmC2 ColorCSpN3 ColorCSmN3];
+AllGrayP1N1P2 = [AllGrayP1N1P2; s GrayCSpP1 GrayCSmP1 GrayCSpN1 GrayCSmN1 GrayCSpP2 GrayCSmP2]; 
+
+end
+
+
+save PLC_EEG_PostcondNewComponents_MeanAmp_39subs AllColorC2N3 AllGrayP1N1P2
 
 %%  Get mean amplitudes for each individual: postcond B4; 3/16/15
 
@@ -1118,109 +1171,119 @@ save PLC_EEG_PrecondNewComponents_MeanAmp_45subs AllColorC1P1C2 AllGrayP1N1P2
 %Inspection of grandygray along with the graph identifies 
 %P1 peak: 85; N1: 98; P2 peak: 114
 
-allsubs = [1 3:5 8:29 31 33 34 37:44 46 47 50 51 54 56 57]; %removing 2,7,53
+allsubs = [1 3:4 8:11 13:29 33 34 38:40 42:44 46 47 50 51 54 56]; %39 subs
 
 clear Oz
-AllColorC1P1C2 = [];
+AllColorC2N3 = [];
 AllGrayP1N1P2 = [];
 
 for s = allsubs
     eval(['load PLC_EEG_Sub' num2str(s) '_Block4_Oz_ERPs.mat Oz';]);
-    ColorCSpC1 = Oz.ColorCSp(75) - Oz.ColorCSp(69);
-    ColorCSpC1P1 = Oz.ColorCSp(78) - Oz.ColorCSp(75);
-    ColorCSpC2 = mean(Oz.ColorCSp(82:90));
+%     ColorCSpC1 = Oz.ColorCSp(75) - Oz.ColorCSp(69);
+%     ColorCSpC1P1 = Oz.ColorCSp(78) - Oz.ColorCSp(75);
+    ColorCSpC2 = mean(Oz.ColorCSp(81:87));
+    ColorCSpN3 = mean(Oz.ColorCSp(122:128));
 
-    ColorCSmC1 = Oz.ColorCSm(75) - Oz.ColorCSm(69);                        
-    ColorCSmC1P1 = Oz.ColorCSm(78) - Oz.ColorCSm(75);
-    ColorCSmC2 = mean(Oz.ColorCSm(82:90));
-
+%     ColorCSmC1 = Oz.ColorCSm(75) - Oz.ColorCSm(69);                        
+%     ColorCSmC1P1 = Oz.ColorCSm(78) - Oz.ColorCSm(75);
+    ColorCSmC2 = mean(Oz.ColorCSm(81:87));
+    ColorCSmN3 = mean(Oz.ColorCSm(122:128));
     
-    GrayCSpP1 = mean(Oz.GrayCSp(81:89));
-    GrayCSpN1 = mean(Oz.GrayCSp(94:102));
+    GrayCSpP1 = mean(Oz.GrayCSp(81:87));
+    GrayCSpN1 = mean(Oz.GrayCSp(99:105));
     GrayCSpP2 = mean(Oz.GrayCSp(104:124)); %using a broader window here
 
     
-    GrayCSmP1 = mean(Oz.GrayCSm(81:89));
-    GrayCSmN1 = mean(Oz.GrayCSm(94:102));
+    GrayCSmP1 = mean(Oz.GrayCSm(81:87));
+    GrayCSmN1 = mean(Oz.GrayCSm(99:105));
     GrayCSmP2 = mean(Oz.GrayCSm(104:124)); %using a broader window here
 
-AllColorC1P1C2 = [AllColorC1P1C2; s ColorCSpC1 ColorCSmC1 ColorCSpC1P1 ColorCSmC1P1 ColorCSpC2 ColorCSmC2];
-AllGrayP1N1P2 = [AllGrayP1N1P2; s GrayCSpP1 GrayCSmP1 GrayCSpN1 GrayCSmN1 GrayCSpP2 GrayCSmP2];
-    
+%AllColorC1P1C2 = [AllColorC1P1C2; s ColorCSpC1 ColorCSmC1 ColorCSpC1P1 ColorCSmC1P1 ColorCSpC2 ColorCSmC2];
+%AllGrayP1N1P2 = [AllGrayP1N1P2; s GrayCSpP1 GrayCSmP1 GrayCSpN1 GrayCSmN1 GrayCSpP2 GrayCSmP2];
+
+AllColorC2N3 = [AllColorC2N3; s ColorCSpC2 ColorCSmC2 ColorCSpN3 ColorCSmN3];
+AllGrayP1N1P2 = [AllGrayP1N1P2; s GrayCSpP1 GrayCSmP1 GrayCSpN1 GrayCSmN1 GrayCSpP2 GrayCSmP2]; 
+
 end
 
-
-save PLC_EEG_PostB4_MeanAmp_45subs AllColorC1P1C2 AllGrayP1N1P2
+save PLC_EEG_PostcondB4_NewComponents_MeanAmp_39subs AllColorC2N3 AllGrayP1N1P2
 
 %% B5
-allsubs = [1 3:5 8:29 31 33 34 37:44 46 47 50 51 54:57];
+
+allsubs = [1 3:4 8:11 13:29 33 34 38:40 42:44 46 47 50 51 54 55 56]; %39 subs
 
 clear Oz
-AllColorC1P1C2 = [];
+AllColorC2N3 = [];
 AllGrayP1N1P2 = [];
 
 for s = allsubs
     eval(['load PLC_EEG_Sub' num2str(s) '_Block5_Oz_ERPs.mat Oz';]);
-    ColorCSpC1 = Oz.ColorCSp(75) - Oz.ColorCSp(69);
-    ColorCSpC1P1 = Oz.ColorCSp(78) - Oz.ColorCSp(75);
-    ColorCSpC2 = mean(Oz.ColorCSp(82:90));
+%     ColorCSpC1 = Oz.ColorCSp(75) - Oz.ColorCSp(69);
+%     ColorCSpC1P1 = Oz.ColorCSp(78) - Oz.ColorCSp(75);
+    ColorCSpC2 = mean(Oz.ColorCSp(81:87));
+    ColorCSpN3 = mean(Oz.ColorCSp(122:128));
 
-    ColorCSmC1 = Oz.ColorCSm(75) - Oz.ColorCSm(69);                        
-    ColorCSmC1P1 = Oz.ColorCSm(78) - Oz.ColorCSm(75);
-    ColorCSmC2 = mean(Oz.ColorCSm(82:90));
-
+%     ColorCSmC1 = Oz.ColorCSm(75) - Oz.ColorCSm(69);                        
+%     ColorCSmC1P1 = Oz.ColorCSm(78) - Oz.ColorCSm(75);
+    ColorCSmC2 = mean(Oz.ColorCSm(81:87));
+    ColorCSmN3 = mean(Oz.ColorCSm(122:128));
     
-    GrayCSpP1 = mean(Oz.GrayCSp(81:89));
-    GrayCSpN1 = mean(Oz.GrayCSp(94:102));
+    GrayCSpP1 = mean(Oz.GrayCSp(81:87));
+    GrayCSpN1 = mean(Oz.GrayCSp(99:105));
     GrayCSpP2 = mean(Oz.GrayCSp(104:124)); %using a broader window here
 
     
-    GrayCSmP1 = mean(Oz.GrayCSm(81:89));
-    GrayCSmN1 = mean(Oz.GrayCSm(94:102));
+    GrayCSmP1 = mean(Oz.GrayCSm(81:87));
+    GrayCSmN1 = mean(Oz.GrayCSm(99:105));
     GrayCSmP2 = mean(Oz.GrayCSm(104:124)); %using a broader window here
 
-AllColorC1P1C2 = [AllColorC1P1C2; s ColorCSpC1 ColorCSmC1 ColorCSpC1P1 ColorCSmC1P1 ColorCSpC2 ColorCSmC2];
-AllGrayP1N1P2 = [AllGrayP1N1P2; s GrayCSpP1 GrayCSmP1 GrayCSpN1 GrayCSmN1 GrayCSpP2 GrayCSmP2];
-    
+%AllColorC1P1C2 = [AllColorC1P1C2; s ColorCSpC1 ColorCSmC1 ColorCSpC1P1 ColorCSmC1P1 ColorCSpC2 ColorCSmC2];
+%AllGrayP1N1P2 = [AllGrayP1N1P2; s GrayCSpP1 GrayCSmP1 GrayCSpN1 GrayCSmN1 GrayCSpP2 GrayCSmP2];
+
+AllColorC2N3 = [AllColorC2N3; s ColorCSpC2 ColorCSmC2 ColorCSpN3 ColorCSmN3];
+AllGrayP1N1P2 = [AllGrayP1N1P2; s GrayCSpP1 GrayCSmP1 GrayCSpN1 GrayCSmN1 GrayCSpP2 GrayCSmP2]; 
+
 end
 
-
-save PLC_EEG_PostB5_MeanAmp_45subs AllColorC1P1C2 AllGrayP1N1P2
+save PLC_EEG_PostcondB5_NewComponents_MeanAmp_39subs AllColorC2N3 AllGrayP1N1P2
 
 %% B6
-allsubs = [1 3:5 8:14 16:29 31 33 34 37:44 46 47 50 51 54:55 57];
+allsubs = [1 3:4 8:11 13:14 16:29 33 34 38:40 42:44 46 47 50 51 54 55]; %39 subs
 
 clear Oz
-AllColorC1P1C2 = [];
+AllColorC2N3 = [];
 AllGrayP1N1P2 = [];
 
 for s = allsubs
     eval(['load PLC_EEG_Sub' num2str(s) '_Block6_Oz_ERPs.mat Oz';]);
-    ColorCSpC1 = Oz.ColorCSp(75) - Oz.ColorCSp(69);
-    ColorCSpC1P1 = Oz.ColorCSp(78) - Oz.ColorCSp(75);
-    ColorCSpC2 = mean(Oz.ColorCSp(82:90));
+%     ColorCSpC1 = Oz.ColorCSp(75) - Oz.ColorCSp(69);
+%     ColorCSpC1P1 = Oz.ColorCSp(78) - Oz.ColorCSp(75);
+    ColorCSpC2 = mean(Oz.ColorCSp(81:87));
+    ColorCSpN3 = mean(Oz.ColorCSp(122:128));
 
-    ColorCSmC1 = Oz.ColorCSm(75) - Oz.ColorCSm(69);                        
-    ColorCSmC1P1 = Oz.ColorCSm(78) - Oz.ColorCSm(75);
-    ColorCSmC2 = mean(Oz.ColorCSm(82:90));
-
+%     ColorCSmC1 = Oz.ColorCSm(75) - Oz.ColorCSm(69);                        
+%     ColorCSmC1P1 = Oz.ColorCSm(78) - Oz.ColorCSm(75);
+    ColorCSmC2 = mean(Oz.ColorCSm(81:87));
+    ColorCSmN3 = mean(Oz.ColorCSm(122:128));
     
-    GrayCSpP1 = mean(Oz.GrayCSp(81:89));
-    GrayCSpN1 = mean(Oz.GrayCSp(94:102));
+    GrayCSpP1 = mean(Oz.GrayCSp(81:87));
+    GrayCSpN1 = mean(Oz.GrayCSp(99:105));
     GrayCSpP2 = mean(Oz.GrayCSp(104:124)); %using a broader window here
 
     
-    GrayCSmP1 = mean(Oz.GrayCSm(81:89));
-    GrayCSmN1 = mean(Oz.GrayCSm(94:102));
+    GrayCSmP1 = mean(Oz.GrayCSm(81:87));
+    GrayCSmN1 = mean(Oz.GrayCSm(99:105));
     GrayCSmP2 = mean(Oz.GrayCSm(104:124)); %using a broader window here
 
-AllColorC1P1C2 = [AllColorC1P1C2; s ColorCSpC1 ColorCSmC1 ColorCSpC1P1 ColorCSmC1P1 ColorCSpC2 ColorCSmC2];
-AllGrayP1N1P2 = [AllGrayP1N1P2; s GrayCSpP1 GrayCSmP1 GrayCSpN1 GrayCSmN1 GrayCSpP2 GrayCSmP2];
-    
+%AllColorC1P1C2 = [AllColorC1P1C2; s ColorCSpC1 ColorCSmC1 ColorCSpC1P1 ColorCSmC1P1 ColorCSpC2 ColorCSmC2];
+%AllGrayP1N1P2 = [AllGrayP1N1P2; s GrayCSpP1 GrayCSmP1 GrayCSpN1 GrayCSmN1 GrayCSpP2 GrayCSmP2];
+
+AllColorC2N3 = [AllColorC2N3; s ColorCSpC2 ColorCSmC2 ColorCSpN3 ColorCSmN3];
+AllGrayP1N1P2 = [AllGrayP1N1P2; s GrayCSpP1 GrayCSmP1 GrayCSpN1 GrayCSmN1 GrayCSpP2 GrayCSmP2]; 
+
 end
 
-
-save PLC_EEG_PostB6_MeanAmp_45subs AllColorC1P1C2 AllGrayP1N1P2
+save PLC_EEG_PostcondB6_NewComponents_MeanAmp_39subs AllColorC2N3 AllGrayP1N1P2
 
 
 %% Exploratory point-by-point ttest of Time(Pre/Post)*CS(+/-) interaction
@@ -1358,6 +1421,9 @@ plot(horz,allrpscr+2, 'k-.');
 line([horz(81) horz(81)],[0 -7]);
 line([horz(87) horz(87)],[0 -7]);
 
+line([horz(122) horz(122)],[0 -7]);
+
+
 legend('Pre Color CS+', 'Pre Color CS-', 'Post Color CS+', 'Post Color CS-', 'Location', 'southwest');
 saveas(gcf, 'PrePost_ColorERPs_39subs_TimebyCSbyBIS_pval.jpg');
 close(gcf);
@@ -1448,9 +1514,14 @@ plot(horz,allPs-2, 'r');
 plot(horz,allrpi-1, 'r--');
 plot(horz,allrpscr, 'k-');
 
-line([horz(81) horz(81)],[0 7]);
-line([horz(89) horz(89)],[0 7]);
+line([horz(81) horz(81)],[0 6]);
+line([horz(87) horz(87)],[0 6]);
 
+line([horz(99) horz(99)],[0 6]);
+%line([horz(105) horz(105)],[0 6]);
+
+line([horz(104) horz(104)],[0 6]);
+line([horz(124) horz(124)],[0 6]);
 legend('Pre Gray CS+', 'Pre Gray CS-', 'Post Gray CS+', 'Post Gray CS-', 'Location', 'southwest');
 saveas(gcf, 'PrePost_GrayERPs_39subs_TimebyCSbyBIS_pval.jpg');
 close(gcf);

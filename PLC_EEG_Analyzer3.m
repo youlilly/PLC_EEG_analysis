@@ -1146,7 +1146,6 @@ for s = allsubs
     GrayCSpP1 = mean(Oz.GrayCSp(81:87));
     GrayCSpN1 = mean(Oz.GrayCSp(99:105));
     GrayCSpP2 = mean(Oz.GrayCSp(104:124)); %using a broader window here
-
     
     GrayCSmP1 = mean(Oz.GrayCSm(81:87));
     GrayCSmN1 = mean(Oz.GrayCSm(99:105));

@@ -614,7 +614,7 @@ Pre.HCrt = [Pre.Acc(:,1) gCSp.HCrt(:,2) gCSm.HCrt(:,2) cCSp.HCrt(:,2) cCSm.HCrt(
 
 Pre.allrt = [Pre.Acc(:,1) gCSp.allrt(:,2) gCSm.allrt(:,2) cCSp.allrt(:,2) cCSm.allrt(:,2) gCSp.allrt(:,2)-gCSm.allrt(:,2) cCSp.allrt(:,2)-cCSm.allrt(:,2)];
 
-save PLC_beh_PreCond_all Pre
+save PLC_beh_PreCond_all_032215 Pre
 
 
 %% Accuracy and RTs broken down by angle - Postconditioning1 - blocks 4,5,6
@@ -626,6 +626,8 @@ allsubs = ExpStatus(find(ExpStatus(:,2) ==1 | ExpStatus(:,2) ==0)',1)';
 allsubs(allsubs ==30)=[];
 allsubs(allsubs ==35)=[];
 allsubs(allsubs ==36)=[];
+% allsubs(allsubs ==15)=[];
+% allsubs(allsubs ==56)=[];
 
 all_acc = [];
 all_rts = [];
@@ -652,6 +654,7 @@ for a = allsubs;
     else
         bs = 4:6;
     end
+%    bs = 6;
     
     initials = subinitials(a,:);
     
@@ -705,7 +708,7 @@ for a = allsubs;
         
         for i = 1:length(rtypes_rttrimed) %reminder: potential issue with duplicate rt entries
             index = rtypes_rttrimed(i,1); %old index that corresponds to StimR
-            response_time = rtypes_rttrimed(i,3);
+            response_time = rtypes_rttrimed(i,4);
             
             targetid=StimR(index,1) ; %Specifies which of the IAPS images in sequence
             distractorid=StimR(index,2) ; %Specifies which of the emo conditions is presented
@@ -1128,7 +1131,7 @@ Post1.HCrt = [Post1.Acc(:,1) gCSp.HCrt(:,2) gCSm.HCrt(:,2) cCSp.HCrt(:,2) cCSm.H
 
 Post1.allrt = [Post1.Acc(:,1) gCSp.allrt(:,2) gCSm.allrt(:,2) cCSp.allrt(:,2) cCSm.allrt(:,2) gCSp.allrt(:,2)-gCSm.allrt(:,2) cCSp.allrt(:,2)-cCSm.allrt(:,2)];
 
-save PLC_beh_PostCond1_all Post1
+%save PLC_beh_PostCond1_all_032215 Post1
 
 %% Gabor Ratings - Visit 1
 
@@ -1349,6 +1352,7 @@ allsubs = ExpStatus(find(ExpStatus(:,4) ==1 | ExpStatus(:,4) ==0)',1)';
 
 %Remove subjects with lots of no response
 allsubs(allsubs ==35)=[];
+%allsubs(allsubs ==10)=[];
 
 
 
@@ -1372,11 +1376,12 @@ allRTs = [];
 
 for a = allsubs;
     
-    if a == 10
-        bs = [4 6];
-    else
-        bs = 4:6;
-    end
+%     if a == 10
+%         bs = [4 6];
+%     else
+%         bs = 4:6;
+%     end
+    bs = 6;
     
     initials = subinitials(a,:);
     
@@ -1430,7 +1435,7 @@ for a = allsubs;
         
         for i = 1:length(rtypes_rttrimed) %reminder: potential issue with duplicate rt entries
             index = rtypes_rttrimed(i,1); %old index that corresponds to StimR
-            response_time = rtypes_rttrimed(i,3);
+            response_time = rtypes_rttrimed(i,4);
             
             targetid=StimR(index,1) ; %Specifies which of the IAPS images in sequence
             distractorid=StimR(index,2) ; %Specifies which of the emo conditions is presented
@@ -1854,7 +1859,7 @@ Post2.HCrt = [Post2.Acc(:,1) gCSp.HCrt(:,2) gCSm.HCrt(:,2) cCSp.HCrt(:,2) cCSm.H
 Post2.allrt = [Post2.Acc(:,1) gCSp.allrt(:,2) gCSm.allrt(:,2) cCSp.allrt(:,2) cCSm.allrt(:,2) gCSp.allrt(:,2)-gCSm.allrt(:,2) cCSp.allrt(:,2)-cCSm.allrt(:,2)];
 
 
-save PLC_beh_PostCond2_all Post2
+%save PLC_beh_PostCond2_all_032215 Post2
 
 %% Calculate pre- and post- conditioning difference
 

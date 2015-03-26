@@ -392,7 +392,8 @@ clear all
 %allsubs = [1:5 7:44 46 47 49:51 53:57];
 %allsubs = [1:5 7:29 31 33 34 37:44 46 47 50 51 53:57];
 %allsubs = [1 3:5 8:29 31 33 34 37:44 46 47 50 51 54:57]; %removing 2,7,53, 45 subs
-allsubs = [1 3 4 9 10 12 13 15 16 17 18 20:25 27 28 32 33 34 37:40 42:44 46 47 50 51 54 55 57]; %36 subs
+%allsubs = [1 3 4 9 10 12 13 15 16 17 18 20:25 27 28 32 33 34 37:40 42:44 46 47 50 51 54 55 57]; %36 subs
+allsubs = [1 3:4 8:11 13:29 33 34 38:40 42:44 46 47 50 51 54:56]; %39 subs
 
 GrayCSp = cell(96,1);
 GrayCSm = cell(96,1);
@@ -444,7 +445,7 @@ results.GrayCSm = GrayCSm;
 results.ColCSp = ColCSp;
 results.ColCSm = ColCSm;
 
-save PLC_EEG_GrandAve_Precond_36subsNo27.mat results
+save PLC_EEG_GrandAve_Precond_39subs_032315.mat results
 
 %save PLC_EEG_GrandAve_Precond_45subsNo2753.mat results
 %save PLC_EEG_GrandAve_Precond_All48subs.mat results
@@ -458,7 +459,8 @@ clear all
 %allsubs = [1:5 7:29 31 33 34 37:44 46 47 50 51 53:57]; %list of all 48
 %subs
 %allsubs = [1 3:5 8:29 31 33 34 37:44 46 47 50 51 54:57]; %removing 2,7,53
-allsubs = [1 3 4 9 10 12 13 15 16 17 18 20:25 27 28 32 33 34 37:40 42:44 46 47 50 51 54 55 57]; %36 subs
+%allsubs = [1 3 4 9 10 12 13 15 16 17 18 20:25 27 28 32 33 34 37:40 42:44 46 47 50 51 54 55 57]; %36 subs
+allsubs = [1 3:4 8:11 13:29 33 34 38:40 42:44 46 47 50 51 54:56]; %39 subs
 
 GrayCSp = cell(96,1);
 GrayCSm = cell(96,1);
@@ -509,7 +511,7 @@ results.GrayCSm = GrayCSm;
 results.ColCSp = ColCSp;
 results.ColCSm = ColCSm;
 
-save PLC_EEG_GrandAve_Postcond_36subsNo27.mat results
+save PLC_EEG_GrandAve_Postcond_39subs_032315.mat results
 
 %save PLC_EEG_GrandAve_Postcond_45subsNo2753.mat results
 
@@ -719,6 +721,8 @@ end
 % Pz = [24 34 35 36 40];
 % Cz = [1 2 38 63 84];
 % Fz = [75 81 82 83 86];
+
+
 
 %% Plot individual ERPs Pre-Post
 clear all
@@ -1087,20 +1091,20 @@ for s = allsubs
     eval(['load PLC_EEG_Sub' num2str(s) '_Precond_Oz_ERPs.mat Oz';]);
 %     ColorCSpC1 = Oz.ColorCSp(75) - Oz.ColorCSp(69);
 %     ColorCSpC1P1 = Oz.ColorCSp(78) - Oz.ColorCSp(75);
-    ColorCSpC2 = mean(Oz.ColorCSp(81:87));
+    ColorCSpC2 = mean(Oz.ColorCSp(83:88));
     ColorCSpN3 = mean(Oz.ColorCSp(122:128));
 
 %     ColorCSmC1 = Oz.ColorCSm(75) - Oz.ColorCSm(69);                        
 %     ColorCSmC1P1 = Oz.ColorCSm(78) - Oz.ColorCSm(75);
-    ColorCSmC2 = mean(Oz.ColorCSm(81:87));
+    ColorCSmC2 = mean(Oz.ColorCSm(83:88));
     ColorCSmN3 = mean(Oz.ColorCSm(122:128));
     
-    GrayCSpP1 = mean(Oz.GrayCSp(81:87));
+    GrayCSpP1 = mean(Oz.GrayCSp(83:88));
     GrayCSpN1 = mean(Oz.GrayCSp(99:105));
     GrayCSpP2 = mean(Oz.GrayCSp(104:124)); %using a broader window here
 
     
-    GrayCSmP1 = mean(Oz.GrayCSm(81:87));
+    GrayCSmP1 = mean(Oz.GrayCSm(83:88));
     GrayCSmN1 = mean(Oz.GrayCSm(99:105));
     GrayCSmP2 = mean(Oz.GrayCSm(104:124)); %using a broader window here
 
@@ -1114,6 +1118,89 @@ end
 
 
 save PLC_EEG_PrecondNewComponents_MeanAmp_39subs AllColorC2N3 AllGrayP1N1P2
+
+
+%%  Get mean amplitudes for each individual: precond; 3/22/15
+
+%Use individual peak for each component
+
+%allsubs = [1 3:5 8:29 31 33 34 37:44 46 47 50 51 54:57]; %removing 2,7,53
+allsubs = [1 3:4 8:11 13:29 33 34 38:40 42:44 46 47 50 51 54:56]; %39 subs
+
+clear Oz
+AllColorC2P2 = [];
+AllGrayP1N1P2 = [];
+
+for s = allsubs
+    eval(['load PLC_EEG_Sub' num2str(s) '_Precond_Oz_ERPs.mat Oz';]);
+%     ColorCSpC1 = Oz.ColorCSp(75) - Oz.ColorCSp(69);
+%     ColorCSpC1P1 = Oz.ColorCSp(78) - Oz.ColorCSp(75);
+    ColorCSpC2 = mean(Oz.ColorCSp(84:88));
+    ColorCSpP2 = mean(Oz.ColorCSp(99:123));
+
+%     ColorCSmC1 = Oz.ColorCSm(75) - Oz.ColorCSm(69);                        
+%     ColorCSmC1P1 = Oz.ColorCSm(78) - Oz.ColorCSm(75);
+    ColorCSmC2 = mean(Oz.ColorCSm(84:88));
+    ColorCSmP2 = mean(Oz.ColorCSm(98:122));
+    
+    GrayCSpP1 = mean(Oz.GrayCSp(82:88));
+    GrayCSpN1 = mean(Oz.GrayCSp(95:105));
+    GrayCSpP2 = mean(Oz.GrayCSp(107:117)); %using a broader window here
+
+    
+    GrayCSmP1 = mean(Oz.GrayCSm(81:87));
+    GrayCSmN1 = mean(Oz.GrayCSm(93:103));
+    GrayCSmP2 = mean(Oz.GrayCSm(108:118)); %using a broader window here
+
+%AllColorC1P1C2 = [AllColorC1P1C2; s ColorCSpC1 ColorCSmC1 ColorCSpC1P1 ColorCSmC1P1 ColorCSpC2 ColorCSmC2];
+%AllGrayP1N1P2 = [AllGrayP1N1P2; s GrayCSpP1 GrayCSmP1 GrayCSpN1 GrayCSmN1 GrayCSpP2 GrayCSmP2];
+
+AllColorC2P2 = [AllColorC2P2; s ColorCSpC2 ColorCSmC2 ColorCSpP2 ColorCSmP2];
+AllGrayP1N1P2 = [AllGrayP1N1P2; s GrayCSpP1 GrayCSmP1 GrayCSpN1 GrayCSmN1 GrayCSpP2 GrayCSmP2]; 
+
+end
+
+
+save PLC_EEG_PrecondNewComponents_MeanAmp_39subs AllColorC2P2 AllGrayP1N1P2
+
+%%  Get mean amplitudes for each individual: postcond; 3/22/15
+
+%allsubs = [1 3:5 8:29 31 33 34 37:44 46 47 50 51 54:57]; %removing 2,7,53
+allsubs = [1 3:4 8:11 13:29 33 34 38:40 42:44 46 47 50 51 54:56]; %39 subs
+
+clear Oz
+AllColorC2P2 = [];
+AllGrayP1N1P2 = [];
+
+for s = allsubs
+    eval(['load PLC_EEG_Sub' num2str(s) '_Postcond_Oz_ERPs.mat Oz';]);
+%     ColorCSpC1 = Oz.ColorCSp(75) - Oz.ColorCSp(69);
+%     ColorCSpC1P1 = Oz.ColorCSp(78) - Oz.ColorCSp(75);
+    ColorCSpC2 = mean(Oz.ColorCSp(85:89));
+    ColorCSpP2 = mean(Oz.ColorCSp(97:121));
+
+%     ColorCSmC1 = Oz.ColorCSm(75) - Oz.ColorCSm(69);                        
+%     ColorCSmC1P1 = Oz.ColorCSm(78) - Oz.ColorCSm(75);
+    ColorCSmC2 = mean(Oz.ColorCSm(84:88));
+    ColorCSmP2 = mean(Oz.ColorCSm(97:121));
+    
+    GrayCSpP1 = mean(Oz.GrayCSp(83:89));
+    GrayCSpN1 = mean(Oz.GrayCSp(96:106));
+    GrayCSpP2 = mean(Oz.GrayCSp(106:116)); %using a broader window here
+    
+    GrayCSmP1 = mean(Oz.GrayCSm(82:88));
+    GrayCSmN1 = mean(Oz.GrayCSm(92:102));
+    GrayCSmP2 = mean(Oz.GrayCSm(106:116)); %using a broader window here
+%AllColorC1P1C2 = [AllColorC1P1C2; s ColorCSpC1 ColorCSmC1 ColorCSpC1P1 ColorCSmC1P1 ColorCSpC2 ColorCSmC2];
+%AllGrayP1N1P2 = [AllGrayP1N1P2; s GrayCSpP1 GrayCSmP1 GrayCSpN1 GrayCSmN1 GrayCSpP2 GrayCSmP2];
+
+AllColorC2P2 = [AllColorC2P2; s ColorCSpC2 ColorCSmC2 ColorCSpP2 ColorCSmP2];
+AllGrayP1N1P2 = [AllGrayP1N1P2; s GrayCSpP1 GrayCSmP1 GrayCSpN1 GrayCSmN1 GrayCSpP2 GrayCSmP2]; 
+
+end
+
+
+save PLC_EEG_PostcondNewComponents_MeanAmp_39subs AllColorC2P2 AllGrayP1N1P2
 
 %%  Get mean amplitudes for each individual: postcond; 3/19/15
 
@@ -1135,19 +1222,19 @@ for s = allsubs
     eval(['load PLC_EEG_Sub' num2str(s) '_Postcond_Oz_ERPs.mat Oz';]);
 %     ColorCSpC1 = Oz.ColorCSp(75) - Oz.ColorCSp(69);
 %     ColorCSpC1P1 = Oz.ColorCSp(78) - Oz.ColorCSp(75);
-    ColorCSpC2 = mean(Oz.ColorCSp(81:87));
+    ColorCSpC2 = mean(Oz.ColorCSp(83:88));
     ColorCSpN3 = mean(Oz.ColorCSp(122:128));
 
 %     ColorCSmC1 = Oz.ColorCSm(75) - Oz.ColorCSm(69);                        
 %     ColorCSmC1P1 = Oz.ColorCSm(78) - Oz.ColorCSm(75);
-    ColorCSmC2 = mean(Oz.ColorCSm(81:87));
+    ColorCSmC2 = mean(Oz.ColorCSm(83:88));
     ColorCSmN3 = mean(Oz.ColorCSm(122:128));
     
-    GrayCSpP1 = mean(Oz.GrayCSp(81:87));
+    GrayCSpP1 = mean(Oz.GrayCSp(83:88));
     GrayCSpN1 = mean(Oz.GrayCSp(99:105));
     GrayCSpP2 = mean(Oz.GrayCSp(104:124)); %using a broader window here
     
-    GrayCSmP1 = mean(Oz.GrayCSm(81:87));
+    GrayCSmP1 = mean(Oz.GrayCSm(83:88));
     GrayCSmN1 = mean(Oz.GrayCSm(99:105));
     GrayCSmP2 = mean(Oz.GrayCSm(104:124)); %using a broader window here
 
@@ -1162,7 +1249,7 @@ end
 
 save PLC_EEG_PostcondNewComponents_MeanAmp_39subs AllColorC2N3 AllGrayP1N1P2
 
-%%  Get mean amplitudes for each individual: postcond B4; 3/16/15
+%%  Get mean amplitudes for each individual: postcond B4; 3/22/15
 
 %Inspection of grandycolor along with the graph identifies 
 %C1 trough:61; C1 peak:75; P1 peak:78; N1 peak: 86; P2 peak: 110
@@ -1173,116 +1260,110 @@ save PLC_EEG_PostcondNewComponents_MeanAmp_39subs AllColorC2N3 AllGrayP1N1P2
 allsubs = [1 3:4 8:11 13:29 33 34 38:40 42:44 46 47 50 51 54 56]; %39 subs
 
 clear Oz
-AllColorC2N3 = [];
+AllColorC2P2 = [];
 AllGrayP1N1P2 = [];
 
 for s = allsubs
     eval(['load PLC_EEG_Sub' num2str(s) '_Block4_Oz_ERPs.mat Oz';]);
 %     ColorCSpC1 = Oz.ColorCSp(75) - Oz.ColorCSp(69);
 %     ColorCSpC1P1 = Oz.ColorCSp(78) - Oz.ColorCSp(75);
-    ColorCSpC2 = mean(Oz.ColorCSp(81:87));
-    ColorCSpN3 = mean(Oz.ColorCSp(122:128));
+    ColorCSpC2 = mean(Oz.ColorCSp(85:89));
+    ColorCSpP2 = mean(Oz.ColorCSp(97:121));
 
 %     ColorCSmC1 = Oz.ColorCSm(75) - Oz.ColorCSm(69);                        
 %     ColorCSmC1P1 = Oz.ColorCSm(78) - Oz.ColorCSm(75);
-    ColorCSmC2 = mean(Oz.ColorCSm(81:87));
-    ColorCSmN3 = mean(Oz.ColorCSm(122:128));
+    ColorCSmC2 = mean(Oz.ColorCSm(84:88));
+    ColorCSmP2 = mean(Oz.ColorCSm(97:121));
     
-    GrayCSpP1 = mean(Oz.GrayCSp(81:87));
-    GrayCSpN1 = mean(Oz.GrayCSp(99:105));
-    GrayCSpP2 = mean(Oz.GrayCSp(104:124)); %using a broader window here
-
+    GrayCSpP1 = mean(Oz.GrayCSp(83:89));
+    GrayCSpN1 = mean(Oz.GrayCSp(96:106));
+    GrayCSpP2 = mean(Oz.GrayCSp(106:116)); %using a broader window here
     
-    GrayCSmP1 = mean(Oz.GrayCSm(81:87));
-    GrayCSmN1 = mean(Oz.GrayCSm(99:105));
-    GrayCSmP2 = mean(Oz.GrayCSm(104:124)); %using a broader window here
-
+    GrayCSmP1 = mean(Oz.GrayCSm(82:88));
+    GrayCSmN1 = mean(Oz.GrayCSm(92:102));
+    GrayCSmP2 = mean(Oz.GrayCSm(106:116)); %using a broader window here
 %AllColorC1P1C2 = [AllColorC1P1C2; s ColorCSpC1 ColorCSmC1 ColorCSpC1P1 ColorCSmC1P1 ColorCSpC2 ColorCSmC2];
 %AllGrayP1N1P2 = [AllGrayP1N1P2; s GrayCSpP1 GrayCSmP1 GrayCSpN1 GrayCSmN1 GrayCSpP2 GrayCSmP2];
 
-AllColorC2N3 = [AllColorC2N3; s ColorCSpC2 ColorCSmC2 ColorCSpN3 ColorCSmN3];
+AllColorC2P2 = [AllColorC2P2; s ColorCSpC2 ColorCSmC2 ColorCSpP2 ColorCSmP2];
 AllGrayP1N1P2 = [AllGrayP1N1P2; s GrayCSpP1 GrayCSmP1 GrayCSpN1 GrayCSmN1 GrayCSpP2 GrayCSmP2]; 
 
 end
 
-save PLC_EEG_PostcondB4_NewComponents_MeanAmp_39subs AllColorC2N3 AllGrayP1N1P2
+save PLC_EEG_PostcondB4_NewComponents_MeanAmp_39subs AllColorC2P2 AllGrayP1N1P2
 
 %% B5
 
 allsubs = [1 3:4 8:11 13:29 33 34 38:40 42:44 46 47 50 51 54 55 56]; %39 subs
 
 clear Oz
-AllColorC2N3 = [];
+AllColorC2P2 = [];
 AllGrayP1N1P2 = [];
 
 for s = allsubs
     eval(['load PLC_EEG_Sub' num2str(s) '_Block5_Oz_ERPs.mat Oz';]);
 %     ColorCSpC1 = Oz.ColorCSp(75) - Oz.ColorCSp(69);
 %     ColorCSpC1P1 = Oz.ColorCSp(78) - Oz.ColorCSp(75);
-    ColorCSpC2 = mean(Oz.ColorCSp(81:87));
-    ColorCSpN3 = mean(Oz.ColorCSp(122:128));
+    ColorCSpC2 = mean(Oz.ColorCSp(85:89));
+    ColorCSpP2 = mean(Oz.ColorCSp(97:121));
 
 %     ColorCSmC1 = Oz.ColorCSm(75) - Oz.ColorCSm(69);                        
 %     ColorCSmC1P1 = Oz.ColorCSm(78) - Oz.ColorCSm(75);
-    ColorCSmC2 = mean(Oz.ColorCSm(81:87));
-    ColorCSmN3 = mean(Oz.ColorCSm(122:128));
+    ColorCSmC2 = mean(Oz.ColorCSm(84:88));
+    ColorCSmP2 = mean(Oz.ColorCSm(97:121));
     
-    GrayCSpP1 = mean(Oz.GrayCSp(81:87));
-    GrayCSpN1 = mean(Oz.GrayCSp(99:105));
-    GrayCSpP2 = mean(Oz.GrayCSp(104:124)); %using a broader window here
-
+    GrayCSpP1 = mean(Oz.GrayCSp(83:89));
+    GrayCSpN1 = mean(Oz.GrayCSp(96:106));
+    GrayCSpP2 = mean(Oz.GrayCSp(106:116)); %using a broader window here
     
-    GrayCSmP1 = mean(Oz.GrayCSm(81:87));
-    GrayCSmN1 = mean(Oz.GrayCSm(99:105));
-    GrayCSmP2 = mean(Oz.GrayCSm(104:124)); %using a broader window here
-
+    GrayCSmP1 = mean(Oz.GrayCSm(82:88));
+    GrayCSmN1 = mean(Oz.GrayCSm(92:102));
+    GrayCSmP2 = mean(Oz.GrayCSm(106:116)); %using a broader window here
 %AllColorC1P1C2 = [AllColorC1P1C2; s ColorCSpC1 ColorCSmC1 ColorCSpC1P1 ColorCSmC1P1 ColorCSpC2 ColorCSmC2];
 %AllGrayP1N1P2 = [AllGrayP1N1P2; s GrayCSpP1 GrayCSmP1 GrayCSpN1 GrayCSmN1 GrayCSpP2 GrayCSmP2];
 
-AllColorC2N3 = [AllColorC2N3; s ColorCSpC2 ColorCSmC2 ColorCSpN3 ColorCSmN3];
+AllColorC2P2 = [AllColorC2P2; s ColorCSpC2 ColorCSmC2 ColorCSpP2 ColorCSmP2];
 AllGrayP1N1P2 = [AllGrayP1N1P2; s GrayCSpP1 GrayCSmP1 GrayCSpN1 GrayCSmN1 GrayCSpP2 GrayCSmP2]; 
 
 end
 
-save PLC_EEG_PostcondB5_NewComponents_MeanAmp_39subs AllColorC2N3 AllGrayP1N1P2
+save PLC_EEG_PostcondB5_NewComponents_MeanAmp_39subs AllColorC2P2 AllGrayP1N1P2
 
 %% B6
 allsubs = [1 3:4 8:11 13:14 16:29 33 34 38:40 42:44 46 47 50 51 54 55]; %39 subs
 
 clear Oz
-AllColorC2N3 = [];
+AllColorC2P2 = [];
 AllGrayP1N1P2 = [];
 
 for s = allsubs
     eval(['load PLC_EEG_Sub' num2str(s) '_Block6_Oz_ERPs.mat Oz';]);
 %     ColorCSpC1 = Oz.ColorCSp(75) - Oz.ColorCSp(69);
 %     ColorCSpC1P1 = Oz.ColorCSp(78) - Oz.ColorCSp(75);
-    ColorCSpC2 = mean(Oz.ColorCSp(81:87));
-    ColorCSpN3 = mean(Oz.ColorCSp(122:128));
+    ColorCSpC2 = mean(Oz.ColorCSp(85:89));
+    ColorCSpP2 = mean(Oz.ColorCSp(97:121));
 
 %     ColorCSmC1 = Oz.ColorCSm(75) - Oz.ColorCSm(69);                        
 %     ColorCSmC1P1 = Oz.ColorCSm(78) - Oz.ColorCSm(75);
-    ColorCSmC2 = mean(Oz.ColorCSm(81:87));
-    ColorCSmN3 = mean(Oz.ColorCSm(122:128));
+    ColorCSmC2 = mean(Oz.ColorCSm(84:88));
+    ColorCSmP2 = mean(Oz.ColorCSm(97:121));
     
-    GrayCSpP1 = mean(Oz.GrayCSp(81:87));
-    GrayCSpN1 = mean(Oz.GrayCSp(99:105));
-    GrayCSpP2 = mean(Oz.GrayCSp(104:124)); %using a broader window here
-
+    GrayCSpP1 = mean(Oz.GrayCSp(83:89));
+    GrayCSpN1 = mean(Oz.GrayCSp(96:106));
+    GrayCSpP2 = mean(Oz.GrayCSp(106:116)); %using a broader window here
     
-    GrayCSmP1 = mean(Oz.GrayCSm(81:87));
-    GrayCSmN1 = mean(Oz.GrayCSm(99:105));
-    GrayCSmP2 = mean(Oz.GrayCSm(104:124)); %using a broader window here
-
+    GrayCSmP1 = mean(Oz.GrayCSm(82:88));
+    GrayCSmN1 = mean(Oz.GrayCSm(92:102));
+    GrayCSmP2 = mean(Oz.GrayCSm(106:116)); %using a broader window here
 %AllColorC1P1C2 = [AllColorC1P1C2; s ColorCSpC1 ColorCSmC1 ColorCSpC1P1 ColorCSmC1P1 ColorCSpC2 ColorCSmC2];
 %AllGrayP1N1P2 = [AllGrayP1N1P2; s GrayCSpP1 GrayCSmP1 GrayCSpN1 GrayCSmN1 GrayCSpP2 GrayCSmP2];
 
-AllColorC2N3 = [AllColorC2N3; s ColorCSpC2 ColorCSmC2 ColorCSpN3 ColorCSmN3];
+AllColorC2P2 = [AllColorC2P2; s ColorCSpC2 ColorCSmC2 ColorCSpP2 ColorCSmP2];
 AllGrayP1N1P2 = [AllGrayP1N1P2; s GrayCSpP1 GrayCSmP1 GrayCSpN1 GrayCSmN1 GrayCSpP2 GrayCSmP2]; 
 
 end
 
-save PLC_EEG_PostcondB6_NewComponents_MeanAmp_39subs AllColorC2N3 AllGrayP1N1P2
+save PLC_EEG_PostcondB6_NewComponents_MeanAmp_39subs AllColorC2P2 AllGrayP1N1P2
 
 
 %% Exploratory point-by-point ttest of Time(Pre/Post)*CS(+/-) interaction
@@ -1378,6 +1459,22 @@ for s = allsubs
     PostcondColorCSp = [PostcondColorCSp; Postcond.ColorCSp];
     PostcondColorCSm = [PostcondColorCSm; Postcond.ColorCSm];
 end
+
+PreColorCSp = mean(PrecondColorCSp,1);
+PreColorCSm = mean(PrecondColorCSm,1);
+PostColorCSp = mean(PostcondColorCSp,1);
+PostColorCSm = mean(PostcondColorCSm,1);
+
+[themin, PreColorCSpC2peak] = min(PreColorCSp(81:91)); % 81+6-1 = 86
+[themin, PreColorCSmC2peak] = min(PreColorCSm(81:91)); % 86
+[themin, PostColorCSpC2peak] = min(PostColorCSp(81:91)); % 87
+[themin, PostColorCSmC2peak] = min(PostColorCSm(81:91));% 86
+
+[themax, PreColorCSpP2peak] = max(PreColorCSp(103:116)); % 103+9-1 = 111
+[themax, PreColorCSmP2peak] = max(PreColorCSm(103:116)); % 110
+[themax, PostColorCSpP2peak] = max(PostColorCSp(103:116)); % 109
+[themax, PostColorCSmP2peak] = max(PostColorCSm(103:116)); % 109
+
 %ttest for interaction for each time point
 for i = 1:length(allTimebyCS)
     
@@ -1405,27 +1502,29 @@ for i = 1:length(allTimebyCS)
     allrpscr = [allrpscr rpscr];
 end
 
-horz = Precond.horz;
 
+% plotting waveforms with p values
+ horz = Precond.horz;
+% 
 plot(horz, mean(PrecondColorCSp,1) , 'r-.'); hold on;
 plot(horz, mean(PrecondColorCSm,1) , 'g-.');
 
 plot(horz, mean(PostcondColorCSp,1) , 'r-');
 plot(horz, mean(PostcondColorCSm,1) , 'g-');
+% 
+% plot(horz,allPs, 'k'); %interaction
+% plot(horz,allrpi+1, 'k--'); %interaction~BISz
+% plot(horz,allrpscr+2, 'k-.'); %interaction~SCR
 
-plot(horz,allPs, 'k');
-plot(horz,allrpi+1, 'k--');
-plot(horz,allrpscr+2, 'k-.');
+line([horz(83) horz(83)],[0 -7]);
+line([horz(88) horz(88)],[0 -7]);
 
-line([horz(81) horz(81)],[0 -7]);
-line([horz(87) horz(87)],[0 -7]);
-
-line([horz(122) horz(122)],[0 -7]);
+%line([horz(122) horz(122)],[0 -7]);
 
 
 legend('Pre Color CS+', 'Pre Color CS-', 'Post Color CS+', 'Post Color CS-', 'Location', 'southwest');
 saveas(gcf, 'PrePost_ColorERPs_39subs_TimebyCSbyBIS_pval.jpg');
-close(gcf);
+%close(gcf);
 
 % %ttest for interaction for C1P1 trough-to-peak difference
 % c1p1 = allTimebyCS(:,78) - allTimebyCS(:,75);
@@ -1475,6 +1574,26 @@ for s = allsubs
     PostcondGrayCSm = [PostcondGrayCSm; Postcond.GrayCSm];
 end
 
+PreGrayCSp = mean(PrecondGrayCSp,1);
+PreGrayCSm = mean(PrecondGrayCSm,1);
+PostGrayCSp = mean(PostcondGrayCSp,1);
+PostGrayCSm = mean(PostcondGrayCSm,1);
+
+[themax, PreGrayCSpP1peak] = max(PreGrayCSp(81:91)); % 85
+[themax, PreGrayCSmP1peak] = max(PreGrayCSm(81:91)); % 84
+[themax, PostGrayCSpP1peak] = max(PostGrayCSp(81:91)); % 86
+[themax, PostGrayCSmP1peak] = max(PostGrayCSm(81:91));% 85
+
+[themin, PreGrayCSpN1peak] = min(PreGrayCSp(91:107)); % 91+10-1 = 100
+[themin, PreGrayCSmN1peak] = min(PreGrayCSm(91:107)); % 91+8-1 = 98
+[themin, PostGrayCSpN1peak] = min(PostGrayCSp(91:107)); % 91+11-1 = 101
+[themin, PostGrayCSmN1peak] = min(PostGrayCSm(91:107)); % 91+7-1 = 97
+
+[themax, PreGrayCSpP2peak] = max(PreGrayCSp(107:122)); % 107+6-1 = 112
+[themax, PreGrayCSmP2peak] = max(PreGrayCSm(107:122)); % 107+7-1 = 113
+[themax, PostGrayCSpP2peak] = max(PostGrayCSp(107:122)); % 107+5-1 = 111
+[themax, PostGrayCSmP2peak] = max(PostGrayCSm(107:122));% 107+5-1 = 111
+
 %ttest for interaction for each time point
 for i = 1:length(allTimebyCS)
     
@@ -1501,6 +1620,7 @@ for i = 1:length(allTimebyCS)
     allrpscr = [allrpscr rpscr];    
 end
 
+%plotting
 horz = Precond.horz;
 
 plot(horz, mean(PrecondGrayCSp,1) , 'b-.'); hold on;
@@ -1509,23 +1629,148 @@ plot(horz, mean(PrecondGrayCSm,1) , 'g-.');
 plot(horz, mean(PostcondGrayCSp,1) , 'b-');
 plot(horz, mean(PostcondGrayCSm,1) , 'g-');
 
-plot(horz,allPs-2, 'r');
-plot(horz,allrpi-1, 'r--');
-plot(horz,allrpscr, 'k-');
+% plot(horz,allPs-2, 'r');
+% plot(horz,allrpi-1, 'r--');
+% plot(horz,allrpscr, 'k-');
 
-line([horz(81) horz(81)],[0 6]);
-line([horz(87) horz(87)],[0 6]);
+line([horz(82) horz(82)],[0 6]);
+line([horz(88) horz(88)],[0 6]);
 
-line([horz(99) horz(99)],[0 6]);
+%line([horz(99) horz(99)],[0 6]);
 %line([horz(105) horz(105)],[0 6]);
 
-line([horz(104) horz(104)],[0 6]);
-line([horz(124) horz(124)],[0 6]);
-legend('Pre Gray CS+', 'Pre Gray CS-', 'Post Gray CS+', 'Post Gray CS-', 'Location', 'southwest');
+%line([horz(104) horz(104)],[0 6]);
+%line([horz(124) horz(124)],[0 6]);
+legend('Pre Gray CS+', 'Pre Gray CS-', 'Post Gray CS+', 'Post Gray CS-', 'Location', 'northwest');
 saveas(gcf, 'PrePost_GrayERPs_39subs_TimebyCSbyBIS_pval.jpg');
-close(gcf);
+%close(gcf);
 
-save PrePostAve_39subs_Gray_TimebyCS.mat
+%save PrePostAve_39subs_Gray_TimebyCS.mat
+
+%% Plot Grand Average ERP Pre-Post Color/Gray at Oz - 3.23.15
+allsubs = [1 3:4 8:11 13:29 33 34 38:40 42:44 46 47 50 51 54:56]; %39 subs
+
+PrecondColorCSp = [];
+PrecondColorCSm = [];
+PostcondColorCSp = [];
+PostcondColorCSm = [];
+
+PrecondGrayCSp = [];
+PrecondGrayCSm = [];
+PostcondGrayCSp = [];
+PostcondGrayCSm = [];
+
+for s = allsubs
+    eval(['load PLC_EEG_Sub' num2str(s) '_Precond_Oz_ERPs.mat Oz';]);
+    Precond = Oz;
+    
+    eval(['load PLC_EEG_Sub' num2str(s) '_Postcond_Oz_ERPs.mat Oz';]);
+    Postcond = Oz;
+    
+    PrecondColorCSp = [PrecondColorCSp; Precond.ColorCSp];
+    PrecondColorCSm = [PrecondColorCSm; Precond.ColorCSm];
+    PostcondColorCSp = [PostcondColorCSp; Postcond.ColorCSp];
+    PostcondColorCSm = [PostcondColorCSm; Postcond.ColorCSm];
+    
+    PrecondGrayCSp = [PrecondGrayCSp; Precond.GrayCSp];
+    PrecondGrayCSm = [PrecondGrayCSm; Precond.GrayCSm];
+    PostcondGrayCSp = [PostcondGrayCSp; Postcond.GrayCSp];
+    PostcondGrayCSm = [PostcondGrayCSm; Postcond.GrayCSm];    
+end
+
+PreColorCSp = mean(PrecondColorCSp,1);
+PreColorCSm = mean(PrecondColorCSm,1);
+PostColorCSp = mean(PostcondColorCSp,1);
+PostColorCSm = mean(PostcondColorCSm,1);
+
+PreGrayCSp = mean(PrecondGrayCSp,1);
+PreGrayCSm = mean(PrecondGrayCSm,1);
+PostGrayCSp = mean(PostcondGrayCSp,1);
+PostGrayCSm = mean(PostcondGrayCSm,1);
+
+horz = Precond.horz;
+
+plot(horz,PreColorCSp , 'r-.'); hold on;
+plot(horz,PreColorCSm , 'g-.');
+
+plot(horz, PostColorCSp , 'r-');
+plot(horz, PostColorCSm , 'g-');
+
+plot(horz, PreGrayCSp, 'b-.'); 
+plot(horz, PreGrayCSm , 'k-.');
+
+plot(horz, PostGrayCSp , 'b-');
+plot(horz, PostGrayCSm , 'k-');
+
+line([horz(81) horz(81)],[4 -7]);
+line([horz(83) horz(83)],[4 -7]);
+line([horz(87) horz(87)],[4 -7]);
+line([horz(88) horz(88)],[4 -7]);
+
+legend('Pre Color CS+', 'Pre Color CS-', 'Post Color CS+', 'Post Color CS-', 'Pre Gray CS+', 'Pre Gray CS-', 'Post Gray CS+', 'Post Gray CS-','Location', 'southwest');
+
+%% Plot Grand Average ERP Pre-PostB4 Color/Gray at Oz - 3.23.15
+allsubs = [1 3:4 8:11 13:29 33 34 38:40 42:44 46 47 50 51 54 56]; %39 subs
+
+PrecondColorCSp = [];
+PrecondColorCSm = [];
+PostcondColorCSp = [];
+PostcondColorCSm = [];
+
+PrecondGrayCSp = [];
+PrecondGrayCSm = [];
+PostcondGrayCSp = [];
+PostcondGrayCSm = [];
+
+for s = allsubs
+    eval(['load PLC_EEG_Sub' num2str(s) '_Precond_Oz_ERPs.mat Oz';]);
+    Precond = Oz;
+    
+    eval(['load PLC_EEG_Sub' num2str(s) '_Block4_Oz_ERPs.mat Oz';]);
+    Postcond = Oz;
+    
+    PrecondColorCSp = [PrecondColorCSp; Precond.ColorCSp];
+    PrecondColorCSm = [PrecondColorCSm; Precond.ColorCSm];
+    PostcondColorCSp = [PostcondColorCSp; Postcond.ColorCSp];
+    PostcondColorCSm = [PostcondColorCSm; Postcond.ColorCSm];
+    
+    PrecondGrayCSp = [PrecondGrayCSp; Precond.GrayCSp];
+    PrecondGrayCSm = [PrecondGrayCSm; Precond.GrayCSm];
+    PostcondGrayCSp = [PostcondGrayCSp; Postcond.GrayCSp];
+    PostcondGrayCSm = [PostcondGrayCSm; Postcond.GrayCSm];    
+end
+
+PreColorCSp = mean(PrecondColorCSp,1);
+PreColorCSm = mean(PrecondColorCSm,1);
+PostColorCSp = mean(PostcondColorCSp,1);
+PostColorCSm = mean(PostcondColorCSm,1);
+
+PreGrayCSp = mean(PrecondGrayCSp,1);
+PreGrayCSm = mean(PrecondGrayCSm,1);
+PostGrayCSp = mean(PostcondGrayCSp,1);
+PostGrayCSm = mean(PostcondGrayCSm,1);
+
+horz = Precond.horz;
+
+plot(horz,PreColorCSp , 'r-.'); hold on;
+plot(horz,PreColorCSm , 'g-.');
+
+plot(horz, PostColorCSp , 'r-');
+plot(horz, PostColorCSm , 'g-');
+
+plot(horz, PreGrayCSp, 'b-.'); 
+plot(horz, PreGrayCSm , 'k-.');
+
+plot(horz, PostGrayCSp , 'b-');
+plot(horz, PostGrayCSm , 'k-');
+
+line([horz(81) horz(81)],[4 -7]);
+line([horz(83) horz(83)],[4 -7]);
+line([horz(87) horz(87)],[4 -7]);
+line([horz(88) horz(88)],[4 -7]);
+
+legend('Pre Color CS+', 'Pre Color CS-', 'PostB4 Color CS+', 'PostB4 Color CS-', 'Pre Gray CS+', 'Pre Gray CS-', 'PostB4 Gray CS+', 'PostB4 Gray CS-','Location', 'southwest');
+
 
 
 %% Exploratory point-by-point ttest of Time(Pre/PostB4)*CS(+/-) interaction
@@ -1660,16 +1905,16 @@ plot(horz, mean(PrecondColorCSm,1) , 'g-.');
 plot(horz, mean(PostcondColorCSp,1) , 'r-');
 plot(horz, mean(PostcondColorCSm,1) , 'g-');
 
-plot(horz,allPs, 'k');
-plot(horz,allrpi+1, 'k--');
-plot(horz,allrpscr+2, 'k-.');
+% plot(horz,allPs, 'k');
+% plot(horz,allrpi+1, 'k--');
+% plot(horz,allrpscr+2, 'k-.');
 
-line([horz(81) horz(81)],[0 -7]);
-line([horz(87) horz(87)],[0 -7]);
+line([horz(83) horz(83)],[0 -7]);
+line([horz(88) horz(88)],[0 -7]);
 
 legend('Pre Color CS+', 'Pre Color CS-', 'Post B4 Color CS+', 'Post B4 Color CS-', 'Location', 'southwest');
 saveas(gcf, 'PrePostB4_ColorERPs_39subs_TimebyCSbyBIS_pval.jpg');
-close(gcf);
+%close(gcf);
 
 % %ttest for interaction for C1P1 trough-to-peak difference
 % c1p1 = allTimebyCS(:,78) - allTimebyCS(:,75);
@@ -1679,7 +1924,7 @@ close(gcf);
 % p1c2 = allTimebyCS(:,86) - allTimebyCS(:,78);
 % [H0p1c2, pp1c2] = ttest(p1c2, 0); %H0 = 0, pp1c2 = 0.19
 
-save PrePostB4_39subs_Color_TimebyCS.mat
+%save PrePostB4_39subs_Color_TimebyCS.mat
 
 
 %% Gray condition
@@ -2186,6 +2431,212 @@ close(gcf);
 
 save PrePostB6_39subs_Gray_TimebyCS.mat
 
+%% Prepare for Loreta - individual conditions - Pre Color
+allsubs = [1 3:4 8:11 13:29 33 34 38:40 42:44 46 47 50 51 54:56]; %removing 2,7,53,5,12,31,37,41,57 
+%sub33 needs interpolation for channel 69 and 87
+
+for s = allsubs
+    
+    cd /Volumes/SAVER/PLC_EEG/ERPs
+
+    if s == 16 || s == 37 || s == 54
+        eval(['load PLC_EEG_Sub' num2str(s) '_Precond_ERPs_ica.mat results';]);
+    else
+        eval(['load PLC_EEG_Sub' num2str(s) '_Precond_ERPs.mat results';]);
+    end    
+    
+    Precond = results;
+    
+    if s == 33
+    %Channel C5 needs to be interpolated
+    Precond.ColCSp{69,1} = (Precond.ColCSp{64,1} + Precond.ColCSp{68,1} + Precond.ColCSp{71,1})/3;
+    Precond.ColCSm{69,1} = (Precond.ColCSm{64,1} + Precond.ColCSm{68,1} + Precond.ColCSm{71,1})/3;
+
+    %Channel C23
+    Precond.ColCSp{87,1} = (Precond.ColCSp{86,1} + Precond.ColCSp{88,1} + Precond.ColCSp{81,1})/3;
+    Precond.ColCSm{87,1} = (Precond.ColCSm{86,1} + Precond.ColCSm{88,1} + Precond.ColCSm{81,1})/3;            
+    end
+       
+    clear results
+    
+    for c = 1:96        
+        colcsp = Precond.ColCSp{c};
+        colcsm = Precond.ColCSm{c};
+        
+        ColorCSpC2(c,1) = mean(colcsp(83:88));
+        ColorCSmC2(c,1) = mean(colcsm(83:88));      
+    end
+    
+        ColorCSpC2std = double((ColorCSpC2 - mean(ColorCSpC2))./std(ColorCSpC2));
+    ColorCSmC2std = double((ColorCSmC2 - mean(ColorCSmC2))./std(ColorCSmC2));
+
+    
+    cd /Volumes/SAVER/PLC_EEG/LORETA/PostPre_ColorC2
+    
+    eval(['save PLC_EEG_Pre_Sub' num2str(s) '_ColorCSpC2std.txt -ascii ColorCSpC2std;']);
+    
+    eval(['save PLC_EEG_Pre_Sub' num2str(s) '_ColorCSmC2std.txt -ascii ColorCSmC2std;']);
+    
+end
+
+%% Prepare for Loreta - individual conditions - Post Color
+
+allsubs = [1 3:4 8:11 13:29 33 34 38:40 42:44 46 47 50 51 54:56]; %removing 2,7,53,5,12,31,37,41,57 
+%sub33 needs interpolation for channel 69 and 87
+
+for s = allsubs
+    
+    cd /Volumes/SAVER/PLC_EEG/ERPs
+    
+    if s == 16 || s == 37 || s == 54
+        eval(['load PLC_EEG_Sub' num2str(s) '_Postcond_ERPs_ica.mat results';]);
+    else
+        eval(['load PLC_EEG_Sub' num2str(s) '_Postcond_ERPs.mat results';]);
+    end
+    
+    Postcond = results;
+    
+    if s == 33
+    Postcond.ColCSp{69,1} = (Postcond.ColCSp{64,1} + Postcond.ColCSp{68,1} + Postcond.ColCSp{71,1})/3;
+    Postcond.ColCSm{69,1} = (Postcond.ColCSm{64,1} + Postcond.ColCSm{68,1} + Postcond.ColCSm{71,1})/3;        
+    end
+    
+    clear results
+    
+    for c = 1:96        
+        colcsp = Postcond.ColCSp{c} ;
+        colcsm = Postcond.ColCSm{c} ;
+        
+        ColorCSpC2(c,1) = mean(colcsp(83:88));
+        ColorCSmC2(c,1) = mean(colcsm(83:88));      
+    end
+    
+    ColorCSpC2std = double((ColorCSpC2 - mean(ColorCSpC2))./std(ColorCSpC2));
+    ColorCSmC2std = double((ColorCSmC2 - mean(ColorCSmC2))./std(ColorCSmC2));
+
+    
+    cd /Volumes/SAVER/PLC_EEG/LORETA/PostPre_ColorC2
+    
+    eval(['save PLC_EEG_Post_Sub' num2str(s) '_ColorCSpC2std.txt -ascii ColorCSpC2std;']);
+    
+    eval(['save PLC_EEG_Post_Sub' num2str(s) '_ColorCSmC2std.txt -ascii ColorCSmC2std;']);
+    
+end
+
+
+
+%% Block4, Color
+allsubs = [1 3:4 8:11 13:29 33 34 38:40 42:44 46 47 50 51 54 56]; %removing 2,7,53,5,12,31,37,41,57,55
+
+b = 4;
+
+for s = allsubs
+    cd /Volumes/SAVER/PLC_EEG/ERPs
+    
+    eval(['load PLC_EEG_Sub' num2str(s) '_Block' num2str(b) '_Averaged_ERPs.mat results';]); %Save it all for fear
+    
+    
+    Postcond = results;
+    clear results
+    
+    for c = 1:96
+        
+        colcsp = Postcond.ColCSp{c} ;
+        colcsm = Postcond.ColCSm{c} ;
+        
+        ColorCSpC2(c,1) = mean(colcsp(83:88));
+        ColorCSmC2(c,1) = mean(colcsm(83:88));
+        
+    end
+    
+    ColorCSpC2std = double((ColorCSpC2 - mean(ColorCSpC2))./std(ColorCSpC2));
+    ColorCSmC2std = double((ColorCSmC2 - mean(ColorCSmC2))./std(ColorCSmC2));
+    
+    cd /Volumes/SAVER/PLC_EEG/LORETA/PostB4Pre_ColorC2
+    
+    
+    eval(['save PLC_EEG_PostB4_Sub' num2str(s) '_ColorCSpC2std.txt -ascii ColorCSpC2std;']);
+    
+    eval(['save PLC_EEG_PostB4_Sub' num2str(s) '_ColorCSmC2std.txt -ascii ColorCSmC2std;']);
+    
+end
+
+%% Prepare for Loreta - Pre Gray - for high BISz group
+
+allsubs = [44,50,9,10,26,27,42,8,47,51,15,18,20,25,29,38,46,54;]; %18subs; high anx group, all have BISz scores > .29
+
+for s = allsubs
+    
+    cd /Volumes/SAVER/PLC_EEG/ERPs
+    
+    if s == 16 || s == 37 || s == 54
+        eval(['load PLC_EEG_Sub' num2str(s) '_Precond_ERPs_ica.mat results';]);
+    else
+        eval(['load PLC_EEG_Sub' num2str(s) '_Precond_ERPs.mat results';]);
+    end
+    
+    Precond = results;
+    
+    clear results
+    
+    for c = 1:96
+        graycsp = Precond.GrayCSp{c};
+        graycsm = Precond.GrayCSm{c};
+        
+        GrayCSpP1(c,1) = mean(graycsp(81:87));
+        GrayCSmP1(c,1) = mean(graycsm(81:87));
+    end
+    
+    GrayCSpP1std = double((GrayCSpP1 - mean(GrayCSpP1))./std(GrayCSpP1));
+    GrayCSmP1std = double((GrayCSmP1 - mean(GrayCSmP1))./std(GrayCSmP1));    
+    
+    cd /Volumes/SAVER/PLC_EEG/LORETA/PostPre_GrayP1
+    
+    eval(['save PLC_EEG_Pre_Sub' num2str(s) '_GrayCSpP1std.txt -ascii GrayCSpP1std;']);
+    
+    eval(['save PLC_EEG_Pre_Sub' num2str(s) '_GrayCSmP1std.txt -ascii GrayCSmP1std;']);
+    
+end
+
+%% Prepare for Loreta - Post Gray - for high BISz group
+
+allsubs = [44,50,9,10,26,27,42,8,47,51,15,18,20,25,29,38,46,54;]; %18subs; high anx group, all have BISz scores > .29
+
+for s = allsubs
+    
+    cd /Volumes/SAVER/PLC_EEG/ERPs    
+    
+    if s == 16 || s == 37 || s == 54
+        eval(['load PLC_EEG_Sub' num2str(s) '_Postcond_ERPs_ica.mat results';]);
+    else
+        eval(['load PLC_EEG_Sub' num2str(s) '_Postcond_ERPs.mat results';]);
+    end
+    
+    Postcond = results;
+    
+    
+    clear results
+    
+    for c = 1:96
+        graycsp = Postcond.GrayCSp{c};
+        graycsm = Postcond.GrayCSm{c};
+        
+        GrayCSpP1(c,1) = mean(graycsp(81:87));
+        GrayCSmP1(c,1) = mean(graycsm(81:87));
+    end
+    
+    GrayCSpP1std = double((GrayCSpP1 - mean(GrayCSpP1))./std(GrayCSpP1));
+    GrayCSmP1std = double((GrayCSmP1 - mean(GrayCSmP1))./std(GrayCSmP1));
+    
+    
+    cd /Volumes/SAVER/PLC_EEG/LORETA/PostPre_GrayP1
+    
+    eval(['save PLC_EEG_Post_Sub' num2str(s) '_GrayCSpP1std.txt -ascii GrayCSpP1std;']);
+    
+    eval(['save PLC_EEG_Post_Sub' num2str(s) '_GrayCSmP1std.txt -ascii GrayCSmP1std;']);
+    
+end
+
 %% Prepare for Loreta - Grand Ave
 
 load PLC_EEG_GrandAve_Precond_45subsNo2753.mat 
@@ -2412,10 +2863,154 @@ end
     save PLC_EEG_postcond_GrayCS275_300std.txt -ascii GrayCS275_300std;
 
  
-    
-%% topomap based on grand average - precond
+%% Prepare for Loreta - Grand Ave - new sample size
+load PLC_EEG_GrandAve_Precond_39subs_032315.mat results
 
-load PLC_EEG_GrandAve_Precond_All48subs.mat results
+for c = 1:96
+    colcsp = results.ColCSp{c};
+    colcsm = results.ColCSm{c};
+    graycsp = results.GrayCSp{c};
+    graycsm = results.GrayCSm{c};
+    
+    ColorCSC2(c,1) = (mean(colcsp(83:88)) + mean(colcsm(83:88)))/2; %collapse across CS+/CS-
+    GrayCSP1(c,1) = (mean(graycsp(81:87)) + mean(graycsp(81:87)))/2; %collapse across CS+/CS-
+    ColorCSP2(c,1) = (mean(colcsp(98:122)) + mean(colcsm(98:122)))/2;
+end
+
+    ColorCSC2std = double((ColorCSC2 - mean(ColorCSC2))./std(ColorCSC2)); 
+    save PLC_EEG_pre_ColorCSC2std.txt -ascii ColorCSC2std;
+
+    ColorCSP2std = double((ColorCSP2 - mean(ColorCSP2))./std(ColorCSP2)); 
+    save PLC_EEG_pre_ColorCSP2std.txt -ascii ColorCSP2std;
+        
+    GrayCSP1std = double((GrayCSP1 - mean(GrayCSP1))./std(GrayCSP1)); 
+    save PLC_EEG_pre_GrayCSP1std.txt -ascii GrayCSP1std;   
+    
+    
+%% topomap based on grand average - CS+ - CS-, precond/postcond/postcond2
+%last updated 032315
+%Color C2
+
+load PLC_EEG_GrandAve_Precond_39subs_032315.mat results
+
+ColorC2CSd = zeros(1,96);
+
+for c = 1:96
+        colorcsp = results.ColCSp{c};
+    colorcsm = results.ColCSm{c};
+    ColorCS2CSd(c) = mean(colorcsp(83:88))- mean(colorcsm(83:88));
+end
+
+filename = strcat('EEG_PLC_Sub55block6_ica_epochs_blc_Farej.set'); %Dataset from a subject we're not using--just have to load up something
+EEG = pop_loadset(filename);
+EEG.chanlocs = readlocs('elp96test.elp', 'filetype', 'besa'); %Reads in accurate locations for all 96 EEG channels
+
+figure; topoplot(ColorCS2CSd, EEG.chanlocs, 'maplimits', [-1 1], 'electrodes', 'on'); %Puts electrode points in the picture & changes colors to fit the range of the vector of values
+colorbar
+saveas(gcf, 'ColorCSC2CSd_39subs_precond_topo.jpg');
+%close(gcf);
+
+
+load PLC_EEG_GrandAve_Precond_39subs_032315.mat results
+
+ColorC2CSd = zeros(1,96);
+
+for c = 1:96
+        colorcsp = results.ColCSp{c};
+    colorcsm = results.ColCSm{c};
+    ColorCS2CSd(c) = mean(colorcsp(98:122))- mean(colorcsm(98:122));
+end
+
+filename = strcat('EEG_PLC_Sub55block6_ica_epochs_blc_Farej.set'); %Dataset from a subject we're not using--just have to load up something
+EEG = pop_loadset(filename);
+EEG.chanlocs = readlocs('elp96test.elp', 'filetype', 'besa'); %Reads in accurate locations for all 96 EEG channels
+
+figure; topoplot(ColorCS2CSd, EEG.chanlocs, 'maplimits', [-1 1], 'electrodes', 'on'); %Puts electrode points in the picture & changes colors to fit the range of the vector of values
+colorbar
+saveas(gcf, 'ColorCSP2CSd_39subs_precond_topo.jpg');
+%close(gcf);
+
+
+
+load PLC_EEG_GrandAve_Postcond_39subs_032315.mat results
+
+ColorC2CSd = zeros(1,96);
+
+for c = 1:96
+        colorcsp = results.ColCSp{c};
+    colorcsm = results.ColCSm{c};
+    ColorCS2CSd(c) = mean(colorcsp(83:88))- mean(colorcsm(83:88));
+end
+
+filename = strcat('EEG_PLC_Sub55block6_ica_epochs_blc_Farej.set'); %Dataset from a subject we're not using--just have to load up something
+EEG = pop_loadset(filename);
+EEG.chanlocs = readlocs('elp96test.elp', 'filetype', 'besa'); %Reads in accurate locations for all 96 EEG channels
+
+figure; topoplot(ColorCS2CSd, EEG.chanlocs, 'maplimits', [-1 1], 'electrodes', 'on'); %Puts electrode points in the picture & changes colors to fit the range of the vector of values
+colorbar
+saveas(gcf, 'ColorCSC2CSd_39subs_postcond_topo.jpg');
+
+
+load PLC_EEG_GrandAve_Post2_Block4_ERPs_32subs_032315.mat results
+
+ColorC2CSd = zeros(1,96);
+
+for c = 1:96
+        colorcsp = results.ColCSp{c};
+    colorcsm = results.ColCSm{c};
+    ColorCS2CSd(c) = mean(colorcsp(98:122))- mean(colorcsm(98:122));
+end
+
+filename = strcat('EEG_PLC_Sub55block6_ica_epochs_blc_Farej.set'); %Dataset from a subject we're not using--just have to load up something
+EEG = pop_loadset(filename);
+EEG.chanlocs = readlocs('elp96test.elp', 'filetype', 'besa'); %Reads in accurate locations for all 96 EEG channels
+
+figure; topoplot(ColorCS2CSd, EEG.chanlocs, 'maplimits', [-1 1.2], 'electrodes', 'on'); %Puts electrode points in the picture & changes colors to fit the range of the vector of values
+colorbar
+saveas(gcf, 'ColorCSP2CSd_32subs_postcond2_topo.jpg');
+
+%% CS+/- collapsed topo for Color C2, P2; Gray P1 at Precond (without
+%% learning effect)
+
+GrayP1 = zeros(1,96);
+ColorC2 = zeros(1,96);
+ColorP2 = zeros(1,96);
+
+load PLC_EEG_GrandAve_Precond_39subs_032315.mat results
+
+for c = 1:96
+    graycsp = results.GrayCSp{c};
+    graycsm = results.GrayCSm{c};
+    colorcsp = results.ColCSp{c};
+    colorcsm = results.ColCSm{c};
+    
+    GrayP1(c) =( mean(graycsp(81:87)) + mean(graycsm(81:87)))/2;
+    ColorC2(c) = ( mean(colorcsp(83:88)) + mean(colorcsm(83:88)))/2;
+    ColorP2(c) = ( mean(colorcsp(98:122)) + mean(colorcsm(98:122)))/2;
+end
+
+filename = strcat('EEG_PLC_Sub55block6_ica_epochs_blc_Farej.set'); %Dataset from a subject we're not using--just have to load up something
+EEG = pop_loadset(filename);
+EEG.chanlocs = readlocs('elp96test.elp', 'filetype', 'besa'); %Reads in accurate locations for all 96 EEG channels
+
+%C2
+figure; topoplot(ColorC2, EEG.chanlocs, 'maplimits', [-6 5], 'electrodes', 'on'); %Puts electrode points in the picture & changes colors to fit the range of the vector of values
+colorbar
+saveas(gcf, 'ColorC2_39subs_precond_topo.jpg');
+
+%P2
+figure; topoplot(ColorP2, EEG.chanlocs, 'maplimits', [-6 5], 'electrodes', 'on'); %Puts electrode points in the picture & changes colors to fit the range of the vector of values
+colorbar
+saveas(gcf, 'ColorP2_39subs_precond_topo.jpg');
+
+%P1
+figure; topoplot(GrayP1, EEG.chanlocs, 'maplimits', [-6 5], 'electrodes', 'on'); %Puts electrode points in the picture & changes colors to fit the range of the vector of values
+colorbar
+saveas(gcf, 'GrayP1_39subs_precond_topo.jpg');
+
+%% old time windows
+
+%load data....
 
 GrayCSpP1 = zeros(1,96);
 GrayCSpN1 = zeros(1,96);
@@ -2450,7 +3045,7 @@ for c = 1:96
     colorcsp = results.ColCSp{c};
     colorcsm = results.ColCSm{c};
     
-    GrayCSpP1(c) = mean(graycsp(81:89)); %a regular 9-datapoint interval generated
+    GrayCSpP1(c) = mean(graycsp(81:87)); %a regular 9-datapoint interval generated
     GrayCSpN1(c) = mean(graycsp(94:102));
     GrayCSpP2(c) = mean(graycsp(110:118));
     
@@ -2781,10 +3376,10 @@ close(gcf);
 
 %% topomap based on grand average - postcond-precond
 
-load PLC_EEG_GrandAve_Postcond_All48subs.mat results
+load PLC_EEG_GrandAve_Postcond_39subs_032315.mat results
 resultsp = results;
 
-load PLC_EEG_GrandAve_Precond_All48subs.mat results
+load PLC_EEG_GrandAve_Precond_39subs_032315.mat results
 
 GrayCSpP1 = zeros(1,96);
 GrayCSpN1 = zeros(1,96);
@@ -2810,7 +3405,7 @@ for c = 1:96
     colorcsp = resultsp.ColCSp{c} - results.ColCSp{c};
     colorcsm = resultsp.ColCSm{c} - results.ColCSm{c};
     
-    GrayCSpP1(c) = mean(graycsp(81:89)); %a regular 9-datapoint interval generated
+    GrayCSpP1(c) = mean(graycsp(81:87)); %a regular 9-datapoint interval generated
     GrayCSpN1(c) = mean(graycsp(94:102));
     GrayCSpP2(c) = mean(graycsp(110:118));
     

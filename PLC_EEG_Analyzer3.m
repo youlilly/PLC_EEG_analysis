@@ -2523,7 +2523,27 @@ for s = allsubs
     
 end
 
+%% Pre/Post C2 LORETA - import text files from LORETA (showing source activity) and compute difference 
 
+allsubs = [1 3:4 8:11 13:29 33 34 38:40 42:44 46 47 50 51 54:56]; %removing 2,7,53,5,12,31,37,41,57
+
+for s = 1%allsubs
+    
+    eval(['load PLC_EEG_Pre_Sub' num2str(s) '_ColorCSpC2std-B2T.lor -ascii;']);
+    
+    eval(['load PLC_EEG_Pre_Sub' num2str(s) '_ColorCSmC2std-B2T.lor -ascii;']);
+    
+    eval(['Pre_C2_CSd = PLC_EEG_Pre_Sub' num2str(s) '_ColorCSpC2std_B2T - PLC_EEG_Pre_Sub' num2str(s) '_ColorCSmC2std_B2T;']);
+    eval(['save Pre_CS_CSd_Sub' num2str(s) '_Loreta_diff.txt -ascii Pre_C2_CSd;']);
+    
+    
+    eval(['load PLC_EEG_Post_Sub' num2str(s) '_ColorCSpC2std-B2T.lor -ascii;']);
+    
+    eval(['load PLC_EEG_Post_Sub' num2str(s) '_ColorCSmC2std-B2T.lor -ascii;']);
+    eval(['Post_C2_CSd = PLC_EEG_Post_Sub' num2str(s) '_ColorCSpC2std_B2T - PLC_EEG_Post_Sub' num2str(s) '_ColorCSmC2std_B2T;']);
+    eval(['save Post_CS_CSd_Sub' num2str(s) '_Loreta_diff.txt -ascii Post_C2_CSd;']);
+
+end
 
 %% Block4, Color
 allsubs = [1 3:4 8:11 13:29 33 34 38:40 42:44 46 47 50 51 54 56]; %removing 2,7,53,5,12,31,37,41,57,55
@@ -2635,6 +2655,27 @@ for s = allsubs
     
     eval(['save PLC_EEG_Post_Sub' num2str(s) '_GrayCSmP1std.txt -ascii GrayCSmP1std;']);
     
+end
+
+%% Pre/Post Gray hBiz P1 LORETA - import text files from LORETA (showing source activity) and compute difference 
+allsubs = [44,50,9,10,26,27,42,8,47,51,15,18,20,25,29,38,46,54;]; %18subs; high anx group, all have BISz scores > .29
+
+for s = allsubs
+    
+    eval(['load PLC_EEG_Pre_Sub' num2str(s) '_GrayCSpP1std-B2T.lor -ascii;']);
+    
+    eval(['load PLC_EEG_Pre_Sub' num2str(s) '_GrayCSmP1std-B2T.lor -ascii;']);
+    
+    eval(['Pre_P1_CSd = PLC_EEG_Pre_Sub' num2str(s) '_GrayCSpP1std_B2T - PLC_EEG_Pre_Sub' num2str(s) '_GrayCSmP1std_B2T;']);
+    eval(['save Pre_CS_CSd_Sub' num2str(s) '_Loreta_diff.txt -ascii Pre_P1_CSd;']);
+    
+    
+    eval(['load PLC_EEG_Post_Sub' num2str(s) '_GrayCSpP1std-B2T.lor -ascii;']);
+    
+    eval(['load PLC_EEG_Post_Sub' num2str(s) '_GrayCSmP1std-B2T.lor -ascii;']);
+    eval(['Post_P1_CSd = PLC_EEG_Post_Sub' num2str(s) '_GrayCSpP1std_B2T - PLC_EEG_Post_Sub' num2str(s) '_GrayCSmP1std_B2T;']);
+    eval(['save Post_CS_CSd_Sub' num2str(s) '_Loreta_diff.txt -ascii Post_P1_CSd;']);
+
 end
 
 %% Prepare for Loreta - Grand Ave

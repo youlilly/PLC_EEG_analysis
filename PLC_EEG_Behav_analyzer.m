@@ -139,7 +139,6 @@ allsubs(allsubs ==30)=[];
 allsubs(allsubs ==35)=[];
 allsubs(allsubs ==36)=[];
 
-
 all_acc = [];
 all_rts = [];
 
@@ -157,6 +156,7 @@ rt_hitcorr = [];
 allresponseTime = [];
 
 allRTs = [];
+AllSubRTs = [];
 
 for a = allsubs;
     
@@ -189,8 +189,22 @@ for a = allsubs;
         
         allresponseTime = allresp(rtypes(:,1)); %find out all trials that has a non-NaN RT
         rtypes_new = [rtypes allresponseTime']; %append it to the rtypes matrix
-        rtindex = allresponseTime > 100 & allresponseTime < (mean(allresponseTime) + 2*std(allresponseTime)); %find out the RTs that are > 100 and < mean + 2sd
+        rtindex = allresponseTime > (mean(allresponseTime) - 2*std(allresponseTime)) & allresponseTime < (mean(allresponseTime) + 2*std(allresponseTime)); %try mean+-3sd trimming 040115; find out the RTs that are > 100 and < mean + 2sd
         rtypes_rttrimed = rtypes_new(rtindex',:); %generate rtypes matrix that removed trimmed RTs.
+        
+        remainRT = allresponseTime(rtindex);
+        
+        AllSubRTs = [AllSubRTs remainRT];
+        
+%         figure; 
+%         subplot(1,2,1);
+%         scatter(1:length(remainRT),remainRT);
+%         subplot(1,2,2);
+%         hist(remainRT);
+%         
+%         eval(['saveas(gcf,''Sub' num2str(a) 'block' num2str(b) 'RTscatter.jpg'');']);
+%         close(gcf);
+%         
         
         for i = 1:length(rtypes_rttrimed) %reminder: potential issue with duplicate rt entries
             index = rtypes_rttrimed(i,1); %get the trial no. of each presses (excluding noresp)
@@ -614,7 +628,7 @@ Pre.HCrt = [Pre.Acc(:,1) gCSp.HCrt(:,2) gCSm.HCrt(:,2) cCSp.HCrt(:,2) cCSm.HCrt(
 
 Pre.allrt = [Pre.Acc(:,1) gCSp.allrt(:,2) gCSm.allrt(:,2) cCSp.allrt(:,2) cCSm.allrt(:,2) gCSp.allrt(:,2)-gCSm.allrt(:,2) cCSp.allrt(:,2)-cCSm.allrt(:,2)];
 
-save PLC_beh_PreCond_all_032215 Pre
+save PLC_beh_PreCond_all_040115 Pre
 
 
 %% Accuracy and RTs broken down by angle - Postconditioning1 - blocks 4,5,6
@@ -646,6 +660,9 @@ acc_hitcorr = [];
 rt_hitcorr = [];
 
 allRTs = [];
+
+AllSubRTs = [];
+
 
 for a = allsubs;
     
@@ -703,8 +720,12 @@ for a = allsubs;
         
         allresponseTime = allresp(indexn); %find out all trials that has a non-NaN RT
         rtypes_new = [rtypes(:,1) indexn' rtypes(:,2) allresponseTime']; %append it to the rtypes matrix
-        rtindex = allresponseTime > 100 & allresponseTime < (mean(allresponseTime) + 2*std(allresponseTime)); %find out the RTs that are > 100 and < mean + 2sd
+        rtindex = allresponseTime > (mean(allresponseTime) - 3*std(allresponseTime)) & allresponseTime < (mean(allresponseTime) + 3*std(allresponseTime)); %try mean+-3sd trimming 040115; find out the RTs that are > 100 and < mean + 2sd
         rtypes_rttrimed = rtypes_new(rtindex',:); %generate rtypes matrix that removed trimmed RTs.        
+        
+        remainRT = allresponseTime(rtindex);
+        
+        AllSubRTs = [AllSubRTs remainRT];        
         
         for i = 1:length(rtypes_rttrimed) %reminder: potential issue with duplicate rt entries
             index = rtypes_rttrimed(i,1); %old index that corresponds to StimR
@@ -1131,7 +1152,7 @@ Post1.HCrt = [Post1.Acc(:,1) gCSp.HCrt(:,2) gCSm.HCrt(:,2) cCSp.HCrt(:,2) cCSm.H
 
 Post1.allrt = [Post1.Acc(:,1) gCSp.allrt(:,2) gCSm.allrt(:,2) cCSp.allrt(:,2) cCSm.allrt(:,2) gCSp.allrt(:,2)-gCSm.allrt(:,2) cCSp.allrt(:,2)-cCSm.allrt(:,2)];
 
-%save PLC_beh_PostCond1_all_032215 Post1
+save PLC_beh_PostCond1_all_040115 Post1
 
 %% Gabor Ratings - Visit 1
 
@@ -1374,6 +1395,9 @@ rt_hitcorr = [];
 
 allRTs = [];
 
+
+AllSubRTs = [];
+
 for a = allsubs;
     
 %     if a == 10
@@ -1430,8 +1454,12 @@ for a = allsubs;
         
         allresponseTime = allresp(indexn); %find out all trials that has a non-NaN RT
         rtypes_new = [rtypes(:,1) indexn' rtypes(:,2) allresponseTime']; %append it to the rtypes matrix
-        rtindex = allresponseTime > 100 & allresponseTime < (mean(allresponseTime) + 2*std(allresponseTime)); %find out the RTs that are > 100 and < mean + 2sd
+        rtindex = allresponseTime > (mean(allresponseTime) - 3*std(allresponseTime)) & allresponseTime < (mean(allresponseTime) + 3*std(allresponseTime)); %try mean+-3sd trimming 040115; find out the RTs that are > 100 and < mean + 2sd
         rtypes_rttrimed = rtypes_new(rtindex',:); %generate rtypes matrix that removed trimmed RTs.        
+ 
+        remainRT = allresponseTime(rtindex);
+        
+        AllSubRTs = [AllSubRTs remainRT];        
         
         for i = 1:length(rtypes_rttrimed) %reminder: potential issue with duplicate rt entries
             index = rtypes_rttrimed(i,1); %old index that corresponds to StimR
@@ -1859,7 +1887,7 @@ Post2.HCrt = [Post2.Acc(:,1) gCSp.HCrt(:,2) gCSm.HCrt(:,2) cCSp.HCrt(:,2) cCSm.H
 Post2.allrt = [Post2.Acc(:,1) gCSp.allrt(:,2) gCSm.allrt(:,2) cCSp.allrt(:,2) cCSm.allrt(:,2) gCSp.allrt(:,2)-gCSm.allrt(:,2) cCSp.allrt(:,2)-cCSm.allrt(:,2)];
 
 
-%save PLC_beh_PostCond2_all_032215 Post2
+save PLC_beh_PostCond2_all_040115 Post2
 
 %% Calculate pre- and post- conditioning difference
 

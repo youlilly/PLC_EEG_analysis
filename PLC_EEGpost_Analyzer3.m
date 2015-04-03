@@ -1901,6 +1901,29 @@ for s = allsubs
     eval(['save PLC_EEG_Post2B4_Sub' num2str(s) '_ColorCSmP2std.txt -ascii ColorCSmP2std;']);
     
 end
+
+%% Pre/Post2B4 C2 LORETA - import text files from LORETA (showing source activity) and compute difference 
+
+allsubs = [1 3 4 9 10 13 15 16 17 18 20:25 27 28 33 34 38:40 42:44 46 47 50 51 54 55]; %32 subs, no 2,7,32,12,37,57
+
+for s = allsubs
+    
+    eval(['load PLC_EEG_Pre_Sub' num2str(s) '_ColorCSpP2std-B2T.lor -ascii;']);
+    
+    eval(['load PLC_EEG_Pre_Sub' num2str(s) '_ColorCSmP2std-B2T.lor -ascii;']);
+    
+    eval(['Pre_P2_CSd = PLC_EEG_Pre_Sub' num2str(s) '_ColorCSpP2std_B2T - PLC_EEG_Pre_Sub' num2str(s) '_ColorCSmP2std_B2T;']);
+    eval(['save Pre_P2_CSd_Sub' num2str(s) '_Loreta_diff.txt -ascii Pre_P2_CSd;']);
+    
+    
+    eval(['load PLC_EEG_Post2B4_Sub' num2str(s) '_ColorCSpP2std-B2T.lor -ascii;']);
+    
+    eval(['load PLC_EEG_Post2B4_Sub' num2str(s) '_ColorCSmP2std-B2T.lor -ascii;']);
+    eval(['Post_P2_CSd = PLC_EEG_Post2B4_Sub' num2str(s) '_ColorCSpP2std_B2T - PLC_EEG_Post2B4_Sub' num2str(s) '_ColorCSmP2std_B2T;']);
+    eval(['save Post2_P2_CSd_Sub' num2str(s) '_Loreta_diff.txt -ascii Post_P2_CSd;']);
+
+end
+
 %% Prepare for Loreta Grand ave Postcond2
 
 clear all

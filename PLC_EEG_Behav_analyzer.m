@@ -180,7 +180,7 @@ for a = allsubs;
     acc_hit_corr_sum = cell(2,2);%this measure collapse hit and correj acc
     rt_hit_corr_sum = cell(2,2);%this measure collapse hit and correj rt
     
-    allrt_sum = cell(2,2); %this measures all rts (both correct and incorrect)
+    allrt_sum = cell(2,2); %this measures all rts (both correct and incorrect); 1st index, gray vs. color; 2nd index, Target1 vs. Target2 
     
     
     for b = 1:3
@@ -189,7 +189,7 @@ for a = allsubs;
         
         allresponseTime = allresp(rtypes(:,1)); %find out all trials that has a non-NaN RT
         rtypes_new = [rtypes allresponseTime']; %append it to the rtypes matrix
-        rtindex = allresponseTime > (mean(allresponseTime) - 2*std(allresponseTime)) & allresponseTime < (mean(allresponseTime) + 2*std(allresponseTime)); %try mean+-3sd trimming 040115; find out the RTs that are > 100 and < mean + 2sd
+        rtindex = allresponseTime > (mean(allresponseTime) - 3*std(allresponseTime)) & (allresponseTime < mean(allresponseTime) + 3*std(allresponseTime)); %try mean+-3sd trimming 040115; find out the RTs that are > 100 and < mean + 2sd
         rtypes_rttrimed = rtypes_new(rtindex',:); %generate rtypes matrix that removed trimmed RTs.
         
         remainRT = allresponseTime(rtindex);
@@ -236,8 +236,7 @@ for a = allsubs;
                             
                         elseif distractorid ==202 %57, 147
                             
-                            allrt_sum{1,2} = [allrt_sum{1,2} response_time];                            
-                            
+                            allrt_sum{1,2} = [allrt_sum{1,2} response_time];                                                       
                             target_rts_gc_angles{1,2} = [target_rts_gc_angles{1,2} response_time];
                             
                         end
@@ -282,12 +281,11 @@ for a = allsubs;
                         if  targetid == 501 && distractorid == 703
                             
                              allrt_sum{2,1} = [allrt_sum{2,1} response_time];                            
-                           fa_rts_gc_angles{2,1} = [fa_rts_gc_angles{2,1} response_time];
+                             fa_rts_gc_angles{2,1} = [fa_rts_gc_angles{2,1} response_time];
                             
                         elseif targetid ==502 && distractorid ==703
                             
-                             allrt_sum{2,2} = [allrt_sum{2,2} response_time];                                                        
-                           
+                             allrt_sum{2,2} = [allrt_sum{2,2} response_time];                                                                                  
                             fa_rts_gc_angles{2,2} = [fa_rts_gc_angles{2,2} response_time];
                             
                         end
@@ -309,9 +307,8 @@ for a = allsubs;
                         
                         
                         if  targetid ==1 && distractorid == 203
-                            allrt_sum{1,1} = [allrt_sum{1,1} response_time];
-                            
-                            distractor_rts_gc_angles {1,1} = [distractor_rts_gc_angles{1,1} response_time];
+                            allrt_sum{1,1} = [allrt_sum{1,1} response_time];                            
+                            distractor_rts_gc_angles{1,1} = [distractor_rts_gc_angles{1,1} response_time];
                             
                         elseif targetid ==2 && distractorid == 203
                             allrt_sum{1,2} = [allrt_sum{1,2} response_time];                              
@@ -325,14 +322,12 @@ for a = allsubs;
                         
                         
                         if  targetid ==501 && distractorid == 703
-                            allrt_sum{2,1} = [allrt_sum{2,1} response_time];                            
-                            
+                            allrt_sum{2,1} = [allrt_sum{2,1} response_time];                                                       
                             distractor_rts_gc_angles{2,1} = [distractor_rts_gc_angles{2,1} response_time];
                             
                         elseif targetid ==502 && distractorid == 703
                             
-                            allrt_sum{2,2} = [allrt_sum{2,2} response_time];                                                        
-                            
+                            allrt_sum{2,2} = [allrt_sum{2,2} response_time];                                                                                    
                             distractor_rts_gc_angles{2,2} = [distractor_rts_gc_angles{2,2} response_time];
                             
                         end
@@ -345,8 +340,7 @@ for a = allsubs;
                     if gcid == 1 %gray
                         
                         if  distractorid == 201
-                            allrt_sum{1,1} = [allrt_sum{1,1} response_time];
-                            
+                            allrt_sum{1,1} = [allrt_sum{1,1} response_time];                           
                             miss_rts_gc_angles{1,1} = [miss_rts_gc_angles{1,1} response_time];
                             
                         elseif distractorid ==202
@@ -358,14 +352,12 @@ for a = allsubs;
                     else %color
                         
                         if  distractorid == 701
-                            allrt_sum{2,1} = [allrt_sum{2,1} response_time];                            
-                            
+                            allrt_sum{2,1} = [allrt_sum{2,1} response_time];                                                        
                             miss_rts_gc_angles{2,1} = [miss_rts_gc_angles{2,1} response_time];
                             
                         elseif distractorid ==702
                             
-                            allrt_sum{2,2} = [allrt_sum{2,2} response_time];                                                        
-                            
+                            allrt_sum{2,2} = [allrt_sum{2,2} response_time];                                                                                    
                             miss_rts_gc_angles{2,2} = [miss_rts_gc_angles{2,2} response_time];
                             
                         end
@@ -628,7 +620,7 @@ Pre.HCrt = [Pre.Acc(:,1) gCSp.HCrt(:,2) gCSm.HCrt(:,2) cCSp.HCrt(:,2) cCSm.HCrt(
 
 Pre.allrt = [Pre.Acc(:,1) gCSp.allrt(:,2) gCSm.allrt(:,2) cCSp.allrt(:,2) cCSm.allrt(:,2) gCSp.allrt(:,2)-gCSm.allrt(:,2) cCSp.allrt(:,2)-cCSm.allrt(:,2)];
 
-save PLC_beh_PreCond_all_040115 Pre
+save PLC_beh_PreCond_all_052615 Pre
 
 
 %% Accuracy and RTs broken down by angle - Postconditioning1 - blocks 4,5,6
@@ -725,7 +717,17 @@ for a = allsubs;
         
         remainRT = allresponseTime(rtindex);
         
-        AllSubRTs = [AllSubRTs remainRT];        
+        AllSubRTs = [AllSubRTs remainRT];   
+        
+%         figure; 
+%         subplot(1,2,1);
+%         scatter(1:length(remainRT),remainRT);
+%         subplot(1,2,2);
+%         hist(remainRT);
+%         
+%         eval(['saveas(gcf,''Sub' num2str(a) 'block' num2str(b) 'RTscatter.jpg'');']);
+%         close(gcf);        
+        
         
         for i = 1:length(rtypes_rttrimed) %reminder: potential issue with duplicate rt entries
             index = rtypes_rttrimed(i,1); %old index that corresponds to StimR
@@ -757,8 +759,7 @@ for a = allsubs;
                             
                         elseif distractorid ==202 %57, 147
                             
-                            allrt_sum{1,2} = [allrt_sum{1,2} response_time];                            
-                            
+                            allrt_sum{1,2} = [allrt_sum{1,2} response_time];                              
                             target_rts_gc_angles{1,2} = [target_rts_gc_angles{1,2} response_time];
                             
                         end
@@ -770,10 +771,12 @@ for a = allsubs;
                         
                         % different target angles: 33, 57 or 123, 147
                         if  distractorid == 701
+                            
                             allrt_sum{2,1} = [allrt_sum{2,1} response_time];                            
                             target_rts_gc_angles{2,1} = [target_rts_gc_angles{2,1} response_time];
                             
                         elseif distractorid ==702
+                            
                             allrt_sum{2,2} = [allrt_sum{2,2} response_time];                                                        
                             target_rts_gc_angles{2,2} = [target_rts_gc_angles{2,2} response_time];
                             
@@ -802,14 +805,13 @@ for a = allsubs;
                         
                         if  targetid == 501 && distractorid == 703
                             
-                             allrt_sum{2,1} = [allrt_sum{2,1} response_time];                            
+                           allrt_sum{2,1} = [allrt_sum{2,1} response_time];                            
                            fa_rts_gc_angles{2,1} = [fa_rts_gc_angles{2,1} response_time];
                             
                         elseif targetid ==502 && distractorid ==703
-                            
-                             allrt_sum{2,2} = [allrt_sum{2,2} response_time];                                                        
-                           
-                            fa_rts_gc_angles{2,2} = [fa_rts_gc_angles{2,2} response_time];
+                                                                                                                                                                                                                                                                    
+                           allrt_sum{2,2} = [allrt_sum{2,2} response_time];                                                                                  
+                           fa_rts_gc_angles{2,2} = [fa_rts_gc_angles{2,2} response_time];
                             
                         end
                         
@@ -830,11 +832,12 @@ for a = allsubs;
                         
                         
                         if  targetid ==1 && distractorid == 203
-                            allrt_sum{1,1} = [allrt_sum{1,1} response_time];
                             
-                            distractor_rts_gc_angles {1,1} = [distractor_rts_gc_angles{1,1} response_time];
+                            allrt_sum{1,1} = [allrt_sum{1,1} response_time];                            
+                            distractor_rts_gc_angles{1,1} = [distractor_rts_gc_angles{1,1} response_time];
                             
                         elseif targetid ==2 && distractorid == 203
+                            
                             allrt_sum{1,2} = [allrt_sum{1,2} response_time];                              
                             distractor_rts_gc_angles{1,2} = [distractor_rts_gc_angles{1,2} response_time];
                             
@@ -846,14 +849,13 @@ for a = allsubs;
                         
                         
                         if  targetid ==501 && distractorid == 703
-                            allrt_sum{2,1} = [allrt_sum{2,1} response_time];                            
                             
+                            allrt_sum{2,1} = [allrt_sum{2,1} response_time];                                                        
                             distractor_rts_gc_angles{2,1} = [distractor_rts_gc_angles{2,1} response_time];
                             
                         elseif targetid ==502 && distractorid == 703
                             
-                            allrt_sum{2,2} = [allrt_sum{2,2} response_time];                                                        
-                            
+                            allrt_sum{2,2} = [allrt_sum{2,2} response_time];                                                                                    
                             distractor_rts_gc_angles{2,2} = [distractor_rts_gc_angles{2,2} response_time];
                             
                         end
@@ -866,11 +868,12 @@ for a = allsubs;
                     if gcid == 1 %gray
                         
                         if  distractorid == 201
-                            allrt_sum{1,1} = [allrt_sum{1,1} response_time];
                             
+                            allrt_sum{1,1} = [allrt_sum{1,1} response_time];   
                             miss_rts_gc_angles{1,1} = [miss_rts_gc_angles{1,1} response_time];
                             
                         elseif distractorid ==202
+                            
                             allrt_sum{1,2} = [allrt_sum{1,2} response_time];                             
                             miss_rts_gc_angles{1,2} = [miss_rts_gc_angles{1,2} response_time];
                             
@@ -879,14 +882,13 @@ for a = allsubs;
                     else %color
                         
                         if  distractorid == 701
-                            allrt_sum{2,1} = [allrt_sum{2,1} response_time];                            
                             
+                            allrt_sum{2,1} = [allrt_sum{2,1} response_time];                                                        
                             miss_rts_gc_angles{2,1} = [miss_rts_gc_angles{2,1} response_time];
                             
                         elseif distractorid ==702
                             
-                            allrt_sum{2,2} = [allrt_sum{2,2} response_time];                                                        
-                            
+                            allrt_sum{2,2} = [allrt_sum{2,2} response_time];                                                                                   
                             miss_rts_gc_angles{2,2} = [miss_rts_gc_angles{2,2} response_time];
                             
                         end
@@ -1152,7 +1154,7 @@ Post1.HCrt = [Post1.Acc(:,1) gCSp.HCrt(:,2) gCSm.HCrt(:,2) cCSp.HCrt(:,2) cCSm.H
 
 Post1.allrt = [Post1.Acc(:,1) gCSp.allrt(:,2) gCSm.allrt(:,2) cCSp.allrt(:,2) cCSm.allrt(:,2) gCSp.allrt(:,2)-gCSm.allrt(:,2) cCSp.allrt(:,2)-cCSm.allrt(:,2)];
 
-save PLC_beh_PostCond1_all_040115 Post1
+save PLC_beh_PostCond1_all_052615 Post1
 
 %% Gabor Ratings - Visit 1
 
@@ -1400,12 +1402,12 @@ AllSubRTs = [];
 
 for a = allsubs;
     
-%     if a == 10
-%         bs = [4 6];
-%     else
-%         bs = 4:6;
-%     end
-    bs = 6;
+    if a == 10
+        bs = [4 6];
+    else
+        bs = 4:6;
+    end
+    %bs = 6;
     
     initials = subinitials(a,:);
     
@@ -1459,7 +1461,16 @@ for a = allsubs;
  
         remainRT = allresponseTime(rtindex);
         
-        AllSubRTs = [AllSubRTs remainRT];        
+        AllSubRTs = [AllSubRTs remainRT];
+%         
+%         figure; 
+%         subplot(1,2,1);
+%         scatter(1:length(remainRT),remainRT);
+%         subplot(1,2,2);
+%         hist(remainRT);
+%         
+%         eval(['saveas(gcf,''Sub' num2str(a) 'block' num2str(b) 'Post2RTscatter.jpg'');']);
+%         close(gcf);              
         
         for i = 1:length(rtypes_rttrimed) %reminder: potential issue with duplicate rt entries
             index = rtypes_rttrimed(i,1); %old index that corresponds to StimR
@@ -1491,8 +1502,7 @@ for a = allsubs;
                             
                         elseif distractorid ==202 %57, 147
                             
-                            allrt_sum{1,2} = [allrt_sum{1,2} response_time];                            
-                            
+                            allrt_sum{1,2} = [allrt_sum{1,2} response_time];                                                       
                             target_rts_gc_angles{1,2} = [target_rts_gc_angles{1,2} response_time];
                             
                         end
@@ -1504,10 +1514,12 @@ for a = allsubs;
                         
                         % different target angles: 33, 57 or 123, 147
                         if  distractorid == 701
+                            
                             allrt_sum{2,1} = [allrt_sum{2,1} response_time];                            
                             target_rts_gc_angles{2,1} = [target_rts_gc_angles{2,1} response_time];
                             
                         elseif distractorid ==702
+                            
                             allrt_sum{2,2} = [allrt_sum{2,2} response_time];                                                        
                             target_rts_gc_angles{2,2} = [target_rts_gc_angles{2,2} response_time];
                             
@@ -1537,13 +1549,12 @@ for a = allsubs;
                         if  targetid == 501 && distractorid == 703
                             
                              allrt_sum{2,1} = [allrt_sum{2,1} response_time];                            
-                           fa_rts_gc_angles{2,1} = [fa_rts_gc_angles{2,1} response_time];
+                             fa_rts_gc_angles{2,1} = [fa_rts_gc_angles{2,1} response_time];
                             
                         elseif targetid ==502 && distractorid ==703
                             
-                             allrt_sum{2,2} = [allrt_sum{2,2} response_time];                                                        
-                           
-                            fa_rts_gc_angles{2,2} = [fa_rts_gc_angles{2,2} response_time];
+                             allrt_sum{2,2} = [allrt_sum{2,2} response_time];                                                                                   
+                             fa_rts_gc_angles{2,2} = [fa_rts_gc_angles{2,2} response_time];
                             
                         end
                         
@@ -1564,11 +1575,12 @@ for a = allsubs;
                         
                         
                         if  targetid ==1 && distractorid == 203
-                            allrt_sum{1,1} = [allrt_sum{1,1} response_time];
                             
+                            allrt_sum{1,1} = [allrt_sum{1,1} response_time];
                             distractor_rts_gc_angles {1,1} = [distractor_rts_gc_angles{1,1} response_time];
                             
                         elseif targetid ==2 && distractorid == 203
+                            
                             allrt_sum{1,2} = [allrt_sum{1,2} response_time];                              
                             distractor_rts_gc_angles{1,2} = [distractor_rts_gc_angles{1,2} response_time];
                             
@@ -1580,14 +1592,13 @@ for a = allsubs;
                         
                         
                         if  targetid ==501 && distractorid == 703
-                            allrt_sum{2,1} = [allrt_sum{2,1} response_time];                            
                             
+                            allrt_sum{2,1} = [allrt_sum{2,1} response_time];                            
                             distractor_rts_gc_angles{2,1} = [distractor_rts_gc_angles{2,1} response_time];
                             
                         elseif targetid ==502 && distractorid == 703
                             
-                            allrt_sum{2,2} = [allrt_sum{2,2} response_time];                                                        
-                            
+                            allrt_sum{2,2} = [allrt_sum{2,2} response_time];                                                                                    
                             distractor_rts_gc_angles{2,2} = [distractor_rts_gc_angles{2,2} response_time];
                             
                         end
@@ -1600,11 +1611,12 @@ for a = allsubs;
                     if gcid == 1 %gray
                         
                         if  distractorid == 201
-                            allrt_sum{1,1} = [allrt_sum{1,1} response_time];
                             
+                            allrt_sum{1,1} = [allrt_sum{1,1} response_time];                            
                             miss_rts_gc_angles{1,1} = [miss_rts_gc_angles{1,1} response_time];
                             
                         elseif distractorid ==202
+                            
                             allrt_sum{1,2} = [allrt_sum{1,2} response_time];                             
                             miss_rts_gc_angles{1,2} = [miss_rts_gc_angles{1,2} response_time];
                             
@@ -1613,14 +1625,13 @@ for a = allsubs;
                     else %color
                         
                         if  distractorid == 701
-                            allrt_sum{2,1} = [allrt_sum{2,1} response_time];                            
                             
+                            allrt_sum{2,1} = [allrt_sum{2,1} response_time];                                                        
                             miss_rts_gc_angles{2,1} = [miss_rts_gc_angles{2,1} response_time];
                             
                         elseif distractorid ==702
                             
-                            allrt_sum{2,2} = [allrt_sum{2,2} response_time];                                                        
-                            
+                            allrt_sum{2,2} = [allrt_sum{2,2} response_time];                                                                                    
                             miss_rts_gc_angles{2,2} = [miss_rts_gc_angles{2,2} response_time];
                             
                         end
@@ -1688,7 +1699,7 @@ for a = allsubs;
             end
             % Then, obtain the Z(Hit), Z(FA)
             zHit = norminv(Hit_rate);
-            zFA = norminv(FA_rate);
+            zFA = norminv(FA_rate); %in case of Sub51, CR rate is 0, FA rate is 1; assume CR is 0.5, and FA rate = 45/45.5 = 0.99, zFA = 2.3263; zHit = 1.2074; d' = -1.1189
             
             % Then, compute d prime
             dprime{a1,a2} = zHit - zFA;
@@ -1887,7 +1898,7 @@ Post2.HCrt = [Post2.Acc(:,1) gCSp.HCrt(:,2) gCSm.HCrt(:,2) cCSp.HCrt(:,2) cCSm.H
 Post2.allrt = [Post2.Acc(:,1) gCSp.allrt(:,2) gCSm.allrt(:,2) cCSp.allrt(:,2) cCSm.allrt(:,2) gCSp.allrt(:,2)-gCSm.allrt(:,2) cCSp.allrt(:,2)-cCSm.allrt(:,2)];
 
 
-save PLC_beh_PostCond2_all_040115 Post2
+save PLC_beh_PostCond2_all_052615 Post2
 
 %% Calculate pre- and post- conditioning difference
 

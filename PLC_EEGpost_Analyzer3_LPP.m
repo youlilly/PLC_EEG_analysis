@@ -247,6 +247,88 @@ for s = allsubs
     end %Of block loop
 end %Of subject loop
 
+
+%% Average ERPs for each block at Post2 (4-6)
+
+%allsubs = [1 3 4 9 10 12 13 15 16 17 18 20:25 27 28 32 33 34 37:40 42:44 46 47 50 51 54 55 57]; %36 subs, no 2, 7
+allsubs = 10% [1 3 4 9 10 13 15 16 17 18 20:25 27 28 33 34 38:40 42:44 46 47 50 51 54 55]; %updated 07/20/15, 32 subs;
+
+for s = allsubs
+    
+    bs = 5%4:6;
+    
+    for b = bs
+            eval(['load PLC_EEGpost90_Sub' num2str(s) 'Block' num2str(b) 'ERPs_LPP.mat results';]); %Save it all for fear
+        
+        GrayCSp = cell(96,1);
+        GrayCSm = cell(96,1);
+        ColCSp = cell(96,1);
+        ColCSm = cell(96,1);
+        
+        for c = 1:96
+            if c == 1 %Only have to do this part once for each subj & block (during channel 1)
+                horz = results.horz;  %Will become the x-axis later, when graphing
+                epochdur = results.epochdur; %Tells us how long the epoch is (in ms)
+            end
+            
+            GrayCSp{c} = mean(results.GrayCSp{c},1);
+            GrayCSm{c} = mean(results.GrayCSm{c},1);
+            ColCSp{c} = mean(results.ColCSp{c},1);
+            ColCSm{c} = mean(results.ColCSm{c},1);
+        end
+        clear results %To save memory--these are big files!
+
+        results.horz = horz; %Will use later to graph
+        results.epochdur=epochdur;
+        
+        results.GrayCSp = GrayCSp;
+        results.GrayCSm = GrayCSm;
+        results.ColCSp = ColCSp;
+        results.ColCSm = ColCSm;
+        
+        eval(['save PLC_EEGpost90_Sub' num2str(s) '_Block' num2str(b) '_Averaged_ERPs_LPP.mat results';]); %Save it all for each subject
+        
+    end
+    
+end
+
+%% Compute individual Oz for Block 4-6 (Postcond2)
+allsubs = [1 3 4 9 10 13 15 16 17 18 20:25 27 28 33 34 38:40 42:44 46 47 50 51 54 55]; %updated 07/20/15, 32 subs;
+
+Ozchan = 31:34; % 07/20/15
+Pzchan = [35:37 23 39];% 07/20/15
+
+for b = 4:6
+    
+    %precond Oz ERPs for each individual
+    for s = allsubs
+        graycsp = [];
+        graycsm = [];
+        colcsp = [];
+        colcsm = [];
+        
+        eval(['load PLC_EEGpost90_Sub' num2str(s) '_Block' num2str(b) '_Averaged_ERPs_LPP.mat results';]);
+        
+        horz =results.horz-100;
+        
+        for c = Pzchan
+            graycsp = [graycsp; results.GrayCSp{c}];
+            graycsm = [graycsm; results.GrayCSm{c}];
+            colcsp = [colcsp; results.ColCSp{c}];
+            colcsm = [colcsm; results.ColCSm{c}];
+        end
+        Oz.GrayCSp = mean(graycsp,1);
+        Oz.GrayCSm = mean(graycsm,1);
+        Oz.ColorCSp = mean(colcsp,1);
+        Oz.ColorCSm = mean(colcsm,1);
+        Oz.hor = horz;
+        eval(['save PLC_EEGpost90_Sub' num2str(s) '_Block' num2str(b) '_Pz_ERPs_LPP.mat Oz';]);
+        
+        
+    end
+    
+end
+
 %% Average ERPs for Postcond2 blocks.
 %exclude 1st block of Sub47
 
@@ -377,9 +459,13 @@ end %Of subject loop
 
 %% Compute individual Oz (A30-B1) ERPs (S1) for Precond and Postcond
 
-allsubs = [1 3 4 9 12 13 15 16 17 18 20:25 27 28 33 34 37:40 42:44 46 47 50 51 54 55 57]; %34 subs, no 2, 7, 32, 10
+%allsubs = [1 3 4 9 12 13 15 16 17 18 20:25 27 28 33 34 37:40 42:44 46 47 50 51 54 55 57]; %34 subs, no 2, 7, 32, 10
+allsubs = [1 3 4 9 10 13 15 16 17 18 20:25 27 28 33 34 38:40 42:44 46 47 50 51 54 55];%32 subs
 
-Ozchan = 30:33;
+%Ozchan = 30:33;
+Ozchan = 31:34; %07/20/15
+Pzchan = [35:37 23 39];
+
 allERPsColor = [];
 allERPsGray = [];
 
@@ -404,7 +490,7 @@ for s = allsubs
     
     horz =results.horz-100;
     
-    for c = Ozchan
+    for c = Pzchan
         graycsp = [graycsp; results.GrayCSp{c}];
         graycsm = [graycsm; results.GrayCSm{c}];
         colcsp = [colcsp; results.ColCSp{c}];
@@ -438,7 +524,7 @@ for s = allsubs
     
     
     Oz.hor = horz;
-    eval(['save PLC_EEG90_Sub' num2str(s) '_Precond_Oz_ERPs_lpp.mat Oz';]);
+    eval(['save PLC_EEG90_Sub' num2str(s) '_Precond_Pz_ERPs_lpp.mat Oz';]);
     
     allERPsColor = [allERPsColor; Oz.ColorCSp; Oz.ColorCSm];
     allERPsGray = [allERPsGray; Oz.GrayCSp; Oz.GrayCSm];
@@ -472,7 +558,7 @@ for s = allsubs
     
     horz =results.horz-100;
     
-    for c = Ozchan
+    for c = Pzchan
         graycsp = [graycsp; results.GrayCSp{c}];
         graycsm = [graycsm; results.GrayCSm{c}];
         colcsp = [colcsp; results.ColCSp{c}];
@@ -505,7 +591,7 @@ for s = allsubs
     Oz.ColorCSmD = mean(colcsmd,1);
     
     Oz.horz = horz;
-    eval(['save PLC_EEGpost90_Sub' num2str(s) '_Postcond2_Oz_ERPs_lpp.mat Oz';]);
+    eval(['save PLC_EEGpost90_Sub' num2str(s) '_Postcond2_Pz_ERPs_lpp.mat Oz';]);
     
     allERPsColor = [allERPsColor; Oz.ColorCSp; Oz.ColorCSm];
     allERPsGray = [allERPsGray; Oz.GrayCSp; Oz.GrayCSm];
@@ -521,8 +607,10 @@ grandygray = [grandygrandpreg; grandygrandpostg]; grandygray = mean(grandygray,1
 plot(horz, grandycolor); hold on; %this plots the grand ERP for color condition across CS+/CS-, across Pre/Postcond for S1
 plot(horz, grandygray);%this plots the grand ERP for gray condition across CS+/CS-, across Pre/Postcond for S1
 
-saveas(gcf, 'GrandPrePost2_LPP_Color_Gray_average_44subs.jpg');
-save GrandPrePost2_Color_Gray_ERP horz grandycolor grandygray
+saveas(gcf, 'GrandPrePost2_LPP_Color_Gray_average_Pz_32subs.jpg');
+save GrandPrePost2_32subs_Pz_Color_Gray_ERP horz grandycolor grandygray
+
+
 
 %% Exploratory point-by-point ttest of Time(Pre/Post)*CS(+/-) interaction
 %Color condition, LPP time window
@@ -628,11 +716,118 @@ PreGrayCSd = SCR(:,2);
 Post2ColorCSd = SCR(:,3);
 Post2GrayCSd = SCR(:,4);
 
+%% Exploratory point-by-point ttest of Time(Pre/Post)*CS(+/-) interaction
+%updated: using 32 subjects, 07/20/15
+
+clear all
+
+allsubs = [1 3 4 9 10 13 15 16 17 18 20:25 27 28 33 34 38:40 42:44 46 47 50 51 54 55]; %32 subs, no 2,7,32,12,37,57
+
+% %missing CSm Color for Sub10 in B5
+% PersonSCR = [-0.64	-0.88	-0.76	-0.121536792	-0.132784119	0.366863619	-0.3569859
+% -0.02	0.41	0.2	-0.221098569	0.213223158	-0.083370757	-0.020371948
+% -0.33	-0.02	-0.17	0.139763219	-0.043098606	0.471919875	0.262141312
+% 1.22	1.7	1.46	0.36877096	-0.491990139	0.034038093	0.067089671
+% -1.57	-1.02	-1.3	-0.078448693	-0.004932663	-0.263994114	0.005962676
+% 0.6	-0.88	-0.14	0.141901832	0.08047412	-0.09508355	0.172889885
+% -1.88	-1.02	-1.45	-0.040906923	0.018814522	0.172573828	0.169081742
+% -1.88	0.99	-0.45	0.569641514	0.342857485	-0.196825843	-0.101016624
+% 0.603670406	-0.161709278	0.220980564	0.168769341	-0.012218746	-0.09257476	-0.312418196
+% 0.29	0.99	0.64	-0.097414847	0.124333057	-0.151984501	0.022525672
+% -0.02	-1.17	-0.59	-0.038107585	0.166154016	0.189281646	-0.046357874
+% -0.33	-0.16	-0.24	-0.047451922	-0.103875478	-0.276717168	0.225959648
+% -0.64	0.41	-0.11	-0.355755034	-0.315810171	0.09821349	0.021989142
+% -0.33	0.27	-0.03	-0.198523144	-0.108344191	0.123112763	-0.087711434
+% 0.29	2.28	1.29	0.304204643	0.29217203	-0.411517265	-0.115777582
+% 1.22	1.27	1.25	-0.115530829	-0.233143978	0.03962776	-0.261270159
+% -1.57	-0.31	-0.94	-0.254398174	0.142865601	-0.36537068	-0.053196999
+% -1.57	1.42	-0.08	0.229313752	0.250467973	0.051307525	-0.308803084
+% -0.33	-1.02	-0.67	-0.193101176	0.350788741	0.201212913	0.13495568
+% 0.29	-0.74	-0.22	0.185501308	0.025087202	-0.355108999	-0.359832089
+% -0.64	-0.74	-0.69	0.010207711	0.051588986	-0.214820225	0.078117059
+% -0.33	-1.17	-0.75	-0.011989929	0.118593346	-0.034980388	0.357294415
+% 1.22	2.56	1.89	-0.041497311	0.392906764	0.167469119	0.25179714
+% -0.64	0.13	-0.26	-0.003450558	-0.011161584	-0.062522954	-0.432529335
+% 1.84	0.84	1.34	0.099551071	-0.123122405	0.074360616	0.009846859
+% 0.29	-1.17	-0.44	-0.60307947	-0.344911395	-0.086188842	0.062774807
+% 0.91	0.27	0.59	-0.140133381	-0.048098821	-0.089972098	0.0472167
+% 1.53	-0.02	0.76	-0.291805415	0.04449716	0.128858143	-0.004933233
+% 0.91	-1.02	-0.05	0.360509487	-0.262573594	0.164646545	0.02973369
+% 0.29	-0.88	-0.29	-0.42510864	-0.216558757	0.171595138	0.154972687
+% -1.57	-0.88	-1.22	-0.194993828	0.11694365	0.030306071	-0.070034748];
+
+PersonSCR = [-0.64	-0.88	-0.76	-0.121536792	-0.132784119	0.366863619	-0.3569859
+-0.02	0.41	0.2	-0.221098569	0.213223158	-0.083370757	-0.020371948
+-0.33	-0.02	-0.17	0.139763219	-0.043098606	0.471919875	0.262141312
+1.22	1.7	1.46	0.36877096	-0.491990139	0.034038093	0.067089671
+1.22	-0.45	0.39	-0.139188915	-0.147945488	0.114775733	-0.291521322
+-1.57	-1.02	-1.3	-0.078448693	-0.004932663	-0.263994114	0.005962676
+0.6	-0.88	-0.14	0.141901832	0.08047412	-0.09508355	0.172889885
+-1.88	-1.02	-1.45	-0.040906923	0.018814522	0.172573828	0.169081742
+-1.88	0.99	-0.45	0.569641514	0.342857485	-0.196825843	-0.101016624
+0.603670406	-0.161709278	0.220980564	0.168769341	-0.012218746	-0.09257476	-0.312418196
+0.29	0.99	0.64	-0.097414847	0.124333057	-0.151984501	0.022525672
+-0.02	-1.17	-0.59	-0.038107585	0.166154016	0.189281646	-0.046357874
+-0.33	-0.16	-0.24	-0.047451922	-0.103875478	-0.276717168	0.225959648
+-0.64	0.41	-0.11	-0.355755034	-0.315810171	0.09821349	0.021989142
+-0.33	0.27	-0.03	-0.198523144	-0.108344191	0.123112763	-0.087711434
+0.29	2.28	1.29	0.304204643	0.29217203	-0.411517265	-0.115777582
+1.22	1.27	1.25	-0.115530829	-0.233143978	0.03962776	-0.261270159
+-1.57	-0.31	-0.94	-0.254398174	0.142865601	-0.36537068	-0.053196999
+-1.57	1.42	-0.08	0.229313752	0.250467973	0.051307525	-0.308803084
+-0.33	-1.02	-0.67	-0.193101176	0.350788741	0.201212913	0.13495568
+0.29	-0.74	-0.22	0.185501308	0.025087202	-0.355108999	-0.359832089
+-0.64	-0.74	-0.69	0.010207711	0.051588986	-0.214820225	0.078117059
+-0.33	-1.17	-0.75	-0.011989929	0.118593346	-0.034980388	0.357294415
+1.22	2.56	1.89	-0.041497311	0.392906764	0.167469119	0.25179714
+-0.64	0.13	-0.26	-0.003450558	-0.011161584	-0.062522954	-0.432529335
+1.84	0.84	1.34	0.099551071	-0.123122405	0.074360616	0.009846859
+0.29	-1.17	-0.44	-0.60307947	-0.344911395	-0.086188842	0.062774807
+0.91	0.27	0.59	-0.140133381	-0.048098821	-0.089972098	0.0472167
+1.53	-0.02	0.76	-0.291805415	0.04449716	0.128858143	-0.004933233
+0.91	-1.02	-0.05	0.360509487	-0.262573594	0.164646545	0.02973369
+0.29	-0.88	-0.29	-0.42510864	-0.216558757	0.171595138	0.154972687
+-1.57	-0.88	-1.22	-0.194993828	0.11694365	0.030306071	-0.070034748];
+
+BISz = PersonSCR(:,1);
+BAIz = PersonSCR(:,2);
+Anxz = PersonSCR(:,3);
+
+PreColorSCRCSd = PersonSCR(:,4);
+PreGraySCRCSd = PersonSCR(:,5);
+Post2ColorSCRCSd = PersonSCR(:,6);
+Post2GraySCRCSd = PersonSCR(:,7);
+
+%% Color Post2 LPP
+
+allTimebyCS = [];
+allH0 = [];
+allPs = [];
+
+allrpi = [];
+allrpa = [];
+allrpn = [];
+
+allri = [];
+allra = [];
+allrn = [];
+
+allrscr = [];
+allrpscr = [];
+
+PrecondColorCSp = [];
+PrecondColorCSm = [];
+Postcond2ColorCSp = [];
+Postcond2ColorCSm = [];
+
 for s = allsubs
-    eval(['load PLC_EEG90_Sub' num2str(s) '_Precond_Oz_ERPs_lpp.mat Oz';]);
+    eval(['load PLC_EEG90_Sub' num2str(s) '_Precond_Pz_ERPs_lpp.mat Oz';]);
     Precond = Oz;
     
-    eval(['load PLC_EEGpost90_Sub' num2str(s) '_Postcond2_Oz_ERPs_lpp.mat Oz';]);
+    eval(['load PLC_EEGpost90_Sub' num2str(s) '_Block4_Pz_ERPs_LPP.mat Oz';]);
+    
+   % eval(['load PLC_EEGpost90_Sub' num2str(s) '_Postcond2_Oz_ERPs_lpp.mat Oz';]);
+   % eval(['load PLC_EEGpost90_Sub' num2str(s) '_Block6_Oz_ERPs_LPP.mat Oz';]);  
     Postcond = Oz;
     
     TimebyCS = (Postcond.ColorCSp - Postcond.ColorCSm) - (Precond.ColorCSp - Precond.ColorCSm);
@@ -640,8 +835,8 @@ for s = allsubs
     
     PrecondColorCSp = [PrecondColorCSp; Precond.ColorCSp];
     PrecondColorCSm = [PrecondColorCSm; Precond.ColorCSm];
-    PostcondColorCSp = [PostcondColorCSp; Postcond.ColorCSp];
-    PostcondColorCSm = [PostcondColorCSm; Postcond.ColorCSm];
+    Postcond2ColorCSp = [Postcond2ColorCSp; Postcond.ColorCSp];
+    Postcond2ColorCSm = [Postcond2ColorCSm; Postcond.ColorCSm];
 end
 
 %ttest for interaction for each time point
@@ -660,7 +855,7 @@ for i = 1:length(allTimebyCS)
     allrpa = [allrpa rpa];
     allrpn = [allrpn rpn];
     
-    [rscr, rpscr] = corr(interaction, (Post2ColorCSd - PreColorCSd));
+    [rscr, rpscr] = corr(interaction, (Post2ColorSCRCSd - PreColorSCRCSd));
     
     allrscr = [allrscr rscr];
     allrpscr = [allrpscr rpscr];
@@ -671,51 +866,67 @@ for i = 1:length(allTimebyCS)
     allPs = [allPs p];   
 end
 
+tallyp = [allPs' allrpi' allrpscr'];
+
 horz = Precond.hor;
 
 plot(horz, mean(PrecondColorCSp,1) , 'r-.'); hold on;
 plot(horz, mean(PrecondColorCSm,1) , 'g-.');
 
-plot(horz, mean(PostcondColorCSp,1) , 'r-');
-plot(horz, mean(PostcondColorCSm,1) , 'g-');
+plot(horz, mean(Postcond2ColorCSp,1) , 'r-');
+plot(horz, mean(Postcond2ColorCSm,1) , 'g-');
 
-plot(horz,allPs, 'k');
-plot(horz,allrpi+1, 'k--');
-plot(horz,allrpscr+2, 'k-.');
+plot(horz,allPs-2, 'k');
+plot(horz,allrpi-1, 'k--');
+plot(horz,allrpscr, 'k-.');
 
 legend('Pre Color CS+', 'Pre Color CS-', 'Post2 Color CS+', 'Post2 Color CS-', 'Location', 'northwest');
-saveas(gcf, 'PrePost2_LPP_ColorERPs_34subs_TimebyCSbyBIS_pval.jpg');
+saveas(gcf, 'PrePost2B4_LPP_ColorERPs_32subs_Pz_TimebyCSbyBIS_pval.jpg');
+
+%saveas(gcf, 'PrePost2B6_LPP_ColorERPs_32subs_Oz31_34_TimebyCSbyBIS_pval.jpg');
+
+%saveas(gcf, 'PrePost2_LPP_ColorERPs_32subs_Oz31_34_TimebyCSbyBIS_pval.jpg');
 close(gcf);
 
 figure;
 plot(horz, mean(PrecondColorCSp,1) , 'r-.'); hold on;
 plot(horz, mean(PrecondColorCSm,1) , 'g-.');
 
-plot(horz, mean(PostcondColorCSp,1) , 'r-');
-plot(horz, mean(PostcondColorCSm,1) , 'g-');
+plot(horz, mean(Postcond2ColorCSp,1) , 'r-');
+plot(horz, mean(Postcond2ColorCSm,1) , 'g-');
 
-plot(horz,allPs, 'k');
-plot(horz,allrpa+1, 'k--');
+plot(horz,allPs-2, 'k');
+plot(horz,allrpa-1, 'k--');
 
 legend('Pre Color CS+', 'Pre Color CS-', 'Post2 Color CS+', 'Post2 Color CS-', 'Location', 'northwest');
-saveas(gcf, 'PrePost2_LPP_ColorERPs_34subs_TimebyCSbyBAI_pval.jpg');
+saveas(gcf, 'PrePost2B4_LPP_ColorERPs_32subs_Pz_TimebyCSbyBAI_pval.jpg');
+
+
+%saveas(gcf,
+%'PrePost2B6_LPP_ColorERPs_32subs_Oz31_34_TimebyCSbyBAI_pval.jpg');
+
+%saveas(gcf, 'PrePost2_LPP_ColorERPs_32subs_Oz31_34_TimebyCSbyBAI_pval.jpg');
 close(gcf);
 
 figure;
 plot(horz, mean(PrecondColorCSp,1) , 'r-.'); hold on;
 plot(horz, mean(PrecondColorCSm,1) , 'g-.');
 
-plot(horz, mean(PostcondColorCSp,1) , 'r-');
-plot(horz, mean(PostcondColorCSm,1) , 'g-');
+plot(horz, mean(Postcond2ColorCSp,1) , 'r-');
+plot(horz, mean(Postcond2ColorCSm,1) , 'g-');
 
-plot(horz,allPs, 'k');
-plot(horz,allrpn+1, 'k--');
+plot(horz,allPs-2, 'k');
+plot(horz,allrpn-1, 'k--');
 
 legend('Pre Color CS+', 'Pre Color CS-', 'Post2 Color CS+', 'Post2 Color CS-', 'Location', 'northwest');
-saveas(gcf, 'PrePost2_LPP_ColorERPs_34subs_TimebyCSbyAnx_pval.jpg');
+saveas(gcf, 'PrePost2B4_LPP_ColorERPs_32subs_Pz_TimebyCSbyAnx_pval.jpg');
+
+%saveas(gcf, 'PrePost2B6_LPP_ColorERPs_32subs_Oz31_34_TimebyCSbyAnx_pval.jpg');
+
+%saveas(gcf, 'PrePost2_LPP_ColorERPs_32subs_Oz31_34_TimebyCSbyAnx_pval.jpg');
 close(gcf);
 
-save PrePost2_LPP_Color_TimebyCS.mat
+save PrePost2B4_LPP_32subs_Pz_Color_TimebyCS.mat
 
 % %ttest for interaction for C1P1 trough-to-peak difference
 % c1p1 = allTimebyCS(:,78) - allTimebyCS(:,75);
@@ -727,7 +938,7 @@ save PrePost2_LPP_Color_TimebyCS.mat
 
 %% Gray condition, LPP time window
 
-allsubs = [1 3 4 9 12 13 15 16 17 18 20:25 27 28 33 34 37:40 42:44 46 47 50 51 54 55 57]; %34 subs, no 2, 7, 32, 10
+%allsubs = [1 3 4 9 12 13 15 16 17 18 20:25 27 28 33 34 37:40 42:44 46 47 50 51 54 55 57]; %34 subs, no 2, 7, 32, 10
 
 allTimebyCS = [];
 allH0 = [];
@@ -746,19 +957,18 @@ allrpscr = [];
 
 PrecondGrayCSp = [];
 PrecondGrayCSm = [];
-PostcondGrayCSp = [];
-PostcondGrayCSm = [];
+Postcond2GrayCSp = [];
+Postcond2GrayCSm = [];
 
-
-BISz = Personality(:,2);
-BAIz = Personality(:,3);
-Anxz = Personality(:,4);
 
 for s = allsubs
-    eval(['load PLC_EEG90_Sub' num2str(s) '_Precond_Oz_ERPs_lpp.mat Oz';]);
+    eval(['load PLC_EEG90_Sub' num2str(s) '_Precond_Pz_ERPs_lpp.mat Oz';]);
     Precond = Oz;
     
-    eval(['load PLC_EEGpost90_Sub' num2str(s) '_Postcond2_Oz_ERPs_lpp.mat Oz';]);
+    eval(['load PLC_EEGpost90_Sub' num2str(s) '_Block4_Pz_ERPs_LPP.mat Oz';]);
+    
+  %  eval(['load PLC_EEGpost90_Sub' num2str(s) '_Block4_Oz_ERPs_LPP.mat Oz';]);  
+  %  eval(['load PLC_EEGpost90_Sub' num2str(s) '_Postcond2_Oz_ERPs_lpp.mat Oz';]);
     Postcond = Oz;
     
     TimebyCS = (Postcond.GrayCSp - Postcond.GrayCSm) - (Precond.GrayCSp - Precond.GrayCSm);
@@ -766,9 +976,10 @@ for s = allsubs
     
     PrecondGrayCSp = [PrecondGrayCSp; Precond.GrayCSp];
     PrecondGrayCSm = [PrecondGrayCSm; Precond.GrayCSm];
-    PostcondGrayCSp = [PostcondGrayCSp; Postcond.GrayCSp];
-    PostcondGrayCSm = [PostcondGrayCSm; Postcond.GrayCSm];
+    Postcond2GrayCSp = [Postcond2GrayCSp; Postcond.GrayCSp];
+    Postcond2GrayCSm = [Postcond2GrayCSm; Postcond.GrayCSm];
 end
+
 %ttest for interaction for each time point
 for i = 1:length(allTimebyCS)
     interaction = allTimebyCS(:,i);
@@ -785,7 +996,7 @@ for i = 1:length(allTimebyCS)
     allrpa = [allrpa rpa];
     allrpn = [allrpn rpn];
     
-    [rscr, rpscr] = corr(interaction, (Post2GrayCSd - PreGrayCSd));
+    [rscr, rpscr] = corr(interaction, (Post2GraySCRCSd - PreGraySCRCSd));
     
     allrscr = [allrscr rscr];
     allrpscr = [allrpscr rpscr];      
@@ -796,51 +1007,62 @@ for i = 1:length(allTimebyCS)
     allPs = [allPs p];   
 end
 
+tallyp = [allPs' allrpi' allrpscr'];
 
 horz = Precond.hor;
 
 plot(horz, mean(PrecondGrayCSp,1) , 'b-.'); hold on;
 plot(horz, mean(PrecondGrayCSm,1) , 'g-.');
 
-plot(horz, mean(PostcondGrayCSp,1) , 'b-');
-plot(horz, mean(PostcondGrayCSm,1) , 'g-');
+plot(horz, mean(Postcond2GrayCSp,1) , 'b-');
+plot(horz, mean(Postcond2GrayCSm,1) , 'g-');
 
 plot(horz,allPs-2, 'r');
 plot(horz,allrpi-1, 'r--');
 plot(horz,allrpscr, 'k-');
 
 legend('Pre Gray CS+', 'Pre Gray CS-', 'Post2 Gray CS+', 'Post2 Gray CS-', 'Location', 'southwest');
-saveas(gcf, 'PrePost2_LPP_GrayERPs_34subs_TimebyCSbyBIS_pval.jpg');
+saveas(gcf, 'PrePost2B4_LPP_GrayERPs_32subs_Pz_TimebyCSbyBIS_pval.jpg');
+
+%saveas(gcf, 'PrePost2B4_LPP_GrayERPs_32subs_Oz31_34_TimebyCSbyBIS_pval.jpg');
 close(gcf);
 
 figure;
 plot(horz, mean(PrecondGrayCSp,1) , 'b-.'); hold on;
 plot(horz, mean(PrecondGrayCSm,1) , 'g-.');
 
-plot(horz, mean(PostcondGrayCSp,1) , 'b-');
-plot(horz, mean(PostcondGrayCSm,1) , 'g-');
+plot(horz, mean(Postcond2GrayCSp,1) , 'b-');
+plot(horz, mean(Postcond2GrayCSm,1) , 'g-');
 
 plot(horz,allPs-1, 'r');
 plot(horz,allrpa, 'r--');
 
 legend('Pre Gray CS+', 'Pre Gray CS-', 'Post2 Gray CS+', 'Post2 Gray CS-', 'Location', 'southwest');
-saveas(gcf, 'PrePost2_LPP_GrayERPs_34subs_TimebyCSbyBAI_pval.jpg');
+saveas(gcf, 'PrePost2B4_LPP_GrayERPs_32subs_Pz_TimebyCSbyBAI_pval.jpg');
+
+%saveas(gcf, 'PrePost2B4_LPP_GrayERPs_32subs_Oz31_34_TimebyCSbyBAI_pval.jpg');
 close(gcf);
 
 plot(horz, mean(PrecondGrayCSp,1) , 'b-.'); hold on;
 plot(horz, mean(PrecondGrayCSm,1) , 'g-.');
 
-plot(horz, mean(PostcondGrayCSp,1) , 'b-');
-plot(horz, mean(PostcondGrayCSm,1) , 'g-');
+plot(horz, mean(Postcond2GrayCSp,1) , 'b-');
+plot(horz, mean(Postcond2GrayCSm,1) , 'g-');
 
 plot(horz,allPs-1, 'r');
 plot(horz,allrpn, 'r--');
 
 legend('Pre Gray CS+', 'Pre Gray CS-', 'Post2 Gray CS+', 'Post2 Gray CS-', 'Location', 'southwest');
-saveas(gcf, 'PrePost2_LPP_GrayERPs_34subs_TimebyCSbyAnx_pval.jpg');
+saveas(gcf, 'PrePost2B4_LPP_GrayERPs_32subs_Pz_TimebyCSbyANX_pval.jpg');
+
+%saveas(gcf, 'PrePost2B4_LPP_GrayERPs_32subs_Oz31_34_TimebyCSbyAnx_pval.jpg');
 close(gcf);
 
-save PrePost2_LPP_Gray_TimebyCS.mat
+save PrePost2B4_LPP_32subs_Pz_Gray_TimebyCS.mat
+
+%save PrePost2B4_LPP_32subs_Oz31_34_Gray_TimebyCS.mat
+
+
 
 %% Exploratory point-by-point ttest of Time(Pre/Post)*CS(+/-) interaction
 %Color condition, CSd-s, LPP time window

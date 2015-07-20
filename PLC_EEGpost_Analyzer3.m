@@ -541,7 +541,7 @@ end
 %% Compute individual Oz (A30-B1) ERPs (S1) for Block 4-6 (Postcond)
 
 allsubs = [1 3 4 9 10 12 13 15 16 17 18 20:25 27 28 32 33 34 37:40 42:44 46 47 50 51 54 55 57]; %36 subs, no 2, 7
-Ozchan = 30:33;
+Ozchan = 31:34; % 07/19/15
 
 for b = 4:6
     
@@ -577,9 +577,10 @@ end
 %% Compute individual Oz (A30-B1) ERPs (S1) for Postcond2
 
 %allsubs = [1:5 7:29 31 33 34 37:44 46 47 50 51 53:57];
-allsubs = [1 3 4 9 10 12 13 15 16 17 18 20:25 27 28 32 33 34 37:40 42:44 46 47 50 51 54 55 57]; %36 subs, no 2, 7
+%allsubs = [1 3 4 9 10 12 13 15 16 17 18 20:25 27 28 32 33 34 37:40 42:44 46 47 50 51 54 55 57]; %36 subs, no 2, 7
+allsubs = [1 3 4 9 10 13 15 16 17 18 20:25 27 28 33 34 38:40 42:44 46 47 50 51 54 55];
 
-Ozchan = 30:33;
+Ozchan = 31:34; %07/19/15
 allERPsColor = [];
 allERPsGray = [];
 
@@ -589,11 +590,11 @@ for s = allsubs
     graycsm = [];
     colcsp = [];
     colcsm = [];
-    if s == 16 || s == 37 || s == 54
-        eval(['load PLC_EEGpost_Sub' num2str(s) '_Postcond2_ERPs_ica.mat results';]);
-    else
+    %if s == 16 || s == 37 || s == 54
+    %    eval(['load PLC_EEGpost_Sub' num2str(s) '_Postcond2_ERPs_ica.mat results';]);
+    %else
         eval(['load PLC_EEGpost_Sub' num2str(s) '_Postcond2_ERPs.mat results';]);
-    end
+    %end
     horz =results.horz-200;
     
     for c = Ozchan
@@ -607,7 +608,7 @@ for s = allsubs
     Oz.ColorCSp = mean(colcsp,1);
     Oz.ColorCSm = mean(colcsm,1);
     Oz.horz = horz;
-    %eval(['save PLC_EEG_Sub' num2str(s) '_Postcond2_Oz_ERPs.mat Oz';]);
+    eval(['save PLC_EEG_Sub' num2str(s) '_Postcond2_Oz_ERPs.mat Oz';]);
     
     allERPsColor = [allERPsColor; Oz.ColorCSp; Oz.ColorCSm];
     allERPsGray = [allERPsGray; Oz.GrayCSp; Oz.GrayCSm];
@@ -1046,6 +1047,8 @@ for i = 1:length(allTimebyCS)
     allrpscr = [allrpscr rpscr];    
 end
 
+tallyp = [allPs' allrpi' allrpscr'];
+
 %plotting waveform
 horz = Precond.horz;
 
@@ -1055,9 +1058,9 @@ plot(horz, mean(PrecondColorCSm,1) , 'g:');
 plot(horz, mean(Postcond2ColorCSp,1) , 'r');
 plot(horz, mean(Postcond2ColorCSm,1) , 'g');
 
-% plot(horz,allPs, 'k');
-% plot(horz,allrpi+1, 'k--');
-% plot(horz,allrpscr+2, 'k-.');
+ plot(horz,allPs, 'k');
+ plot(horz,allrpi+1, 'k--');
+ plot(horz,allrpscr+2, 'k-.');
 
 line([horz(83) horz(83)],[0 -7]);
 line([horz(88) horz(88)],[0 -7]);
@@ -1066,10 +1069,10 @@ line([horz(98) horz(98)],[0 -7]);
 line([horz(122) horz(122)],[0 -7]);
 
 legend('Pre Color CS+', 'Pre Color CS-', 'Post2 Color CS+', 'Post2 Color CS-', 'Location', 'southwest');
-saveas(gcf, 'PrePost2_ColorERPs_32subs_TimebyCSbyBIS_pval.jpg');
+saveas(gcf, 'PrePost2_ColorERPs_Oz31_34_noica_32subs_TimebyCSbyBIS_pval.jpg');
 %close(gcf);
 
-%save PrePost2Ave_32subs_Color_TimebyCS.mat
+save PrePost2Ave_32subs_Oz31_34_noica_Color_TimebyCS.mat
 
 
 %% Gray condition, early time window
@@ -1156,7 +1159,9 @@ for i = 1:length(allTimebyCS)
     allrpscr = [allrpscr rpscr];     
     
 end
+tallyp = [allPs' allrpi' allrpscr'];
 
+figure;
 horz = Precond.horz;
 
 plot(horz, mean(PrecondGrayCSp,1) , 'b-.'); hold on;
@@ -1165,9 +1170,9 @@ plot(horz, mean(PrecondGrayCSm,1) , 'g-.');
 plot(horz, mean(Postcond2GrayCSp,1) , 'b-');
 plot(horz, mean(Postcond2GrayCSm,1) , 'g-');
 
-% plot(horz,allPs-2, 'r');
-% plot(horz,allrpi-1, 'r--');
-% plot(horz,allrpscr, 'k-');
+ plot(horz,allPs-2, 'r');
+ plot(horz,allrpi-1, 'r--');
+ plot(horz,allrpscr, 'k-');
 
 line([horz(82) horz(82)],[0 6]);
 line([horz(88) horz(88)],[0 6]);
@@ -1180,10 +1185,10 @@ line([horz(88) horz(88)],[0 6]);
 % line([horz(124) horz(124)],[0 6]);
 
 legend('Pre Gray CS+', 'Pre Gray CS-', 'Post2 Gray CS+', 'Post2 Gray CS-', 'Location', 'northwest');
-saveas(gcf, 'PrePost2_GrayERPs_32subs_TimebyCSbyBIS_pval.jpg');
+saveas(gcf, 'PrePost2_GrayERPs_Oz31_34_noica_32subs_TimebyCSbyBIS_pval.jpg');
 %close(gcf);
 
-%save PrePost2Ave_32subs_Gray_TimebyCS.mat
+save PrePost2Ave_Oz31_34_noica_32subs_Gray_TimebyCS.mat
 
 
 %% Exploratory point-by-point ttest of Time(Pre/Post2 B4)*CS(+/-) interaction
@@ -1250,6 +1255,10 @@ for i = 1:length(allTimebyCS)
     allrpscr = [allrpscr rpscr];    
 end
 
+tallyp = [allPs' allrpi' allrpscr'];
+
+figure;
+
 horz = Precond.horz;
 
 plot(horz, mean(PrecondColorCSp,1) , 'r:'); hold on;
@@ -1258,19 +1267,20 @@ plot(horz, mean(PrecondColorCSm,1) , 'g:');
 plot(horz, mean(Postcond2ColorCSp,1) , 'r');
 plot(horz, mean(Postcond2ColorCSm,1) , 'g');
 
-% plot(horz,allPs, 'k');
-% plot(horz,allrpi+1, 'k--');
-% plot(horz,allrpscr+2, 'k-.');
+ plot(horz,allPs, 'k');
+ plot(horz,allrpi+1, 'k--');
+ plot(horz,allrpscr+2, 'k-.');
 
 line([horz(98) horz(98)],[0 -7]);
 line([horz(122) horz(122)],[0 -7]);
 
 
 legend('Pre Color CS+', 'Pre Color CS-', 'Post2 B4 Color CS+', 'Post2 B4 Color CS-', 'Location', 'southwest');
-saveas(gcf, 'PrePost2B4_ColorERPs_32subs_TimebyCSbyBIS_pval.jpg');
+saveas(gcf, 'PrePost2B4_ColorERPs_Oz31_34_32subs_TimebyCSbyBIS_pval.jpg');
 %close(gcf);
 
-%save PrePost2B4_32subs_Color_TimebyCS.mat
+save PrePost2B4_Oz31_34_32subs_Color_TimebyCS.mat
+
 
 %% Gray condition
 allTimebyCS = [];
@@ -1352,10 +1362,10 @@ line([horz(81) horz(81)],[0 7]);
 line([horz(87) horz(87)],[0 7]);
 
 legend('Pre Gray CS+', 'Pre Gray CS-', 'Post2 B4 Gray CS+', 'Post2 B4 Gray CS-', 'Location', 'southwest');
-saveas(gcf, 'PrePost2B4_GrayERPs_32subs_TimebyCSbyBIS_pval.jpg');
+saveas(gcf, 'PrePost2B4_Oz31_34_GrayERPs_32subs_TimebyCSbyBIS_pval.jpg');
 close(gcf);
 
-save PrePost2B4_32subs_Gray_TimebyCS.mat
+save PrePost2B4_Oz31_34_32subs_Gray_TimebyCS.mat
 
 %% Plot Grand Average ERP Pre-Post2B4 Color/Gray at Oz - 3.23.15
 
@@ -1565,10 +1575,10 @@ line([horz(81) horz(81)],[0 -7]);
 line([horz(87) horz(87)],[0 -7]);
 
 legend('Pre Color CS+', 'Pre Color CS-', 'Post2 B5 Color CS+', 'Post2 B5 Color CS-', 'Location', 'southwest');
-saveas(gcf, 'PrePost2B5_ColorERPs_32subs_TimebyCSbyBIS_pval.jpg');
+saveas(gcf, 'PrePost2B5_ColorERPs_Oz31_34_32subs_TimebyCSbyBIS_pval.jpg');
 close(gcf);
 
-save PrePost2B5_32subs_Color_TimebyCS.mat
+save PrePost2B5_Oz31_34_32subs_Color_TimebyCS.mat
 
 
 %% Gray condition
@@ -1651,10 +1661,10 @@ line([horz(81) horz(81)],[0 5]);
 line([horz(87) horz(87)],[0 5]);
 
 legend('Pre Gray CS+', 'Pre Gray CS-', 'Post2 B5 Gray CS+', 'Post2 B5 Gray CS-', 'Location', 'southwest');
-saveas(gcf, 'PrePost2B5_GrayERPs_32subs_TimebyCSbyBIS_pval.jpg');
+saveas(gcf, 'PrePost2B5_GrayERPs_Oz31_34_32subs_TimebyCSbyBIS_pval.jpg');
 close(gcf);
 
-save PrePost2B5_32subs_Gray_TimebyCS.mat
+save PrePost2B5_Oz31_34_32subs_Gray_TimebyCS.mat
 
 %% Exploratory point-by-point ttest of Time(Pre/Post2 B6)*CS(+/-) interaction
 %Color condition, early time window
@@ -1737,10 +1747,10 @@ line([horz(81) horz(81)],[0 -7]);
 line([horz(87) horz(87)],[0 -7]);
 
 legend('Pre Color CS+', 'Pre Color CS-', 'Post2 B6 Color CS+', 'Post2 B6 Color CS-', 'Location', 'southwest');
-saveas(gcf, 'PrePost2B6_ColorERPs_32subs_TimebyCSbyBIS_pval.jpg');
+saveas(gcf, 'PrePost2B6_ColorERPs_Oz31_34_32subs_TimebyCSbyBIS_pval.jpg');
 close(gcf);
 
-save PrePost2B6_32subs_Color_TimebyCS.mat
+save PrePost2B6_32subs_Oz31_34_Color_TimebyCS.mat
 
 %% Gray condition
 allTimebyCS = [];
@@ -1822,10 +1832,10 @@ line([horz(81) horz(81)],[0 5]);
 line([horz(87) horz(87)],[0 5]);
 
 legend('Pre Gray CS+', 'Pre Gray CS-', 'Post2 B6 Gray CS+', 'Post2 B6 Gray CS-', 'Location', 'southwest');
-saveas(gcf, 'PrePost2B6_GrayERPs_32subs_TimebyCSbyBIS_pval.jpg');
+saveas(gcf, 'PrePost2B6_GrayERPs_Oz31_34_32subs_TimebyCSbyBIS_pval.jpg');
 close(gcf);
 
-save PrePost2B6_32subs_Gray_TimebyCS.mat
+save PrePost2B6_32subs_Oz31_34_Gray_TimebyCS.mat
 
 %% Prepare for Loreta - Pre individual conditions
 allsubs = [1 3 4 9 10 13 15 16 17 18 20:25 27 28 33 34 38:40 42:44 46 47 50 51 54 55]; %32 subs, no 2,7,32,12,37,57

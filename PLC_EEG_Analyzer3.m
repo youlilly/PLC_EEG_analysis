@@ -839,9 +839,9 @@ for b = 4:6
 end
 
 %% Compute individual Oz (A30-B1) ERPs (S1) for Precond and Postcond
-
-allsubs = [1:5 7:29 31 33 34 37:44 46 47 50 51 53:57];
-Ozchan = 30:33;
+allsubs = [1 3:4 8:11 13:29 33 34 38:40 42:44 46 47 50 51 54:56]; %39 Subs
+%allsubs = [1:5 7:29 31 33 34 37:44 46 47 50 51 53:57];
+Ozchan = [31:34 26 27 42 43]%[31:34];%[31:33 27 43];%[31:34 26 27 42 43]; %new oz channels 07/19/15
 allERPsColor = [];
 allERPsGray = [];
 
@@ -869,7 +869,7 @@ for s = allsubs
     Oz.ColorCSp = mean(colcsp,1);
     Oz.ColorCSm = mean(colcsm,1);
     Oz.hor = horz;
-    %eval(['save PLC_EEG_Sub' num2str(s) '_Precond_Oz_ERPs.mat Oz';]);
+   % eval(['save PLC_EEG_Sub' num2str(s) '_Precond_Oz_ERPs.mat Oz';]);
     
     allERPsColor = [allERPsColor; Oz.ColorCSp; Oz.ColorCSm];
     allERPsGray = [allERPsGray; Oz.GrayCSp; Oz.GrayCSm];
@@ -904,7 +904,7 @@ for s = allsubs
     Oz.ColorCSp = mean(colcsp,1);
     Oz.ColorCSm = mean(colcsm,1);
     Oz.horz = horz;
-    %eval(['save PLC_EEG_Sub' num2str(s) '_Postcond_Oz_ERPs.mat Oz';]);
+  %  eval(['save PLC_EEG_Sub' num2str(s) '_Postcond_Oz_ERPs.mat Oz';]);
     
     allERPsColor = [allERPsColor; Oz.ColorCSp; Oz.ColorCSm];
     allERPsGray = [allERPsGray; Oz.GrayCSp; Oz.GrayCSm];
@@ -916,6 +916,7 @@ grandygrandpostg = mean(allERPsGray,1);
 grandycolor = [grandygrandprec; grandygrandpostc]; grandycolor = mean(grandycolor,1);
 grandygray = [grandygrandpreg; grandygrandpostg]; grandygray = mean(grandygray,1);
 
+figure;
 plot(horz, grandycolor); hold on; %this plots the grand ERP for color condition across CS+/CS-, across Pre/Postcond for S1
 plot(horz, grandygray);%this plots the grand ERP for gray condition across CS+/CS-, across Pre/Postcond for S1
 
@@ -1502,6 +1503,7 @@ for i = 1:length(allTimebyCS)
     allrpscr = [allrpscr rpscr];
 end
 
+tallyp = [allPs' allrpi' allrpscr'];
 
 % plotting waveforms with p values
  horz = Precond.horz;
@@ -1512,9 +1514,9 @@ plot(horz, mean(PrecondColorCSm,1) , 'g-.');
 plot(horz, mean(PostcondColorCSp,1) , 'r-');
 plot(horz, mean(PostcondColorCSm,1) , 'g-');
 % 
-% plot(horz,allPs, 'k'); %interaction
-% plot(horz,allrpi+1, 'k--'); %interaction~BISz
-% plot(horz,allrpscr+2, 'k-.'); %interaction~SCR
+ plot(horz,allPs, 'k'); %interaction
+ plot(horz,allrpi+1, 'k--'); %interaction~BISz
+ plot(horz,allrpscr+2, 'k-.'); %interaction~SCR
 
 line([horz(83) horz(83)],[0 -7]);
 line([horz(88) horz(88)],[0 -7]);
@@ -1523,7 +1525,7 @@ line([horz(88) horz(88)],[0 -7]);
 
 
 legend('Pre Color CS+', 'Pre Color CS-', 'Post Color CS+', 'Post Color CS-', 'Location', 'southwest');
-saveas(gcf, 'PrePost_ColorERPs_39subs_TimebyCSbyBIS_pval.jpg');
+saveas(gcf, 'PrePost_ColorERPs_Oz31_34_39subs_TimebyCSbyBIS_pval.jpg');
 %close(gcf);
 
 % %ttest for interaction for C1P1 trough-to-peak difference
@@ -1534,7 +1536,7 @@ saveas(gcf, 'PrePost_ColorERPs_39subs_TimebyCSbyBIS_pval.jpg');
 % p1c2 = allTimebyCS(:,86) - allTimebyCS(:,78);
 % [H0p1c2, pp1c2] = ttest(p1c2, 0); %H0 = 0, pp1c2 = 0.19
 
-save PrePostAve_39subs_Color_TimebyCS.mat
+save PrePostAve_Oz31_34_39subs_Color_TimebyCS.mat
 
 %% Gray condition, early time window
 allsubs = [1 3:4 8:11 13:29 33 34 38:40 42:44 46 47 50 51 54:56]; %removing 2,7,53,5,12,31,37,41,57 
@@ -1620,6 +1622,8 @@ for i = 1:length(allTimebyCS)
     allrpscr = [allrpscr rpscr];    
 end
 
+tallyp = [allPs' allrpi' allrpscr'];
+
 %plotting
 horz = Precond.horz;
 
@@ -1629,9 +1633,9 @@ plot(horz, mean(PrecondGrayCSm,1) , 'g-.');
 plot(horz, mean(PostcondGrayCSp,1) , 'b-');
 plot(horz, mean(PostcondGrayCSm,1) , 'g-');
 
-% plot(horz,allPs-2, 'r');
-% plot(horz,allrpi-1, 'r--');
-% plot(horz,allrpscr, 'k-');
+ plot(horz,allPs-2, 'r');
+ plot(horz,allrpi-1, 'r--');
+ plot(horz,allrpscr, 'k-');
 
 line([horz(82) horz(82)],[0 6]);
 line([horz(88) horz(88)],[0 6]);
@@ -1642,10 +1646,10 @@ line([horz(88) horz(88)],[0 6]);
 %line([horz(104) horz(104)],[0 6]);
 %line([horz(124) horz(124)],[0 6]);
 legend('Pre Gray CS+', 'Pre Gray CS-', 'Post Gray CS+', 'Post Gray CS-', 'Location', 'northwest');
-saveas(gcf, 'PrePost_GrayERPs_39subs_TimebyCSbyBIS_pval.jpg');
+saveas(gcf, 'PrePost_GrayERPs_Oz31_34_39subs_TimebyCSbyBIS_pval.jpg');
 %close(gcf);
 
-%save PrePostAve_39subs_Gray_TimebyCS.mat
+save PrePostAve_Oz31_34_39subs_Gray_TimebyCS.mat
 
 %% Plot Grand Average ERP Pre-Post Color/Gray at Oz - 3.23.15
 allsubs = [1 3:4 8:11 13:29 33 34 38:40 42:44 46 47 50 51 54:56]; %39 subs
